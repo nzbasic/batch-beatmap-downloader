@@ -14,6 +14,6 @@ func main() {
 	}
 
 	http.HandleFunc("/hello", helloHandler)
-	log.Println("Listing for requests at http://localhost:8000/hello")
-	log.Fatal(http.ListenAndServe(":8000", nil))
+	log.Println("Listing for requests at http://localhost:7373/hello")
+	log.Fatal(http.ListenAndServe(":7373", nil))
 }
