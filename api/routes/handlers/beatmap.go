@@ -1,1 +1,39 @@
 package handlers
+
+import (
+	"database/sql"
+	"io/ioutil"
+	"net/http"
+	"strings"
+
+	"github.com/gorilla/mux"
+	"github.com/nzbasic/batch-beatmap-downloader/api/database"
+)
+
+func BeatmapHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	beatmap, err := database.GetBeatmapById(vars["id"])
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			w.WriteHeader(http.StatusBadRequest)
+		} else {
+			w.WriteHeader(http.StatusInternalServerError)
+		}
+		return
+	}
+
+	file, err := ioutil.ReadFile(beatmap.Path)
+
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	filenames := strings.Split(beatmap.Path, "/")
+	filename := filenames[len(filenames)-1]
+
+	w.Header().Set("Content-Disposition", "attachment; filename="+filename)
+	w.Write(file)
+	return
+}

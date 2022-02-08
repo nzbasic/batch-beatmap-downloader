@@ -3,6 +3,7 @@ package osu
 import (
 	"archive/zip"
 	"bytes"
+	"fmt"
 	"io"
 	"log"
 	"regexp"
@@ -11,6 +12,8 @@ import (
 
 	"github.com/thehowl/go-osuapi"
 )
+
+var CustomDelimiter = ">"
 
 type BeatmapData struct {
 	Title          string
@@ -21,8 +24,8 @@ type BeatmapData struct {
 	CS             float64
 	OD             float64
 	AR             float64
-	TimingPoints   []string
-	HitObjects     []string
+	TimingPoints   string
+	HitObjects     string
 	Hash           string
 	Genre          string
 	ApprovedDate   int64
@@ -42,6 +45,7 @@ type BeatmapData struct {
 	LastUpdate     int64
 	PassCount      int
 	PlayCount      int
+	Path           string
 }
 
 var r *regexp.Regexp
@@ -50,15 +54,18 @@ func init() {
 	r, _ = regexp.Compile(`^\d+`)
 }
 
-func ParseOsz(c *osuapi.Client, path string) []BeatmapData {
-
-	output := []BeatmapData{}
-
+func ParseSetId(path string) int {
 	// get the number at the start of the file name in an int
 	filenames := strings.Split(path, "/")
 	filename := filenames[len(filenames)-1]
 	number := r.FindString(filename)
 	setId, _ := strconv.Atoi(number)
+	return setId
+}
+
+func ParseOsz(c *osuapi.Client, path string, setId int) []BeatmapData {
+
+	output := []BeatmapData{}
 
 	beatmaps, err := c.GetBeatmaps(osuapi.GetBeatmapsOpts{
 		BeatmapSetID: setId,
@@ -70,19 +77,24 @@ func ParseOsz(c *osuapi.Client, path string) []BeatmapData {
 	}
 
 	archive, _ := zip.OpenReader(path)
-	defer archive.Close()
 
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println("Recovered from:\n", r)
+		}
+	}()
 	for _, f := range archive.File {
 		if strings.HasSuffix(f.Name, ".osu") {
 			file, _ := f.Open()
-			output = append(output, parseBeatmap(beatmaps, file, setId))
+			output = append(output, parseBeatmap(beatmaps, file, setId, path))
 		}
 	}
 
+	archive.Close()
 	return output
 }
 
-func parseBeatmap(beatmaps []osuapi.Beatmap, osu io.ReadCloser, setId int) BeatmapData {
+func parseBeatmap(beatmaps []osuapi.Beatmap, osu io.ReadCloser, setId int, path string) BeatmapData {
 	// We need the version name, timing points and hit objects from the file, everything else
 	// from the api.
 
@@ -148,8 +160,8 @@ func parseBeatmap(beatmaps []osuapi.Beatmap, osu io.ReadCloser, setId int) Beatm
 				HP:             apiBeatmap.HPDrain,
 				CS:             apiBeatmap.CircleSize,
 				OD:             apiBeatmap.OverallDifficulty,
-				TimingPoints:   timingPoints,
-				HitObjects:     hitObjects,
+				TimingPoints:   strings.Join(timingPoints, CustomDelimiter),
+				HitObjects:     strings.Join(hitObjects, CustomDelimiter),
 				Hash:           apiBeatmap.FileMD5,
 				Genre:          apiBeatmap.Genre.String(),
 				ApprovedDate:   apiBeatmap.ApprovedDate.GetTime().UnixMilli(),
@@ -170,6 +182,7 @@ func parseBeatmap(beatmaps []osuapi.Beatmap, osu io.ReadCloser, setId int) Beatm
 				LastUpdate:     apiBeatmap.LastUpdate.GetTime().Unix(),
 				PassCount:      apiBeatmap.Passcount,
 				PlayCount:      apiBeatmap.Playcount,
+				Path:           path,
 			}
 		}
 	}

@@ -22,6 +22,7 @@ type Reader struct {
 
 // this is meant to be run once ever
 func main() {
+	defer database.Close()
 	base := "/home/beatmaps"
 	paths := []string{}
 
@@ -49,7 +50,13 @@ func main() {
 
 	for _, path := range paths {
 		bar.Increment()
-		beatmapsData := osu.ParseOsz(c, path)
+		setId := osu.ParseSetId(path)
+		if database.Exists(setId) {
+			time.Sleep(50 * time.Millisecond)
+			continue
+		}
+
+		beatmapsData := osu.ParseOsz(c, path, setId)
 
 		for _, beatmapData := range beatmapsData {
 
@@ -58,21 +65,11 @@ func main() {
 				continue
 			}
 
-			database.AddBeatmap(beatmapData, path)
+			database.AddBeatmap(beatmapData)
 		}
 
 		time.Sleep(1*time.Second + 100*time.Millisecond)
 	}
 
 	bar.Finish()
-
-	// if err != nil {
-	// 	panic(err)
-	// }
-
-	// for _, beatmap := range beatmaps {
-	// 	print(beatmap.FileMD5)
-	// 	print("\n")
-	// }
-
 }

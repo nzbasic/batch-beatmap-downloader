@@ -2,7 +2,8 @@ package database
 
 import (
 	"database/sql"
-	"strings"
+	"fmt"
+	"log"
 
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/nzbasic/batch-beatmap-downloader/api/osu"
@@ -11,6 +12,7 @@ import (
 var database *sql.DB
 
 func init() {
+
 	open()
 	table := "CREATE TABLE IF NOT EXISTS beatmaps (" +
 		"id INTEGER PRIMARY KEY, " +
@@ -49,22 +51,26 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
-
-	close()
 }
 
-func open() {
-	database, _ = sql.Open("sqlite3", "/home/beatmaps/database.db")
-	database.SetMaxOpenConns(1)
+func Exists(setId int) bool {
+
+	cmd := "SELECT id FROM beatmaps WHERE setId = " + fmt.Sprint(setId)
+	row := database.QueryRow(cmd)
+	id := 0
+	err := row.Scan(&id)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return false
+		}
+		log.Println(err)
+	}
+
+	return true
 }
 
-func close() {
-	database.Close()
-}
-
-func AddBeatmap(beatmap osu.BeatmapData, path string) {
-
-	open()
+func AddBeatmap(beatmap osu.BeatmapData) {
 
 	cmd := "INSERT INTO beatmaps VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
 	_, err := database.Exec(cmd,
@@ -78,8 +84,8 @@ func AddBeatmap(beatmap osu.BeatmapData, path string) {
 		beatmap.CS,
 		beatmap.OD,
 		beatmap.AR,
-		strings.Join(beatmap.TimingPoints, ">"),
-		strings.Join(beatmap.HitObjects, ">"),
+		beatmap.TimingPoints,
+		beatmap.HitObjects,
 		beatmap.Hash,
 		beatmap.Genre,
 		beatmap.ApprovedDate,
@@ -97,12 +103,11 @@ func AddBeatmap(beatmap osu.BeatmapData, path string) {
 		beatmap.LastUpdate,
 		beatmap.PassCount,
 		beatmap.PlayCount,
-		path,
+		beatmap.Path,
 	)
 
 	if err != nil {
-		panic(err)
+		log.Println(err)
+		log.Printf("%+v\n", beatmap)
 	}
-
-	close()
 }
