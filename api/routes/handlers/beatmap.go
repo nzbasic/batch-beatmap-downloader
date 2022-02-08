@@ -12,7 +12,7 @@ import (
 
 func BeatmapHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	beatmap, err := database.GetBeatmapById(vars["id"])
+	beatmap, err := database.GetBeatmapBySetId(vars["setId"])
 
 	if err != nil {
 		if err == sql.ErrNoRows {

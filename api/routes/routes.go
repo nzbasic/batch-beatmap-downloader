@@ -9,5 +9,5 @@ var Router *mux.Router
 
 func init() {
 	Router = mux.NewRouter()
-	Router.HandleFunc("/beatmap/{id}", handlers.BeatmapHandler)
+	Router.HandleFunc("/beatmapset/{setId}", handlers.BeatmapHandler)
 }
