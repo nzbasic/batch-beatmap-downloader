@@ -16,36 +16,37 @@ import (
 var CustomDelimiter = ">"
 
 type BeatmapData struct {
-	Title          string
-	Artist         string
-	Creator        string
-	Version        string
-	HP             float64
-	CS             float64
-	OD             float64
-	AR             float64
-	TimingPoints   string
-	HitObjects     string
-	Hash           string
-	Genre          string
-	ApprovedDate   int64
-	Approved       string
-	BPM            float64
-	Id             int
-	SetId          int
-	Stars          float64
-	FavouriteCount int
-	HitLength      int
-	Language       string
-	MaxCombo       int
-	Mode           string
-	TotalLength    int
-	Tags           string
-	Source         string
-	LastUpdate     int64
-	PassCount      int
-	PlayCount      int
-	Path           string
+	Title          string  `filterType:"Text"`
+	Artist         string  `filterType:"Text"`
+	Creator        string  `filterType:"Text"`
+	Version        string  `filterType:"Text"`
+	HP             float64 `filterType:"Numeric"`
+	CS             float64 `filterType:"Numeric"`
+	OD             float64 `filterType:"Numeric"`
+	AR             float64 `filterType:"Numeric"`
+	TimingPoints   string  `filterType:"None"`
+	HitObjects     string  `filterType:"None"`
+	Hash           string  `filterType:"Text"`
+	Genre          string  `filterType:"Text"`
+	ApprovedDate   int64   `filterType:"Numeric"`
+	Approved       string  `filterType:"Text"`
+	BPM            float64 `filterType:"Numeric"`
+	Id             int     `filterType:"Numeric"`
+	SetId          int     `filterType:"Numeric"`
+	Stars          float64 `filterType:"Numeric"`
+	FavouriteCount int     `filterType:"Numeric"`
+	HitLength      int     `filterType:"Numeric"`
+	Language       string  `filterType:"Text"`
+	MaxCombo       int     `filterType:"Numeric"`
+	Mode           string  `filterType:"Text"`
+	TotalLength    int     `filterType:"Numeric"`
+	Tags           string  `filterType:"Text"`
+	Source         string  `filterType:"Text"`
+	LastUpdate     int64   `filterType:"Numeric"`
+	PassCount      int     `filterType:"Numeric"`
+	PlayCount      int     `filterType:"Numeric"`
+	Path           string  `filterType:"None"`
+	Stream         int     `filterType:"Numeric"`
 }
 
 var r *regexp.Regexp
