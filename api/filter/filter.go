@@ -101,7 +101,7 @@ func ParseFilters(filters []Filter) ([]int, error) {
 
 	output, err = database.QueryIds(query, values)
 	if err != nil {
-		panic(err)
+		return []int{}, errors.New("Invalid query " + query)
 	}
 
 	return output, nil
