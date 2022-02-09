@@ -1,11 +1,15 @@
 package database
 
-import "database/sql"
+import (
+	"database/sql"
+	"os"
 
-var dbLocation = "/home/beatmaps/database.db"
+	"github.com/joho/godotenv"
+)
 
 func open() {
-	database, _ = sql.Open("sqlite3", dbLocation)
+	godotenv.Load()
+	database, _ = sql.Open("sqlite3", os.Getenv("DB_LOCATION"))
 	database.SetMaxOpenConns(1)
 }
 
