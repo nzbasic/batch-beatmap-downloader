@@ -35,5 +35,4 @@ func BeatmapHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Disposition", "attachment; filename="+filename)
 	w.Write(file)
-	return
 }
