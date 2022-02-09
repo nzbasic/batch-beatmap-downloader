@@ -64,7 +64,6 @@ func ParseFilters(filters []Filter) ([]int, error) {
 	query := "SELECT id FROM beatmaps WHERE (1=1) "
 	for _, filter := range filters {
 		if filter.Type == "Numeric" {
-
 			query += "AND (" + filter.Field
 			query, err = addValidOperator(filter.Operator, validOperatorsNumeric, query)
 			if err != nil {
@@ -78,9 +77,7 @@ func ParseFilters(filters []Filter) ([]int, error) {
 
 			values = append(values, filter.Value)
 			query += "?) "
-
 		} else if filter.Type == "Text" {
-
 			query += "AND (" + filter.Field
 			query, err = addValidOperator(filter.Operator, validOperatorsText, query)
 			if err != nil {
@@ -93,7 +90,6 @@ func ParseFilters(filters []Filter) ([]int, error) {
 
 			values = append(values, filter.Value)
 			query += "?) "
-
 		} else {
 			return []int{}, errors.New("No matching filter type found for " + filter.Type)
 		}

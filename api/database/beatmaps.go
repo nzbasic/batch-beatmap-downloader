@@ -21,6 +21,27 @@ func GetBeatmapBySetId(setId string) (osu.BeatmapData, error) {
 	return beatmap, nil
 }
 
+func GetBeatmapById(id int) (osu.BeatmapData, error) {
+
+	var beatmap osu.BeatmapData
+	row, err := database.Query("SELECT * FROM beatmaps WHERE id=?", id)
+
+	if err != nil {
+		return osu.BeatmapData{}, err
+	}
+
+	err = scan.Row(&beatmap, row)
+	if err != nil {
+		return osu.BeatmapData{}, err
+	}
+
+	beatmap.HitObjects = ""
+	beatmap.TimingPoints = ""
+	beatmap.Path = ""
+
+	return beatmap, nil
+}
+
 func QueryIds(query string, values []string) ([]int, error) {
 
 	output := []int{}

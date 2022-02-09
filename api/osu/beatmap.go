@@ -20,17 +20,17 @@ type BeatmapData struct {
 	Artist         string  `filterType:"Text"`
 	Creator        string  `filterType:"Text"`
 	Version        string  `filterType:"Text"`
-	HP             float64 `filterType:"Numeric"`
-	CS             float64 `filterType:"Numeric"`
-	OD             float64 `filterType:"Numeric"`
-	AR             float64 `filterType:"Numeric"`
+	Hp             float64 `filterType:"Numeric"`
+	Cs             float64 `filterType:"Numeric"`
+	Od             float64 `filterType:"Numeric"`
+	Ar             float64 `filterType:"Numeric"`
 	TimingPoints   string  `filterType:"None"`
 	HitObjects     string  `filterType:"None"`
 	Hash           string  `filterType:"Text"`
 	Genre          string  `filterType:"Text"`
 	ApprovedDate   int64   `filterType:"Numeric"`
 	Approved       string  `filterType:"Text"`
-	BPM            float64 `filterType:"Numeric"`
+	Bpm            float64 `filterType:"Numeric"`
 	Id             int     `filterType:"Numeric"`
 	SetId          int     `filterType:"Numeric"`
 	Stars          float64 `filterType:"Numeric"`
@@ -158,17 +158,17 @@ func parseBeatmap(beatmaps []osuapi.Beatmap, osu io.ReadCloser, setId int, path 
 				Artist:         apiBeatmap.Artist,
 				Creator:        apiBeatmap.Creator,
 				Version:        version,
-				HP:             apiBeatmap.HPDrain,
-				CS:             apiBeatmap.CircleSize,
-				OD:             apiBeatmap.OverallDifficulty,
+				Hp:             apiBeatmap.HPDrain,
+				Cs:             apiBeatmap.CircleSize,
+				Od:             apiBeatmap.OverallDifficulty,
 				TimingPoints:   strings.Join(timingPoints, CustomDelimiter),
 				HitObjects:     strings.Join(hitObjects, CustomDelimiter),
 				Hash:           apiBeatmap.FileMD5,
 				Genre:          apiBeatmap.Genre.String(),
 				ApprovedDate:   apiBeatmap.ApprovedDate.GetTime().UnixMilli(),
 				Approved:       apiBeatmap.Approved.String(),
-				AR:             apiBeatmap.ApproachRate,
-				BPM:            apiBeatmap.BPM,
+				Ar:             apiBeatmap.ApproachRate,
+				Bpm:            apiBeatmap.BPM,
 				Id:             apiBeatmap.BeatmapID,
 				SetId:          apiBeatmap.BeatmapSetID,
 				Stars:          apiBeatmap.DifficultyRating,
