@@ -10,4 +10,5 @@ require (
 	github.com/joho/godotenv v1.4.0 // indirect
 	github.com/mattn/go-sqlite3 v1.14.11 // indirect
 	github.com/thehowl/go-osuapi v0.0.0-20181219091033-b29455689881
+	golang.org/x/sys v0.0.0-20210615035016-665e8c7367d1 // indirect
 )
