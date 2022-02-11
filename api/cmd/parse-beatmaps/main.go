@@ -10,8 +10,8 @@ import (
 
 	"github.com/cheggaaa/pb/v3"
 	"github.com/joho/godotenv"
-	"github.com/nzbasic/batch-beatmap-downloader/api/database"
-	"github.com/nzbasic/batch-beatmap-downloader/api/osu"
+	"github.com/nzbasic/batch-beatmap-downloader/database"
+	"github.com/nzbasic/batch-beatmap-downloader/osu"
 	"github.com/thehowl/go-osuapi"
 )
 

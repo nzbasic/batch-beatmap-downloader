@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "module": "commonjs",
+    "jsx": "react-jsx",
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "sourceMap": true,
+    "baseUrl": ".",
+    "outDir": "dist",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "paths": {
+      "*": ["node_modules/*"],
+      "@/*": ["./src/*"],
+      "@assets/*": ["./assets/*"],
+      "@containers/*": ["./src/render/containers/*"],
+      "@components/*": ["./src/render/components/*"]
+    }
+  },
+  "include": ["*.js", "*.jsx", "*.ts", "*.tsx"],
+}

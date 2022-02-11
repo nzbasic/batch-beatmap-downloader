@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/nzbasic/batch-beatmap-downloader/api/filter"
+	"github.com/nzbasic/batch-beatmap-downloader/filter"
 )
 
 func FilterHandler(w http.ResponseWriter, r *http.Request) {

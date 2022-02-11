@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/nzbasic/batch-beatmap-downloader/api/database"
+	"github.com/nzbasic/batch-beatmap-downloader/database"
 )
 
 /*

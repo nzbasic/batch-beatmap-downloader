@@ -2,7 +2,7 @@ package database
 
 import (
 	"github.com/blockloop/scan"
-	"github.com/nzbasic/batch-beatmap-downloader/api/osu"
+	"github.com/nzbasic/batch-beatmap-downloader/osu"
 )
 
 func GetBeatmapBySetId(setId string) (osu.BeatmapData, error) {

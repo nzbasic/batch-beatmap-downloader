@@ -8,8 +8,8 @@ import (
 	"strings"
 
 	"github.com/gorilla/mux"
-	"github.com/nzbasic/batch-beatmap-downloader/api/database"
-	"github.com/nzbasic/batch-beatmap-downloader/api/osu"
+	"github.com/nzbasic/batch-beatmap-downloader/database"
+	"github.com/nzbasic/batch-beatmap-downloader/osu"
 )
 
 func BeatmapDownloadHandler(w http.ResponseWriter, r *http.Request) {
