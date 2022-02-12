@@ -61,7 +61,8 @@ export const RuleOperator = ({ rule, onChange }: PropTypes) => {
   }, [rule])
 
  return <Select
-    className="w-52"
+    className="w-52 my-react-select-container"
+    classNamePrefix="my-react-select"
     options={operatorMap.get(rule.type as RuleType)}
     isSearchable={false}
     value={selectedOption}

@@ -43,7 +43,8 @@ interface PropTypes {
 
 export const RuleSelector = ({ rule, onChange }: PropTypes) => {
   return <Select
-    className="w-52"
+    className="w-52 my-react-select-container"
+    classNamePrefix="my-react-select"
     options={options}
     defaultValue={options.find(i => i.value === rule.field)}
     onChange={(option) => onChange({ ...rule, field: option.value, type: option.type, value: "" })}

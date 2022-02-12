@@ -21,7 +21,7 @@ export const ResultTable = ({ result }: PropTypes) => {
       row.push(beatmap.Title)
       row.push(beatmap.Creator)
       row.push(beatmap.Version)
-      row.push(beatmap.Stars)
+      row.push(beatmap.Stars.toFixed(2))
       row.push(beatmap.Ar)
       row.push(beatmap.Od)
       row.push(beatmap.Cs)

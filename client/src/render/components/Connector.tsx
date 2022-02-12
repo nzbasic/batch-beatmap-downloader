@@ -9,14 +9,14 @@ interface PropTypes {
 
 export const Connector = ({ details, update }: PropTypes) => {
   return (
-    <div className="flex items-center py-2">
+    <div className="flex items-center py-2 text-black ">
       <div className="">
         {types.map((type, index) => (
           <button
             className={`
               ${index === 0 ? 'rounded-l border-r-0' : index === types.length-1 ? 'rounded-r border-l-0' : ''}
-              ${details.type === type ? 'bg-blue-500' : 'bg-white hover:bg-blue-500'}
-              px-2 py-1  border-gray-600 border w-12 transition duration-200`}
+              ${details.type === type ? 'bg-blue-500 dark:bg-blue-600' : 'bg-white dark:bg-neutral-700 dark:hover:bg-blue-600 hover:bg-blue-500'}
+              px-2 py-1 border-gray-600 dark:border-black border w-12 transition duration-200`}
             disabled={type === details.type}
             onClick={() => update({ ...details, type })}
             key={index}
@@ -28,8 +28,8 @@ export const Connector = ({ details, update }: PropTypes) => {
 
       <button
         className={`
-          ${details.not ? 'bg-red-500' : 'hover:bg-red-500 bg-red-200'}
-          ml-2 border-gray-600 border px-2 py-1 rounded transition duration-100`}
+          ${details.not ? 'bg-red-500 dark:bg-red-600' : 'hover:bg-red-500 bg-white dark:bg-neutral-700 dark:hover:bg-red-600'}
+          ml-2 border-gray-600 dark:border-black border px-2 py-1 rounded transition duration-100`}
         onClick={() => update({ ...details, not: !details.not })}
         >
           NOT
