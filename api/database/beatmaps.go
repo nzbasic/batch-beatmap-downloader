@@ -6,7 +6,6 @@ import (
 )
 
 func GetBeatmapBySetId(setId string) (osu.BeatmapData, error) {
-
 	var beatmap osu.BeatmapData
 	row, err := database.Query("SELECT * FROM beatmaps WHERE setId=?", setId)
 
@@ -22,7 +21,6 @@ func GetBeatmapBySetId(setId string) (osu.BeatmapData, error) {
 }
 
 func GetBeatmapById(id int) (osu.BeatmapData, error) {
-
 	var beatmap osu.BeatmapData
 	row, err := database.Query("SELECT * FROM beatmaps WHERE id=?", id)
 
@@ -38,14 +36,11 @@ func GetBeatmapById(id int) (osu.BeatmapData, error) {
 	beatmap.HitObjects = ""
 	beatmap.TimingPoints = ""
 	beatmap.Path = ""
-
 	return beatmap, nil
 }
 
 func QueryIds(query string, values []string) ([]int, error) {
-
 	output := []int{}
-
 	iValues := make([]interface{}, len(values))
 	for i, v := range values {
 		iValues[i] = v
@@ -58,7 +53,10 @@ func QueryIds(query string, values []string) ([]int, error) {
 
 	for rows.Next() {
 		var id int
-		rows.Scan(&id)
+		err := rows.Scan(&id)
+		if err != nil {
+			panic(err)
+		}
 		output = append(output, id)
 	}
 

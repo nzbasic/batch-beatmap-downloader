@@ -5,6 +5,8 @@ import {
   OpenExternalOptions,
 } from "electron";
 import { createStoreBindings } from "electron-persist-secure/lib/bindings";
+import { BeatmapDetails } from "../models/api";
+import { Node } from '../models/filter'
 
 export const electronBridge = {
   quit: (): void => {
@@ -21,6 +23,17 @@ export const electronBridge = {
 
   relaunch: (): void => {
     ipcRenderer.send("relaunch-app");
+  },
+
+  query: async (node: Node) => {
+    const res = await ipcRenderer.invoke("query", node) as number[];
+    return res;
+  },
+
+  getBeatmapDetails: async (ids: number[]) => {
+    const res = await ipcRenderer.invoke("get-beatmap-details", ids) as BeatmapDetails[];
+    console.log(res)
+    return res;
   },
 
   openUrl: async (

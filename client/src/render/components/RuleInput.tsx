@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import Select from "react-select"
 import { InputType, RuleType } from "../../models/filter"
-import { Rule } from "./Rule"
+import { Rule } from "../../models/filter"
 
 interface Option {
   label: string;
@@ -76,9 +76,9 @@ const RuleInputDropdown = ({ rule, onChange }: PropTypes) => {
   const [selectedOption, setSelectedOption] = useState<Option>(null)
 
   useEffect(() => {
-    const option = dropdownMap.get(rule.type).find(i => i.value === rule.value)
+    const option = dropdownMap.get(rule.type as RuleType).find(i => i.value === rule.value)
     if (!option) {
-      setSelectedOption(dropdownMap.get(rule.type)[0])
+      setSelectedOption(dropdownMap.get(rule.type as RuleType)[0])
     } else {
       setSelectedOption(option)
     }
@@ -87,7 +87,7 @@ const RuleInputDropdown = ({ rule, onChange }: PropTypes) => {
   return (
     <Select
       className="w-40"
-      options={dropdownMap.get(rule.type)}
+      options={dropdownMap.get(rule.type as RuleType)}
       value={selectedOption}
       onChange={(e) => onChange({ ...rule, value: e.value })}
     />
@@ -136,7 +136,7 @@ export const RuleInput = ({ rule, onChange }: PropTypes) => {
 
   return (
     <div className="">
-      {inputMap.get(inputTypeMap.get(rule.type))}
+      {inputMap.get(inputTypeMap.get(rule.type as RuleType))}
     </div>
   )
 }

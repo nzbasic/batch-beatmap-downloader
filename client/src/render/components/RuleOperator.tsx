@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react"
 import Select from "react-select"
-import { RuleType } from "../../models/filter"
-import { Rule } from "./Rule"
+import { Rule, RuleType } from "../../models/filter"
 
 interface Operator {
   label: string,
@@ -53,9 +52,9 @@ export const RuleOperator = ({ rule, onChange }: PropTypes) => {
   const [selectedOption, setSelectedOption] = useState<Operator>(null)
 
   useEffect(() => {
-    const option = operatorMap.get(rule.type).find(i => i.value === rule.operator)
+    const option = operatorMap.get(rule.type as RuleType).find(i => i.value === rule.operator)
     if (!option) {
-      setSelectedOption(operatorMap.get(rule.type)[0])
+      setSelectedOption(operatorMap.get(rule.type as RuleType)[0])
     } else {
       setSelectedOption(option)
     }
@@ -63,7 +62,7 @@ export const RuleOperator = ({ rule, onChange }: PropTypes) => {
 
  return <Select
     className="w-52"
-    options={operatorMap.get(rule.type)}
+    options={operatorMap.get(rule.type as RuleType)}
     isSearchable={false}
     value={selectedOption}
     onChange={(e) => onChange({ ...rule, operator: e.value })}

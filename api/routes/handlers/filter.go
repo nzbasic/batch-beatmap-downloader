@@ -9,11 +9,11 @@ import (
 
 func FilterHandler(w http.ResponseWriter, r *http.Request) {
 
-	var filters []filter.Filter
+	var node filter.Node
 	decoder := json.NewDecoder(r.Body)
-	decoder.Decode(&filters)
+	decoder.Decode(&node)
 
-	ids, err := filter.ParseFilters(filters)
+	ids, err := filter.QueryNode(node)
 
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)

@@ -1,4 +1,4 @@
-import { electronBridge, storeBridge } from "../main";
+import { electronBridge, storeBridge } from "./bridges/main";
 
 declare global {
   interface Window {

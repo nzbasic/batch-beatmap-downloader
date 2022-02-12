@@ -1,16 +1,8 @@
 import { useEffect, useState } from 'react'
-import Select from 'react-select'
-import { RuleType } from '../../models/filter'
 import { RuleInput } from './RuleInput'
 import { RuleOperator } from './RuleOperator'
 import { RuleSelector } from './RuleSelector'
-
-export interface Rule {
-  type: RuleType;
-  value: string;
-  operator: string;
-  field: string;
-}
+import { Rule } from '../../models/filter'
 
 interface PropTypes {
   rule: Rule;
@@ -18,7 +10,7 @@ interface PropTypes {
   updateParent: (rule: Rule, id: string) => void
 }
 
-export const Rule = ({ rule, id, updateParent }: PropTypes) => {
+export const FilterRule = ({ rule, id, updateParent }: PropTypes) => {
   const [state, setState] = useState<Rule>(rule)
 
   useEffect(() => {

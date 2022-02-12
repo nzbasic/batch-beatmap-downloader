@@ -1,7 +1,4 @@
-export interface ConnectorDetails {
-  type: string;
-  not: boolean;
-}
+import { ConnectorDetails } from "../../models/filter";
 
 const types = ["AND", "OR"];
 

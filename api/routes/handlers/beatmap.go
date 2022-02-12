@@ -3,6 +3,7 @@ package handlers
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strings"
@@ -55,6 +56,8 @@ func BeatmapDetailsHandler(w http.ResponseWriter, r *http.Request) {
 
 		beatmaps = append(beatmaps, beatmap)
 	}
+
+	fmt.Printf("%+v", beatmaps)
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(beatmaps)

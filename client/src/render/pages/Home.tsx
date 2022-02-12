@@ -1,20 +1,10 @@
-import { useEffect, useState } from "react"
-import { FilterRequest } from "../../models/api"
+import { useState } from "react"
 import { RuleType } from "../../models/filter"
-import { ConnectorDetails } from "../components/Connector"
 import { QueryGroup } from "../components/QueryGroup"
-import { Rule } from "../components/Rule"
-
-export interface Group {
-  connector: ConnectorDetails,
-  children: Node[]
-}
-
-export interface Node {
-  id: string,
-  group?: Group
-  rule?: Rule
-}
+import { Node, Group } from '../../models/filter'
+import { cloneDeep } from "lodash"
+import { ResultTable } from "../components/ResultTable"
+import { CircularProgress } from "@mui/material"
 
 const sampleTree: Node = {
   id: "root",
@@ -39,12 +29,13 @@ const sampleTree: Node = {
 
 export const Home = () => {
   const [tree, setTree] = useState<Node>(sampleTree)
+  const [result, setResult] = useState<number[]>([])
+  const [loading, setLoading] = useState(false)
+  const [firstQuery, setFirstQuery] = useState(true)
 
-  const exportData = () => {
-    const output: FilterRequest = {
-      groups: [],
-      rules: []
-    }
+  const exportData = async () => {
+    setResult([])
+    setLoading(true)
 
     const map = new Map<RuleType, string>([
       [RuleType.STATUS, "Text"],
@@ -56,29 +47,22 @@ export const Home = () => {
       [RuleType.TEXT, "Text"]
     ])
 
-    // flatten the tree into the output filter request
-    const flatten = (node: Node, parent: number) => {
+    // replace all rule types with the correct string from the Map
+    const replaceRuleType = (node: Node) => {
+      if ("rule" in node) {
+        node.rule.type = map.get(node.rule.type as RuleType)
+      }
       if ("group" in node) {
-        output.groups.push({
-          connector: node.group.connector.type,
-          not: node.group.connector.not,
-          parent: parent,
-          number: parent+1
-        })
-        node.group.children.forEach(child => flatten(child, parent+1))
-      } else {
-        output.rules.push({
-          type: map.get(node.rule.type),
-          field: node.rule.field,
-          value: node.rule.value,
-          operator: node.rule.operator,
-          group: parent,
-        })
+        node.group.children.forEach(replaceRuleType)
       }
     }
 
-    flatten(tree, 0)
-    console.log(output)
+    const clone = cloneDeep(tree)
+    replaceRuleType(clone)
+    const res = await window.electron.query(clone)
+    setLoading(false)
+    setResult(res)
+    setFirstQuery(false)
   }
 
   const updateTree = (group: Group) => {
@@ -86,9 +70,22 @@ export const Home = () => {
   }
 
   return (
-    <div className="flex flex-col gap-2 items-start">
-      <QueryGroup group={tree.group} id={tree.id} updateParent={(child) => updateTree(child)} />
-      <button className="bg-blue-600 rounded hover:bg-blue-700 transition duration-150 px-2 py-1 ml-2 text-white font-medium" onClick={exportData}>Test Query</button>
+    <div className="flex flex-col gap-2 ">
+      <div className="bg-white rounded shadow p-6 m-4 flex flex-col">
+        <span className="font-bold text-lg">Advanced Query Builder</span>
+        <span className="font-bold text-gray-500 mt-4">Filters</span>
+        <QueryGroup group={tree.group} id={tree.id} updateParent={(child) => updateTree(child)} />
+        <div className="flex gap-2 items-center mt-4">
+          <button className="bg-blue-600 self-start rounded hover:bg-blue-700 transition duration-150 px-2 py-1 text-white font-medium" onClick={exportData}>Test Query</button>
+          {loading ? <CircularProgress size={25} /> : !firstQuery && <span>{result.length} Results</span>}
+        </div>
+      </div>
+
+      {result.length ?
+        <div className="bg-white rounded shadow p-6 m-4 mt-0">
+          <ResultTable result={result} />
+        </div>
+      : null}
     </div>
 
   )

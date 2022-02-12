@@ -1,13 +1,11 @@
-import { Rule } from './Rule';
-import { Group } from '../pages/Home'
-import { Connector, ConnectorDetails } from './Connector';
+import { FilterRule } from './Rule';
+import { RuleType, Rule, ConnectorDetails, Group, Node } from '../../models/filter'
+import { Connector } from './Connector';
 import { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { RuleType } from '../../models/filter';
 import { cloneDeep } from 'lodash'
-import { Node } from '../pages/Home'
-import ClearIcon from '@mui/icons-material/Clear';
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
+import { stringToColor } from '@davidcmeier/string-to-color'
 
 interface PropTypes {
   group: Group
@@ -82,30 +80,34 @@ export const QueryGroup = ({ group, id, updateParent }: PropTypes) => {
   }
 
   return (
-    <div className="bg-slate-100 border-black border-l-indigo-500 border-l-8 border rounded-l-none rounded m-2 p-2 flex flex-col">
-      {state.children.map((child, index) => (
-        <div key={index}>
-          {index == 0 ? null : <Connector details={state.connector} update={updateConnector} />}
-          {child.group ?
-            <div className="">
-              <ClearIcon onClick={() => removeChild(child.id)} className="hover:cursor-pointer text-white rounded-full bg-red-600 h-10 w-10 mb-1" />
-              <div className="-mt-6">
-                <QueryGroup group={child.group} id={child.id} updateParent={(child, id) => updateGroup(child, id)} />
-              </div>
+    <div className="flex w-full">
+      <div style={{ backgroundColor: stringToColor(id) }} className="w-4" />
+      <div className="p-4 rounded-l-none border-gray-300 border-l-0 border rounded flex items-stretch w-full">
+        <div className="flex flex-col">
+          {state.children.map((child, index) => (
+            <div key={index}>
+              {index == 0 ? null : <Connector details={state.connector} update={updateConnector} />}
+              {child.group ?
+                <div>
+                  <QueryGroup group={child.group} id={child.id} updateParent={(child, id) => updateGroup(child, id)} />
+                </div>
+                :
+                <div className="flex gap-2 items-center">
+                  <FilterRule rule={child.rule} id={child.id} updateParent={(rule, id) => updateGroup(rule, id)} />
+                  {(id != "root" || index != 0) && <CancelOutlinedIcon onClick={() => removeChild(child.id)} className="text-gray-400 hover:cursor-pointer hover:text-red-500" />}
+                </div>
+              }
             </div>
-             :
-            <div className="flex gap-2 items-center">
-              <Rule rule={child.rule} id={child.id} updateParent={(rule, id) => updateGroup(rule, id)} />
-              {(id != "root" || index != 0) && <CancelOutlinedIcon onClick={() => removeChild(child.id)} className="text-gray-400 hover:cursor-pointer hover:text-red-500" />}
-            </div>
-          }
+          ))}
+          <div className="flex items-center gap-2 mt-4">
+            <button onClick={() => addChild(cloneDeep(defaultRule))} className="border-blue-600 text-gray-600 border-2 rounded px-2 py-1 hover:bg-blue-600 hover:text-white font-medium transition duration-150">+ Add Rule</button>
+            <button onClick={() => addChild(cloneDeep(defaultGroup))} className="border-blue-600 text-gray-600 border-2 rounded px-2 py-1 hover:bg-blue-600 hover:text-white font-medium transition duration-150">+ Add Group</button>
+
+          </div>
         </div>
-      ))}
-      <div className="flex items-center gap-2 mt-4">
-        <button onClick={() => addChild(cloneDeep(defaultRule))} className="bg-blue-600 text-white rounded px-2 py-1 hover:bg-blue-700 font-medium transition duration-150">+ Add Rule</button>
-        <button onClick={() => addChild(cloneDeep(defaultGroup))} className="bg-blue-600 text-white rounded px-2 py-1 hover:bg-blue-700 font-medium transition duration-150">+ Add Group</button>
       </div>
     </div>
+
   );
 };
 

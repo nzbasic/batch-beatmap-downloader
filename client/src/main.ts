@@ -29,6 +29,7 @@ const createWindow = (): void => {
   const mainWindow = new BrowserWindow({
     height: 720,
     width: 1280,
+    backgroundColor: "#fff",
     webPreferences: {
       contextIsolation: true,
       nodeIntegration: false,
@@ -46,6 +47,10 @@ const createWindow = (): void => {
   // and load the index.html of the app.
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 };
+
+app.on("activate", () => {
+  app.disableHardwareAcceleration()
+})
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
