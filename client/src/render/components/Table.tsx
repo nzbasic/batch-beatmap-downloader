@@ -12,7 +12,7 @@ export const Table = ({ rows, columns }: PropTypes) => {
       <thead>
         <tr>
           {columns.map(column => (
-            <th key={column} className="px-2 border border-gray-300 py-1">{column}</th>
+            <th key={column} className="px-2 border border-gray-300 dark:border-black dark:border-2 py-1">{column}</th>
           ))}
           </tr>
         </thead>
@@ -20,7 +20,7 @@ export const Table = ({ rows, columns }: PropTypes) => {
           {rows.map((row, index) => (
             <tr key={index}>
               {row.map((cell, index) => (
-                <td key={index} className="px-2 border border-gray-300 py-1">{cell}</td>
+                <td key={index} className="px-2 border border-gray-300 dark:border-black dark:border-2 py-1">{cell}</td>
               ))}
             </tr>
           ))}

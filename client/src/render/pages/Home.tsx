@@ -76,8 +76,7 @@ export const Home = () => {
     <div className="flex flex-col">
       <Settings />
       <div className="bg-white dark:bg-zinc-800 rounded shadow p-6 m-4 mt-0 flex flex-col">
-        <span className="font-bold text-lg dark:text-white">Advanced Query Builder</span>
-        <span className="font-bold text-gray-500 dark:text-gray-200 mt-4">Filters</span>
+        <span className="font-bold text-lg dark:text-white mb-4">Advanced Query Builder</span>
         <QueryGroup group={tree.group} id={tree.id} updateParent={(child) => updateTree(child)} />
         <div className="flex gap-2 items-center mt-4">
           <button disabled={loading} className="bg-blue-600 self-start rounded hover:bg-blue-700 transition duration-150 px-2 py-1 text-white font-medium" onClick={exportData}>Test Query</button>
@@ -86,7 +85,7 @@ export const Home = () => {
       </div>
 
       {result.length ?
-        <div className="bg-white rounded shadow p-6 m-4 mt-0">
+        <div className="bg-white dark:bg-zinc-800 rounded shadow p-6 m-4 mt-0">
           <ResultTable result={result} />
         </div>
       : null}
