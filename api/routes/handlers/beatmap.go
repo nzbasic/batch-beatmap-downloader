@@ -26,7 +26,6 @@ func BeatmapDownloadHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	file, err := ioutil.ReadFile(beatmap.Path)
-
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return

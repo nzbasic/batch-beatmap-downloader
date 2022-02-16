@@ -5,13 +5,16 @@ import { BeatmapDetails, FilterResponse } from "../../models/api";
 import settings from 'electron-settings'
 import { SettingsObject } from "../../global";
 import fs from 'fs'
+import Download from 'nodejs-file-downloader'
+
+const serverUri = "http://localhost:7373"
 
 ipcMain.handle("query", async (event, node: Node, limit: number) => {
-  return (await axios.post<FilterResponse>("http://localhost:7373/filter", { node, limit })).data
+  return (await axios.post<FilterResponse>(`${serverUri}/filter`, { node, limit })).data
 })
 
 ipcMain.handle("get-beatmap-details", async (event, node: Node) => {
-  return (await axios.post<BeatmapDetails[]>("http://localhost:7373/beatmapDetails", node)).data
+  return (await axios.post<BeatmapDetails[]>(`${serverUri}/beatmapDetails`, node)).data
 })
 
 ipcMain.handle("get-settings", async () => {
@@ -37,6 +40,22 @@ ipcMain.handle("browse", async () => {
 
 ipcMain.on("quit", () => {
   app.quit()
+})
+
+ipcMain.handle("download", async (event, ids: number[]) => {
+  const path = (await settings.get('path')) as string + "/Songs"
+
+  for (const id of ids) {
+    const uri = `${serverUri}/beatmapset/${id}`
+    const outPath = `${path}/Songs`
+    const download = new Download({ url: uri, directory: outPath, maxAttempts: 3 })
+    try {
+      await download.download()
+    } catch (err) {
+      console.log(err)
+    }
+
+  }
 })
 
 ipcMain.handle("load-beatmaps", async () => {

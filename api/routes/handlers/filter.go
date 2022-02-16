@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/nzbasic/batch-beatmap-downloader/filter"
@@ -35,8 +34,6 @@ func FilterHandler(w http.ResponseWriter, r *http.Request) {
 	var request FilterRequest
 	decoder := json.NewDecoder(r.Body)
 	decoder.Decode(&request)
-
-	fmt.Printf("%+v\n", request)
 
 	ids, setIds, err := filter.QueryNode(request.Node, request.Limit)
 	if err != nil {

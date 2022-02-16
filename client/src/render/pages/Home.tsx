@@ -73,6 +73,10 @@ export const Home = () => {
     setTree({ ...tree, group })
   }
 
+  const download = () => {
+    window.electron.download(result.SetIds)
+  }
+
   return (
     <div className="flex flex-col w-full gap-4">
       <Settings />
@@ -87,10 +91,16 @@ export const Home = () => {
       </div>
 
       {result?.Ids ?
-        <div className="bg-white dark:bg-monokai-dark rounded shadow p-6 mt-0 flex flex-col gap-4">
-          <span className="font-bold text-lg dark:text-white">Results</span>
-          <ResultTable result={result} />
+        <div className="flex flex-col gap-4">
+          <div className="bg-white dark:bg-monokai-dark rounded shadow p-6">
+            <button onClick={download} className="bg-green-500 hover:bg-green-400 transition duration-150 px-2 py-1 rounded text-lg font-medium">Download</button>
+          </div>
+          <div className="bg-white dark:bg-monokai-dark rounded shadow p-6 mt-0 flex flex-col gap-4">
+            <span className="font-bold text-lg dark:text-white">Results</span>
+            <ResultTable result={result} />
+          </div>
         </div>
+
       : null}
     </div>
   )

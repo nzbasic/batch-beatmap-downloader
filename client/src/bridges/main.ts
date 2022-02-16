@@ -54,6 +54,10 @@ export const electronBridge = {
 
   quit: (): void => {
     ipcRenderer.send("quit");
+  },
+
+  download: (ids: number[]) => {
+    ipcRenderer.invoke("download", ids)
   }
 };
 
