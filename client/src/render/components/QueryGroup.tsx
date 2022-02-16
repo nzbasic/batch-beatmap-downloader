@@ -7,6 +7,7 @@ import { cloneDeep } from 'lodash'
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
 import { stringToColor } from '@davidcmeier/string-to-color'
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
+import { stat } from 'original-fs';
 
 interface PropTypes {
   group: Group
@@ -65,6 +66,14 @@ export const QueryGroup = ({ group, id, updateParent }: PropTypes) => {
     })
   }
 
+  const getLastRule = () => {
+    const lastRule = state.children.filter(node => "rule" in node).pop()
+    if (lastRule) {
+      return lastRule
+    }
+    return defaultRule
+  }
+
   const addChild = (child: Node) => {
     child.id = uuidv4()
     if (child.group) {
@@ -88,8 +97,8 @@ export const QueryGroup = ({ group, id, updateParent }: PropTypes) => {
 
   return (
     <div className="flex w-full">
-      <div style={{ backgroundColor: stringToColor(id) }} className="w-4" />
-      <div className="p-4 rounded-l-none border-gray-300 dark:border-black dark:border-2 dark:border-l-0 border-l-0 border rounded flex items-stretch w-full">
+      <div style={{ backgroundColor: stringToColor(id) }} className="w-2" />
+      <div className="p-4 rounded-l-none border-gray-300 dark:border-monokai-border dark:border-2 dark:border-l-0 border-l-0 border rounded flex items-stretch w-full">
         <div className="flex flex-col">
           {state.children.map((child, index) => (
             <div key={child.id}>
@@ -99,7 +108,7 @@ export const QueryGroup = ({ group, id, updateParent }: PropTypes) => {
                   <QueryGroup group={child.group} id={child.id} updateParent={(child, id) => updateGroup(child, id)} />
                   <RemoveCircleIcon
                     onClick={() => removeChild(child.id)}
-                    className="text-red-600 hover:text-red-700 hover:cursor-pointer rounded -ml-5 -mt-4 bg-white dark:bg-zinc-800"
+                    className="text-red-600 hover:text-red-700 hover:cursor-pointer rounded -ml-5 -mt-4 bg-white dark:bg-monokai-dark"
                     fontSize="large"
                   />
                 </div>
@@ -110,7 +119,7 @@ export const QueryGroup = ({ group, id, updateParent }: PropTypes) => {
                     (id != "root" || index != 0) &&
                     <CancelOutlinedIcon
                       onClick={() => removeChild(child.id)}
-                      className="text-gray-400 dark:text-black dark:hover:text-red-600 hover:cursor-pointer hover:text-red-500"
+                      className="text-gray-400 dark:text-red-500 dark:hover:text-red-600 hover:cursor-pointer hover:text-red-500"
                     />
                   }
                 </div>
@@ -118,7 +127,7 @@ export const QueryGroup = ({ group, id, updateParent }: PropTypes) => {
             </div>
           ))}
           <div className="flex items-center gap-2 mt-4">
-            <button onClick={() => addChild(cloneDeep(defaultRule))} className="dark:text-white border-blue-600 text-gray-600 border-2 rounded px-2 py-1 hover:bg-blue-600 hover:text-white font-medium transition duration-150">+ Add Rule</button>
+            <button onClick={() => addChild(cloneDeep(getLastRule()))} className="dark:text-white border-blue-600 text-gray-600 border-2 rounded px-2 py-1 hover:bg-blue-600 hover:text-white font-medium transition duration-150">+ Add Rule</button>
             <button onClick={() => addChild(cloneDeep(defaultGroup))} className="dark:text-white border-blue-600 text-gray-600 border-2 rounded px-2 py-1 hover:bg-blue-600 hover:text-white font-medium transition duration-150">+ Add Group</button>
           </div>
         </div>

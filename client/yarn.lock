@@ -1466,6 +1466,11 @@
   dependencies:
     "@types/node" "*"
 
+"@types/is-number@^7.0.2":
+  version "7.0.2"
+  resolved "https://registry.yarnpkg.com/@types/is-number/-/is-number-7.0.2.tgz#b8cc7cef635544acdd4325104888edbae940b460"
+  integrity sha512-5SVdfYSyNOc16O1wp/cfFN2i/tCFAriWKzKk2RkUIT0Ec+jvvX+oBPbNSRpuBwSobXX+gRjaamE2y0Z10sgO5A==
+
 "@types/json-schema@*", "@types/json-schema@^7.0.4", "@types/json-schema@^7.0.5", "@types/json-schema@^7.0.7", "@types/json-schema@^7.0.8":
   version "7.0.9"
   resolved "https://registry.yarnpkg.com/@types/json-schema/-/json-schema-7.0.9.tgz#97edc9037ea0c38585320b28964dde3b39e4660d"
@@ -3055,6 +3060,11 @@ currently-unhandled@^0.4.1:
   integrity sha1-mI3zP+qxke95mmE2nddsF635V+o=
   dependencies:
     array-find-index "^1.0.1"
+
+custom-electron-titlebar@^4.0.1:
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/custom-electron-titlebar/-/custom-electron-titlebar-4.0.1.tgz#cc337e21a4bf5522c7c9729a41657049a56de003"
+  integrity sha512-fdnAylObN/qvmd+UFwlWnJqttbOBkuWF7tSPe19R12CtadNTw9PWzWC8NM5KuoKanCSq6KclruhgQeH++16cuQ==
 
 cz-conventional-changelog@3.2.0:
   version "3.2.0"

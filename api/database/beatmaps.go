@@ -39,8 +39,9 @@ func GetBeatmapById(id int) (osu.BeatmapData, error) {
 	return beatmap, nil
 }
 
-func QueryIds(query string, values []string) ([]int, error) {
-	output := []int{}
+func QueryIds(query string, values []string) ([]int, []int, error) {
+	ids := []int{}
+	setIds := []int{}
 	iValues := make([]interface{}, len(values))
 	for i, v := range values {
 		iValues[i] = v
@@ -48,18 +49,20 @@ func QueryIds(query string, values []string) ([]int, error) {
 
 	rows, err := database.Query(query, iValues...)
 	if err != nil {
-		return output, err
+		return ids, setIds, err
 	}
 
 	for rows.Next() {
 		var id int
-		err := rows.Scan(&id)
+		var setId int
+		err := rows.Scan(&id, &setId)
 		if err != nil {
 			panic(err)
 		}
-		output = append(output, id)
+		ids = append(ids, id)
+		setIds = append(setIds, setId)
 	}
 
 	rows.Close()
-	return output, nil
+	return ids, setIds, nil
 }

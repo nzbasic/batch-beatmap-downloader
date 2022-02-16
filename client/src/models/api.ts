@@ -3,6 +3,11 @@ export interface FilterRequest {
   rules: Rule[]
 }
 
+export interface FilterResponse {
+  Ids: number[],
+  SetIds: number[]
+}
+
 export interface Group {
   number: number,
   connector: string,

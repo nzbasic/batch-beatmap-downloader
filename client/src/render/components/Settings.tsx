@@ -42,7 +42,7 @@ export const Settings = () => {
   }, [])
 
   return (
-    <div className="bg-white dark:bg-zinc-800 rounded shadow p-6 m-4 flex flex-col dark:text-white">
+    <div id="menu-button" className="bg-white dark:bg-monokai-dark rounded shadow p-6 flex flex-col dark:text-white w-full">
       <span className="font-bold text-lg">Settings</span>
       <div className="flex flex-col gap-4">
         <div className="flex items-center mt-4 gap-2">

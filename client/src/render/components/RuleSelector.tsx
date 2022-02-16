@@ -9,6 +9,7 @@ interface Option {
 
 const options: Option[] = [
   { value: "Approved", label: "Map Status", type: RuleType.STATUS },
+  { value: "ApprovedDate", label: "Approved Date", type: RuleType.DATE },
   { value: "Title", label: "Song Title", type: RuleType.TEXT },
   { value: "Artist", label: "Artist", type: RuleType.TEXT },
   { value: "Creator", label: "Mapper", type: RuleType.TEXT },
@@ -30,7 +31,6 @@ const options: Option[] = [
   { value: "FavouriteCount", label: "Favourite Count", type: RuleType.NUMBER },
   { value: "PassCount", label: "Pass Count", type: RuleType.NUMBER  },
   { value: "PlayCount", label: "Play Count", type: RuleType.NUMBER  },
-  { value: "ApprovedDate", label: "Approved Date", type: RuleType.DATE },
   { value: "LastUpdated", label: "Last Updated Date", type: RuleType.DATE },
   { value: "SetId", label: "Beatmap Set ID", type: RuleType.NUMBER  },
   { value: "Id", label: "Beatmap ID", type: RuleType.NUMBER  },

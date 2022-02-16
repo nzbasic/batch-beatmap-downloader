@@ -1,4 +1,4 @@
-export type Row = (string | number)[]
+export type Row = (string | number | JSX.Element)[]
 
 interface PropTypes {
   rows: Row[]

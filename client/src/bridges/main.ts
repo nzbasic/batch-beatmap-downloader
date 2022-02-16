@@ -6,12 +6,12 @@ import {
 } from "electron";
 import { createStoreBindings } from "electron-persist-secure/lib/bindings";
 import { SettingsObject } from "../global";
-import { BeatmapDetails } from "../models/api";
+import { BeatmapDetails, FilterResponse } from "../models/api";
 import { Node } from '../models/filter'
 
 export const electronBridge = {
-  query: async (node: Node) => {
-    const res = await ipcRenderer.invoke("query", node) as number[];
+  query: async (node: Node, limit: number) => {
+    const res = await ipcRenderer.invoke("query", node, limit) as FilterResponse;
     return res;
   },
 
@@ -50,6 +50,10 @@ export const electronBridge = {
 
   setPath: async (path: string): Promise<void> => {
     return await ipcRenderer.invoke("set-path", path) as void;
+  },
+
+  quit: (): void => {
+    ipcRenderer.send("quit");
   }
 };
 

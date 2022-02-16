@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #192227;
+        stroke: #141c20;
+        stroke-width: 48.35px;
+      }
+
+      .cls-2, .cls-3 {
+        fill: #2c5c87;
+      }
+
+      .cls-3 {
+        stroke: #2c5c87;
+        stroke-width: 10px;
+        fill-rule: evenodd;
+      }
+    </style>
+  </defs>
+  <circle class="cls-1" cx="256.5" cy="255.5" r="228.5"/>
+  <rect class="cls-2" x="219" y="86" width="75" height="292"/>
+  <path id="Triangle_1" data-name="Triangle 1" class="cls-3" d="M256,419L108,275H404Z"/>
+</svg>

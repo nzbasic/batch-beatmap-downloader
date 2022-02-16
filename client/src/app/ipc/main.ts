@@ -1,13 +1,13 @@
 import { app, BrowserWindow, dialog, ipcMain } from "electron";
 import { Node } from '../../models/filter'
 import axios from 'axios'
-import { BeatmapDetails } from "../../models/api";
+import { BeatmapDetails, FilterResponse } from "../../models/api";
 import settings from 'electron-settings'
 import { SettingsObject } from "../../global";
 import fs from 'fs'
 
-ipcMain.handle("query", async (event, node: Node) => {
-  return (await axios.post<number[]>("http://localhost:7373/filter", node)).data
+ipcMain.handle("query", async (event, node: Node, limit: number) => {
+  return (await axios.post<FilterResponse>("http://localhost:7373/filter", { node, limit })).data
 })
 
 ipcMain.handle("get-beatmap-details", async (event, node: Node) => {
@@ -33,6 +33,10 @@ ipcMain.handle("set-path", async (event, path: string) => {
 ipcMain.handle("browse", async () => {
   const dialogResult = await dialog.showOpenDialog({ properties: ['openDirectory'] })
   return dialogResult
+})
+
+ipcMain.on("quit", () => {
+  app.quit()
 })
 
 ipcMain.handle("load-beatmaps", async () => {

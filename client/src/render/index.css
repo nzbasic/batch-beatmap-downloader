@@ -6,23 +6,37 @@
   height: 2.35rem
 }
 
+#menu {
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-app-region: drag;
+}
+
+#menu-button {
+  -webkit-app-region: no-drag;
+}
+
+.main {
+  width: calc(100% - 13rem)
+}
+
 @layer components {
   /* .my-react-select-container {
   } */
   .my-react-select-container .my-react-select__control {
-    @apply bg-white dark:bg-neutral-700 border-2 border-neutral-300 dark:border-neutral-700 hover:border-neutral-400 dark:hover:border-neutral-500;
+    @apply bg-white dark:bg-monokai-light2 border border-neutral-300 dark:border-none hover:border-neutral-400 ;
   }
 
   .my-react-select-container .my-react-select__control--is-focused {
-    @apply border-neutral-500 hover:border-neutral-500 dark:border-neutral-400 dark:hover:border-neutral-400 shadow-none;
+    @apply border-neutral-500 hover:border-neutral-500 dark:bg-monokai-light2 dark:hover:bg-monokai-light2 shadow-none;
   }
 
   .my-react-select-container .my-react-select__menu {
-    @apply bg-neutral-100 dark:bg-neutral-700 border-2 border-neutral-300 dark:border-neutral-600;
+    @apply bg-neutral-100 dark:bg-monokai-light2 border border-neutral-300 dark:border-monokai-border;
   }
 
   .my-react-select-container .my-react-select__option {
-    @apply text-neutral-600 dark:text-neutral-200 bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-700 dark:hover:bg-neutral-800;
+    @apply text-neutral-600 dark:text-neutral-200 bg-neutral-100 hover:bg-neutral-200 dark:bg-monokai-light2 dark:hover:bg-monokai-dark;
   }
   /* .my-react-select-container .my-react-select__option--is-focused {
     @apply bg-neutral-200 dark:bg-neutral-800;
@@ -39,6 +53,26 @@
   }
 
   input {
-    @apply bg-white dark:bg-neutral-700 border-2 border-neutral-300 dark:border-neutral-700 hover:border-neutral-400 dark:hover:border-neutral-500;
+    @apply bg-white dark:bg-monokai-light2 border border-neutral-300 dark:border-none hover:border-neutral-400 dark:hover:border-neutral-500;
+  }
+
+   /* width */
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  /* Track */
+  ::-webkit-scrollbar-track {
+    @apply dark:bg-monokai-light bg-stone-200
+  }
+
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    @apply dark:bg-monokai-dark bg-monokai-light
+  }
+
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555;
   }
 }

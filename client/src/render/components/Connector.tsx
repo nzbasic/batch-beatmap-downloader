@@ -15,8 +15,8 @@ export const Connector = ({ details, update }: PropTypes) => {
           <button
             className={`
               ${index === 0 ? 'rounded-l border-r-0' : index === types.length-1 ? 'rounded-r border-l-0' : ''}
-              ${details.type === type ? 'bg-blue-500 dark:bg-blue-500' : 'bg-white dark:bg-neutral-700 dark:hover:bg-blue-500 hover:bg-blue-500'}
-              px-2 py-1 border-gray-600 dark:border-black border w-12 transition duration-200`}
+              ${details.type === type ? 'bg-blue-500 dark:bg-blue-500' : 'bg-white dark:bg-monokai-light2 dark:hover:bg-blue-500 hover:bg-blue-500'}
+              px-2 py-1 border-gray-600 dark:border-monokai-border border w-12 transition duration-200`}
             disabled={type === details.type}
             onClick={() => update({ ...details, type })}
             key={index}
@@ -28,8 +28,8 @@ export const Connector = ({ details, update }: PropTypes) => {
 
       <button
         className={`
-          ${details.not ? 'bg-red-500 dark:bg-red-600' : 'hover:bg-red-500 bg-white dark:bg-neutral-700 dark:hover:bg-red-600'}
-          ml-2 border-gray-600 dark:border-black border px-2 py-1 rounded transition duration-100`}
+          ${details.not ? 'bg-red-500 dark:bg-red-600' : 'hover:bg-red-500 bg-white dark:bg-monokai-light2 dark:hover:bg-red-600'}
+          ml-2 border-gray-600 dark:border-monokai-border border px-2 py-1 rounded transition duration-100`}
         onClick={() => update({ ...details, not: !details.not })}
         >
           NOT

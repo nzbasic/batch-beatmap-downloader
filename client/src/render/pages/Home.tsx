@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { RuleType } from "../../models/filter"
 import { QueryGroup } from "../components/QueryGroup"
 import { Node, Group } from '../../models/filter'
@@ -6,6 +6,8 @@ import { cloneDeep } from "lodash"
 import { ResultTable } from "../components/ResultTable"
 import { CircularProgress } from "@mui/material"
 import { Settings } from "../components/Settings"
+import { FilterResponse } from "../../models/api"
+import { QueryLimit } from "../components/QueryLimit"
 
 const sampleTree: Node = {
   id: "root",
@@ -30,14 +32,13 @@ const sampleTree: Node = {
 
 export const Home = () => {
   const [tree, setTree] = useState<Node>(sampleTree)
-  const [result, setResult] = useState<number[]>([])
+  const [result, setResult] = useState<FilterResponse>(null)
   const [loading, setLoading] = useState(false)
   const [firstQuery, setFirstQuery] = useState(true)
-
-
+  const [limit, setLimit] = useState<number | null>(null)
 
   const exportData = async () => {
-    setResult([])
+    setResult(null)
     setLoading(true)
 
     const map = new Map<RuleType, string>([
@@ -62,7 +63,7 @@ export const Home = () => {
 
     const clone = cloneDeep(tree)
     replaceRuleType(clone)
-    const res = await window.electron.query(clone)
+    const res = await window.electron.query(clone, limit)
     setLoading(false)
     setResult(res)
     setFirstQuery(false)
@@ -73,23 +74,24 @@ export const Home = () => {
   }
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col w-full gap-4">
       <Settings />
-      <div className="bg-white dark:bg-zinc-800 rounded shadow p-6 m-4 mt-0 flex flex-col">
-        <span className="font-bold text-lg dark:text-white mb-4">Advanced Query Builder</span>
+      <div id="menu-button" className="bg-white dark:bg-monokai-dark rounded shadow p-6 mt-0 flex flex-col gap-4">
+        <span className="font-bold text-lg dark:text-white">Query Builder</span>
         <QueryGroup group={tree.group} id={tree.id} updateParent={(child) => updateTree(child)} />
-        <div className="flex gap-2 items-center mt-4">
+        <QueryLimit limit={limit} updateLimit={(limit) => setLimit(limit)} />
+        <div className="flex gap-2 items-center">
           <button disabled={loading} className="bg-blue-600 self-start rounded hover:bg-blue-700 transition duration-150 px-2 py-1 text-white font-medium" onClick={exportData}>Test Query</button>
-          {loading ? <CircularProgress size={25} /> : !firstQuery && <span>{result.length} Results</span>}
+          {loading ? <CircularProgress size={25} /> : !firstQuery && <span>{result?.Ids?.length??0} Beatmap Results ({result?.SetIds?.length??0} Sets)</span>}
         </div>
       </div>
 
-      {result.length ?
-        <div className="bg-white dark:bg-zinc-800 rounded shadow p-6 m-4 mt-0">
+      {result?.Ids ?
+        <div className="bg-white dark:bg-monokai-dark rounded shadow p-6 mt-0 flex flex-col gap-4">
+          <span className="font-bold text-lg dark:text-white">Results</span>
           <ResultTable result={result} />
         </div>
       : null}
     </div>
-
   )
 }

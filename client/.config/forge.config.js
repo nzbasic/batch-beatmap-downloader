@@ -70,6 +70,7 @@ module.exports = {
         mainConfig: "./.config/webpack.main.config.js",
         renderer: {
           config: "./.config/webpack.renderer.config.js",
+          devContentSecurityPolicy: `img-src * 'self' data: https:; default-src 'self' 'unsafe-inline' data:; script-src 'self' 'unsafe-eval'`,
           entryPoints: [
             {
               html: "./src/render/index.html",

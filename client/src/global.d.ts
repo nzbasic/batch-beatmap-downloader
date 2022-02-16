@@ -5,6 +5,7 @@ declare global {
     electron: typeof electronBridge;
     store: typeof storeBridge;
   }
+
 }
 
 declare type SettingsValue = null | boolean | string | number | SettingsObject | SettingsValue[];
@@ -15,3 +16,5 @@ declare type SettingsValue = null | boolean | string | number | SettingsObject |
 declare type SettingsObject = {
     [key: string]: SettingsValue;
 };
+
+declare module "*.png"

@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from "electron";
+import { app, BrowserWindow, nativeTheme } from "electron";
 import isDev from "electron-is-dev";
 import Store from "electron-persist-secure/lib/store";
 // Import all IPCs to make sure they register their respective listeners
@@ -31,6 +31,8 @@ const createWindow = (): void => {
     width: 1280,
     minHeight: 720,
     minWidth: 1280,
+    title: "Batch Beatmap Downloader",
+    titleBarStyle: "hidden",
     backgroundColor: "#fff",
     webPreferences: {
       contextIsolation: true,
@@ -40,6 +42,9 @@ const createWindow = (): void => {
   });
 
   mainWindow.setMenu(null)
+  mainWindow.on("close", () => {
+    mainWindow.destroy();
+  })
 
   // enable dev tools
   if (isDev) {
@@ -60,6 +65,7 @@ app.on("activate", () => {
 app.on("ready", () => {
   createStores();
   createWindow();
+  nativeTheme.themeSource = "dark"
 });
 
 // Quit when all windows are closed, except on macOS. There, it's common
