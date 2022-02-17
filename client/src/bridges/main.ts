@@ -6,7 +6,7 @@ import {
 } from "electron";
 import { createStoreBindings } from "electron-persist-secure/lib/bindings";
 import { SettingsObject } from "../global";
-import { BeatmapDetails, FilterResponse } from "../models/api";
+import { BeatmapDetails, DownloadStatus, FilterResponse } from "../models/api";
 import { Node } from '../models/filter'
 
 export const electronBridge = {
@@ -56,8 +56,14 @@ export const electronBridge = {
     ipcRenderer.send("quit");
   },
 
-  download: (ids: number[]) => {
-    ipcRenderer.invoke("download", ids)
+  download: (ids: number[], size: number, force: boolean) => {
+    ipcRenderer.invoke("download", ids, size, force)
+  },
+
+  listenForDownloads: (callback: (status: DownloadStatus) => void) => {
+    ipcRenderer.on("download-status", (event, status: DownloadStatus) => {
+      callback(status)
+    })
   }
 };
 

@@ -4,8 +4,13 @@ import HomeIcon from '@mui/icons-material/Home';
 import DownloadIcon from '@mui/icons-material/Download';
 import SearchIcon from '@mui/icons-material/Search';
 import CloseIcon from '@mui/icons-material/Close';
+import { DownloadStatus } from '../../models/api';
 
-export const Menu = () => {
+interface PropTypes {
+  downloadStatus: DownloadStatus
+}
+
+export const Menu = ({ downloadStatus }: PropTypes) => {
   const { pathname } = useLocation()
 
   const closeApp = () => {

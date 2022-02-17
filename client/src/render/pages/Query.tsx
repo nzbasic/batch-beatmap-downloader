@@ -85,7 +85,7 @@ export const Query = () => {
         <QueryLimit limit={limit} updateLimit={(limit) => setLimit(limit)} />
         <div className="flex gap-2 items-center">
           <button disabled={loading} className="bg-blue-600 self-start rounded hover:bg-blue-700 transition duration-150 px-2 py-1 text-white font-medium" onClick={exportData}>Test Query</button>
-          {loading ? <CircularProgress size={25} /> : !firstQuery && <span>{result?.Ids?.length??0} Beatmap Results ({result?.SetIds?.length??0} Sets)</span>}
+          {loading && <CircularProgress size={25} />}
         </div>
       </div>
 

@@ -12,7 +12,7 @@ import App from "./render/App";
 import "./render/index.css";
 
 function render() {
-  ReactDOM.render(App(), document.getElementById("root"));
+  ReactDOM.render(<App />, document.getElementById("root"));
 }
 
 render();

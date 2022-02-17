@@ -9,6 +9,18 @@ export interface FilterResponse {
   SizeMap: Map<number, number>
 }
 
+export interface DownloadStatus {
+  all: number[]
+  completed: number[]
+  skipped: number[]
+  failed: number[]
+  currentProgress: string
+  currentSize: string
+  totalSize: number
+  totalProgress: number
+  force: boolean
+}
+
 export interface Group {
   number: number,
   connector: string,

@@ -24,6 +24,8 @@ const createStores = (): void => {
   });
 };
 
+export let window: BrowserWindow
+
 const createWindow = (): void => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
@@ -40,6 +42,8 @@ const createWindow = (): void => {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
     },
   });
+
+  window = mainWindow
 
   mainWindow.setMenu(null)
   mainWindow.on("close", () => {
