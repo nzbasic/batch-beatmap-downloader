@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import Select from "react-select"
-import { Rule, RuleType } from "../../models/filter"
+import { Rule, RuleType } from "../../../models/filter"
 
 interface Operator {
   label: string,

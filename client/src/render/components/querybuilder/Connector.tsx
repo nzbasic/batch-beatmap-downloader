@@ -1,4 +1,4 @@
-import { ConnectorDetails } from "../../models/filter";
+import { ConnectorDetails } from "../../../models/filter";
 
 const types = ["AND", "OR"];
 

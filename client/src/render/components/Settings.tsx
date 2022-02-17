@@ -1,10 +1,20 @@
 import { useEffect, useState } from "react"
 import Switch from 'react-switch'
 
-export const Settings = () => {
+interface PropTypes {
+  onBeatmapsLoaded?: (ids: number[]) => void
+}
+
+export const Settings = ({ onBeatmapsLoaded }: PropTypes) => {
   const [path, setPath] = useState<string>("")
   const [beatmaps, setBeatmaps] = useState<number[]>([])
   const [darkMode, setDarkMode] = useState<boolean>(false)
+
+  useEffect(() => {
+    if (onBeatmapsLoaded) {
+      onBeatmapsLoaded(beatmaps)
+    }
+  }, [beatmaps, onBeatmapsLoaded])
 
   const updatePath = async () => {
     await window.electron.setPath(path)
@@ -42,7 +52,7 @@ export const Settings = () => {
   }, [])
 
   return (
-    <div id="menu-button" className="bg-white dark:bg-monokai-dark rounded shadow p-6 flex flex-col dark:text-white w-full">
+    <div className="bg-white dark:bg-monokai-dark rounded shadow p-6 flex flex-col dark:text-white w-full">
       <span className="font-bold text-lg">Settings</span>
       <div className="flex flex-col gap-4">
         <div className="flex items-center mt-4 gap-2">

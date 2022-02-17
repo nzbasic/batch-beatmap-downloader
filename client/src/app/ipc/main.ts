@@ -7,7 +7,7 @@ import { SettingsObject } from "../../global";
 import fs from 'fs'
 import Download from 'nodejs-file-downloader'
 
-const serverUri = "http://localhost:7373"
+const serverUri = "http://192.168.1.233:7373"
 
 ipcMain.handle("query", async (event, node: Node, limit: number) => {
   return (await axios.post<FilterResponse>(`${serverUri}/filter`, { node, limit })).data
@@ -44,21 +44,27 @@ ipcMain.on("quit", () => {
 
 ipcMain.handle("download", async (event, ids: number[]) => {
   const path = (await settings.get('path')) as string + "/Songs"
+  const beatmapIds = await loadBeatmaps()
 
   for (const id of ids) {
-    const uri = `${serverUri}/beatmapset/${id}`
-    const outPath = `${path}/Songs`
-    const download = new Download({ url: uri, directory: outPath, maxAttempts: 3 })
-    try {
-      await download.download()
-    } catch (err) {
-      console.log(err)
+    if (!beatmapIds.includes(id)) {
+      const uri = `${serverUri}/beatmapset/${id}`
+      const download = new Download({ url: uri, directory: path, maxAttempts: 3 })
+      try {
+        await download.download()
+        console.log(`downloaded ${id}`)
+      } catch (err) {
+        console.log(err)
+      }
     }
-
   }
 })
 
 ipcMain.handle("load-beatmaps", async () => {
+  return await loadBeatmaps()
+})
+
+const loadBeatmaps = async () => {
   const path = await settings.get("path") as string
   const dir = await fs.promises.readdir(path + "/Songs")
 
@@ -69,5 +75,5 @@ ipcMain.handle("load-beatmaps", async () => {
   })
 
   return beatmapIds
-})
+}
 

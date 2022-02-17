@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
-import { BeatmapDetails, FilterResponse } from "../../models/api"
+import { BeatmapDetails, FilterResponse } from "../../../models/api"
 import { Beatmap } from "./Beatmap"
-import { Row, Table } from "./Table"
+import { Row, Table } from "../Table"
 
 interface PropTypes {
   result: FilterResponse

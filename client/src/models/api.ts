@@ -5,7 +5,8 @@ export interface FilterRequest {
 
 export interface FilterResponse {
   Ids: number[],
-  SetIds: number[]
+  SetIds: number[],
+  SizeMap: Map<number, number>
 }
 
 export interface Group {

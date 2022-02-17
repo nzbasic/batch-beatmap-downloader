@@ -6,16 +6,6 @@
   height: 2.35rem
 }
 
-#menu {
-  user-select: none;
-  -webkit-user-select: none;
-  -webkit-app-region: drag;
-}
-
-#menu-button {
-  -webkit-app-region: no-drag;
-}
-
 .main {
   width: calc(100% - 13rem)
 }

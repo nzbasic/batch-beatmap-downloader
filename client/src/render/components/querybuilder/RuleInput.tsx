@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import Select from "react-select"
-import { InputType, RuleType } from "../../models/filter"
-import { Rule } from "../../models/filter"
+import { InputType, RuleType } from "../../../models/filter"
+import { Rule } from "../../../models/filter"
 
 interface Option {
   label: string;
