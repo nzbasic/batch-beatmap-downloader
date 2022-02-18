@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { RuleInput } from './RuleInput'
 import { RuleOperator } from './RuleOperator'
 import { RuleSelector } from './RuleSelector'
-import { Rule } from '../../../models/filter'
+import { Rule } from '../../../models/rules'
 
 interface PropTypes {
   rule: Rule;

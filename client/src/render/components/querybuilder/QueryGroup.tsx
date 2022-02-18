@@ -1,5 +1,6 @@
 import { FilterRule } from './Rule';
-import { RuleType, Rule, ConnectorDetails, Group, Node } from '../../../models/filter'
+import { ConnectorDetails, Group, Node } from '../../../models/filter'
+import { RuleType, Rule } from '../../../models/rules'
 import { Connector } from './Connector';
 import { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
@@ -7,7 +8,6 @@ import { cloneDeep } from 'lodash'
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
 import { stringToColor } from '@davidcmeier/string-to-color'
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
-import { stat } from 'original-fs';
 
 interface PropTypes {
   group: Group
