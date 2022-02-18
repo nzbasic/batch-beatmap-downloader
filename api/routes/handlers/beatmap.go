@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/gorilla/mux"
@@ -34,6 +35,7 @@ func BeatmapDownloadHandler(w http.ResponseWriter, r *http.Request) {
 	filenames := strings.Split(beatmap.Path, "/")
 	filename := filenames[len(filenames)-1]
 
+	w.Header().Set("Content-Length", strconv.Itoa(beatmap.Size))
 	w.Header().Set("Content-Disposition", "attachment; filename="+filename)
 	w.Write(file)
 }
