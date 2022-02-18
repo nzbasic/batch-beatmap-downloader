@@ -3,6 +3,7 @@ import Switch from 'react-switch'
 import { useState } from 'react'
 import { Link } from "react-router-dom"
 import { bytesToFileSize } from "../util/fileSize"
+import { toast } from 'react-toastify'
 
 interface PropTypes {
   result: FilterResponse
@@ -15,6 +16,7 @@ export const DownloadSettings = ({ result, existing }: PropTypes) => {
   const [collectionName, setCollectionName] = useState("")
 
   const download = () => {
+    toast.success(`Download started!`)
     window.electron.download(result.SetIds, calculateSize(), force)
   }
 

@@ -9,16 +9,31 @@ import { SettingsObject } from "../global";
 import { BeatmapDetails, DownloadStatus, FilterResponse } from "../models/api";
 import { Node } from '../models/filter'
 
+const handleGenericError = (e: unknown) => {
+  if (typeof e === "string") {
+    return e
+  } else if (e instanceof Error) {
+    return e.message
+  }
+}
+
 export const electronBridge = {
   query: async (node: Node, limit: number) => {
-    const res = await ipcRenderer.invoke("query", node, limit) as FilterResponse;
-    return res;
+    try {
+      const res = await ipcRenderer.invoke("query", node, limit) as FilterResponse;
+      return res;
+    } catch(e) {
+      return handleGenericError(e)
+    }
   },
 
   getBeatmapDetails: async (ids: number[]) => {
-    const res = await ipcRenderer.invoke("get-beatmap-details", ids) as BeatmapDetails[];
-    console.log(res)
-    return res;
+    try {
+      const res = await ipcRenderer.invoke("get-beatmap-details", ids) as BeatmapDetails[];
+      return res;
+    } catch(e) {
+      return handleGenericError(e)
+    }
   },
 
   openUrl: async (

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { BeatmapDetails, FilterResponse } from "../../../models/api"
 import { Beatmap } from "./Beatmap"
-import { Row, Table } from "../Table"
+import { toast } from 'react-toastify'
 
 interface PropTypes {
   result: FilterResponse
@@ -15,7 +15,12 @@ export const ResultTable = ({ result }: PropTypes) => {
   const getNewPage = async (): Promise<BeatmapDetails[]> => {
     const ids = result.Ids.slice((pageNumber - 1) * pageSize, pageNumber * pageSize)
     const res = await window.electron.getBeatmapDetails(ids)
-    return res
+    if (typeof res === "string") {
+      toast.error(res)
+      return []
+    } else {
+      return res
+    }
   }
 
   useEffect(() => {

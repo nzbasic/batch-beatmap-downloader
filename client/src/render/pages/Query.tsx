@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react"
-import { RuleType } from "../../models/filter"
+import { useState } from "react"
+import { sampleTree } from "../../models/filter"
+import { RuleType } from "../../models/rules"
 import { QueryGroup } from "../components/querybuilder/QueryGroup"
 import { Node, Group } from '../../models/filter'
 import { cloneDeep } from "lodash"
@@ -10,33 +11,12 @@ import { FilterResponse } from "../../models/api"
 import { QueryLimit } from "../components/querybuilder/QueryLimit"
 import { useStickyState } from "../hooks/stickystate"
 import { DownloadSettings } from "../components/DownloadSettings"
-
-const sampleTree: Node = {
-  id: "root",
-  group: {
-    connector: {
-      type: "AND",
-      not: false
-    },
-    children: [
-      {
-        id: "1",
-        rule: {
-          type: RuleType.STATUS,
-          value: "ranked",
-          operator: "=",
-          field: "Approved"
-        }
-      },
-    ]
-  }
-}
+import { toast } from 'react-toastify';
 
 export const Query = () => {
   const [tree, setTree] = useStickyState<Node>(sampleTree, "tree")
   const [result, setResult] = useState<FilterResponse>(null)
   const [loading, setLoading] = useState(false)
-  const [firstQuery, setFirstQuery] = useState(true)
   const [limit, setLimit] = useState<number | null>(null)
   const [existing, setExisting] = useState<number[]>([])
 
@@ -51,7 +31,8 @@ export const Query = () => {
       [RuleType.LANGUAGE, "Text"],
       [RuleType.DATE, "Numeric"],
       [RuleType.NUMBER, "Numeric"],
-      [RuleType.TEXT, "Text"]
+      [RuleType.TEXT, "Text"],
+      [RuleType.BOOLEAN, "Numeric"],
     ])
 
     // replace all rule types with the correct string from the Map
@@ -67,9 +48,14 @@ export const Query = () => {
     const clone = cloneDeep(tree)
     replaceRuleType(clone)
     const res = await window.electron.query(clone, limit)
+    if (typeof res === "string") {
+      toast.error(res)
+    } else {
+      toast.success(`Query successful: ${res.Ids.length} results`)
+      setResult(res)
+    }
+
     setLoading(false)
-    setResult(res)
-    setFirstQuery(false)
   }
 
   const updateTree = (group: Group) => {
@@ -81,15 +67,16 @@ export const Query = () => {
       <Settings onBeatmapsLoaded={(ids) => setExisting(ids)} />
       <div className="bg-white dark:bg-monokai-dark rounded shadow p-6 mt-0 flex flex-col gap-4">
         <span className="font-bold text-lg dark:text-white">Query Builder</span>
+        <span>Large queries (queries that will return a lot of results) may take a lot of time (1-2mins) to load. Consider using a limit, or make your query more specific to get it loading faster.</span>
         <QueryGroup group={tree.group} id={tree.id} updateParent={(child) => updateTree(child)} />
         <QueryLimit limit={limit} updateLimit={(limit) => setLimit(limit)} />
         <div className="flex gap-2 items-center">
-          <button disabled={loading} className="bg-blue-600 self-start rounded hover:bg-blue-700 transition duration-150 px-2 py-1 text-white font-medium" onClick={exportData}>Test Query</button>
+          <button disabled={loading} className="bg-blue-600 self-start rounded hover:bg-blue-700 transition duration-150 px-2 py-1 text-white font-medium" onClick={exportData}>Search</button>
           {loading && <CircularProgress size={25} />}
         </div>
       </div>
 
-      {result?.Ids ?
+      {(result?.Ids??[]).length ?
         <div className="flex flex-col gap-4">
           <div className="bg-white dark:bg-monokai-dark rounded shadow p-6">
             <DownloadSettings result={result} existing={existing} />

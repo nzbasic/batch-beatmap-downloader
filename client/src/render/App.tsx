@@ -6,6 +6,8 @@ import { Downloads } from './pages/Downloads';
 import { Home } from './pages/Home';
 import { useEffect, useState } from 'react';
 import { DownloadStatus } from '../models/api';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const App = () => {
   const [downloadStatus, setDownloadStatus] = useState<DownloadStatus>(null)
@@ -29,6 +31,7 @@ const App = () => {
             <Route path="/downloads" element={<Downloads downloadStatus={downloadStatus} />} />
           </Routes>
         </div>
+        <ToastContainer />
       </div>
     </HashRouter>
   )
