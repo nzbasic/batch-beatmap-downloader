@@ -13,13 +13,13 @@ export enum RuleType {
   LANGUAGE,
   MODE,
   DATE,
-  BOOLEAN
+  BOOLEAN,
 }
 
 export interface InputOption {
-  label: string
-  value: string
-  type: RuleType
+  label: string;
+  value: string;
+  type: RuleType;
 }
 
 export const inputOptions: InputOption[] = [
@@ -32,36 +32,36 @@ export const inputOptions: InputOption[] = [
   { value: "Creator", label: "Mapper", type: RuleType.TEXT },
   { value: "Version", label: "Difficulty", type: RuleType.TEXT },
   { value: "Bpm", label: "BPM", type: RuleType.NUMBER },
-  { value: "Hp", label: "HP (Health Drain)", type: RuleType.NUMBER  },
-  { value: "Od", label: "OD (Overall Difficulty)", type: RuleType.NUMBER  },
-  { value: "Ar", label: "AR (Approach Rate)", type: RuleType.NUMBER  },
-  { value: "Cs", label: "CS (Circle Size)", type: RuleType.NUMBER  },
+  { value: "Hp", label: "HP (Health Drain)", type: RuleType.NUMBER },
+  { value: "Od", label: "OD (Overall Difficulty)", type: RuleType.NUMBER },
+  { value: "Ar", label: "AR (Approach Rate)", type: RuleType.NUMBER },
+  { value: "Cs", label: "CS (Circle Size)", type: RuleType.NUMBER },
   { value: "Mode", label: "Game Mode", type: RuleType.MODE },
-  { value: "Stars", label: "Star Rating", type: RuleType.NUMBER  },
-  { value: "MaxCombo", label: "Max Combo", type: RuleType.NUMBER  },
-  { value: "HitLength", label: "Song Length (drain)", type: RuleType.NUMBER  },
-  { value: "TotalLength", label: "Song Length (total)", type: RuleType.NUMBER  },
+  { value: "Stars", label: "Star Rating", type: RuleType.NUMBER },
+  { value: "MaxCombo", label: "Max Combo", type: RuleType.NUMBER },
+  { value: "HitLength", label: "Song Length (drain)", type: RuleType.NUMBER },
+  { value: "TotalLength", label: "Song Length (total)", type: RuleType.NUMBER },
   { value: "Source", label: "Source", type: RuleType.TEXT },
   { value: "Tags", label: "Tags", type: RuleType.TEXT },
   { value: "Genre", label: "Genre", type: RuleType.GENRE },
   { value: "Language", label: "Language", type: RuleType.LANGUAGE },
   { value: "FavouriteCount", label: "Favourite Count", type: RuleType.NUMBER },
-  { value: "PassCount", label: "Pass Count", type: RuleType.NUMBER  },
-  { value: "PlayCount", label: "Play Count", type: RuleType.NUMBER  },
+  { value: "PassCount", label: "Pass Count", type: RuleType.NUMBER },
+  { value: "PlayCount", label: "Play Count", type: RuleType.NUMBER },
   { value: "LastUpdated", label: "Last Updated Date", type: RuleType.DATE },
-  { value: "SetId", label: "Beatmap Set ID", type: RuleType.NUMBER  },
-  { value: "Id", label: "Beatmap ID", type: RuleType.NUMBER  },
-]
+  { value: "SetId", label: "Beatmap Set ID", type: RuleType.NUMBER },
+  { value: "Id", label: "Beatmap ID", type: RuleType.NUMBER },
+];
 
 export interface Operator {
-  label: string,
-  value: string
+  label: string;
+  value: string;
 }
 
 export const defaultOperators = [
   { label: "is", value: "=" },
   { label: "is not", value: "!=" },
-]
+];
 
 export const operatorMap = new Map<RuleType, Operator[]>([
   [
@@ -69,7 +69,7 @@ export const operatorMap = new Map<RuleType, Operator[]>([
     [
       { label: "exactly matches", value: "=" },
       { label: "contains", value: "like" },
-    ]
+    ],
   ],
   [
     RuleType.NUMBER,
@@ -86,23 +86,23 @@ export const operatorMap = new Map<RuleType, Operator[]>([
   [RuleType.GENRE, defaultOperators],
   [RuleType.MODE, defaultOperators],
   [RuleType.LANGUAGE, defaultOperators],
-  [RuleType.DATE,
+  [
+    RuleType.DATE,
     [
       { label: "is before", value: "<" },
       { label: "is after", value: ">" },
-    ]
+    ],
   ],
   [RuleType.BOOLEAN, defaultOperators],
-])
+]);
 
 export enum InputType {
   TEXT,
   NUMBER,
   DROPDOWN,
   DATE,
-  BOOLEAN
+  BOOLEAN,
 }
-
 
 export const inputTypeMap = new Map<RuleType, InputType>([
   [RuleType.NUMBER, InputType.NUMBER],
@@ -113,7 +113,7 @@ export const inputTypeMap = new Map<RuleType, InputType>([
   [RuleType.LANGUAGE, InputType.DROPDOWN],
   [RuleType.DATE, InputType.DATE],
   [RuleType.BOOLEAN, InputType.DROPDOWN],
-])
+]);
 
 export interface DropdownOption {
   label: string;
@@ -126,7 +126,7 @@ export const dropdownMap = new Map<RuleType, DropdownOption[]>([
     [
       { value: "ranked", label: "Ranked" },
       { value: "loved", label: "Loved" },
-    ]
+    ],
   ],
   [
     RuleType.GENRE,
@@ -140,7 +140,7 @@ export const dropdownMap = new Map<RuleType, DropdownOption[]>([
       { value: "novelty", label: "Novelty" },
       { value: "hip hop", label: "Hip Hop" },
       { value: "electronic", label: "Electronic" },
-    ]
+    ],
   ],
   [
     RuleType.MODE,
@@ -149,7 +149,7 @@ export const dropdownMap = new Map<RuleType, DropdownOption[]>([
       { value: "Taiko", label: "osu!taiko" },
       { value: "Catch the Beat", label: "osu!catch" },
       { value: "osu!mania", label: "osu!mania" },
-    ]
+    ],
   ],
   [
     RuleType.LANGUAGE,
@@ -171,7 +171,7 @@ export const dropdownMap = new Map<RuleType, DropdownOption[]>([
     RuleType.BOOLEAN,
     [
       { value: "1", label: "True" },
-      { value: "0", label: "False" }
-    ]
+      { value: "0", label: "False" },
+    ],
   ],
-])
+]);

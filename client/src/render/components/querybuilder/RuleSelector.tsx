@@ -1,9 +1,9 @@
-import Select from "react-select"
-import { inputOptions, Rule, RuleType } from "../../../models/rules"
+import Select from "react-select";
+import { inputOptions, Rule, RuleType } from "../../../models/rules";
 
 interface PropTypes {
-  rule: Rule,
-  onChange: (rule: Rule) => void
+  rule: Rule;
+  onChange: (rule: Rule) => void;
 }
 
 export const RuleSelector = ({ rule, onChange }: PropTypes) => {
@@ -14,8 +14,8 @@ export const RuleSelector = ({ rule, onChange }: PropTypes) => {
     [RuleType.NUMBER, "1"],
     [RuleType.TEXT, ""],
     [RuleType.GENRE, "any"],
-    [RuleType.LANGUAGE, "any"]
-  ])
+    [RuleType.LANGUAGE, "any"],
+  ]);
 
   const defaultOperators = new Map<RuleType, string>([
     [RuleType.STATUS, "="],
@@ -24,14 +24,23 @@ export const RuleSelector = ({ rule, onChange }: PropTypes) => {
     [RuleType.NUMBER, "="],
     [RuleType.TEXT, "like"],
     [RuleType.GENRE, "="],
-    [RuleType.LANGUAGE, "="]
-  ])
+    [RuleType.LANGUAGE, "="],
+  ]);
 
-  return <Select
-    className="w-52 my-react-select-container"
-    classNamePrefix="my-react-select"
-    options={inputOptions}
-    defaultValue={inputOptions.find(i => i.value === rule.field)}
-    onChange={(option) => onChange({ field: option.value, type: option.type, value: defaultValues.get(option.type), operator: defaultOperators.get(option.type) })}
-  />
-}
+  return (
+    <Select
+      className="w-52 my-react-select-container"
+      classNamePrefix="my-react-select"
+      options={inputOptions}
+      defaultValue={inputOptions.find((i) => i.value === rule.field)}
+      onChange={(option) =>
+        onChange({
+          field: option.value,
+          type: option.type,
+          value: defaultValues.get(option.type),
+          operator: defaultOperators.get(option.type),
+        })
+      }
+    />
+  );
+};

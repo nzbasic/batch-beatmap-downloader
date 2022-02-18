@@ -7,32 +7,39 @@ import {
 import { createStoreBindings } from "electron-persist-secure/lib/bindings";
 import { SettingsObject } from "../global";
 import { BeatmapDetails, DownloadStatus, FilterResponse } from "../models/api";
-import { Node } from '../models/filter'
+import { Node } from "../models/filter";
 
 const handleGenericError = (e: unknown) => {
   if (typeof e === "string") {
-    return e
+    return e;
   } else if (e instanceof Error) {
-    return e.message
+    return e.message;
   }
-}
+};
 
 export const electronBridge = {
   query: async (node: Node, limit: number) => {
     try {
-      const res = await ipcRenderer.invoke("query", node, limit) as FilterResponse;
+      const res = (await ipcRenderer.invoke(
+        "query",
+        node,
+        limit
+      )) as FilterResponse;
       return res;
-    } catch(e) {
-      return handleGenericError(e)
+    } catch (e) {
+      return handleGenericError(e);
     }
   },
 
   getBeatmapDetails: async (ids: number[]) => {
     try {
-      const res = await ipcRenderer.invoke("get-beatmap-details", ids) as BeatmapDetails[];
+      const res = (await ipcRenderer.invoke(
+        "get-beatmap-details",
+        ids
+      )) as BeatmapDetails[];
       return res;
-    } catch(e) {
-      return handleGenericError(e)
+    } catch (e) {
+      return handleGenericError(e);
     }
   },
 
@@ -44,27 +51,29 @@ export const electronBridge = {
   },
 
   getSettings: async (): Promise<SettingsObject> => {
-    return await ipcRenderer.invoke("get-settings") as SettingsObject;
+    return (await ipcRenderer.invoke("get-settings")) as SettingsObject;
   },
 
   setSettings: async (settings: SettingsObject): Promise<void> => {
-    return await ipcRenderer.invoke("set-settings", settings) as void;
+    return (await ipcRenderer.invoke("set-settings", settings)) as void;
   },
 
   browse: async (): Promise<Electron.OpenDialogReturnValue> => {
-    return await ipcRenderer.invoke("browse") as Electron.OpenDialogReturnValue;
+    return (await ipcRenderer.invoke(
+      "browse"
+    )) as Electron.OpenDialogReturnValue;
   },
 
   loadBeatmaps: async (): Promise<number[]> => {
-    return await ipcRenderer.invoke("load-beatmaps") as number[];
+    return (await ipcRenderer.invoke("load-beatmaps")) as number[];
   },
 
   setTheme: async (theme: boolean): Promise<void> => {
-    return await ipcRenderer.invoke("set-theme", theme) as void;
+    return (await ipcRenderer.invoke("set-theme", theme)) as void;
   },
 
   setPath: async (path: string): Promise<void> => {
-    return await ipcRenderer.invoke("set-path", path) as void;
+    return (await ipcRenderer.invoke("set-path", path)) as void;
   },
 
   quit: (): void => {
@@ -72,14 +81,14 @@ export const electronBridge = {
   },
 
   download: (ids: number[], size: number, force: boolean) => {
-    ipcRenderer.invoke("download", ids, size, force)
+    ipcRenderer.invoke("download", ids, size, force);
   },
 
   listenForDownloads: (callback: (status: DownloadStatus) => void) => {
     ipcRenderer.on("download-status", (event, status: DownloadStatus) => {
-      callback(status)
-    })
-  }
+      callback(status);
+    });
+  },
 };
 
 contextBridge.exposeInMainWorld("electron", electronBridge);

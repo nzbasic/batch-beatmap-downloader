@@ -1,31 +1,34 @@
-import { Link, useLocation } from 'react-router-dom'
-import Logo from '../assets/bbd.svg'
-import HomeIcon from '@mui/icons-material/Home';
-import DownloadIcon from '@mui/icons-material/Download';
-import SearchIcon from '@mui/icons-material/Search';
-import CloseIcon from '@mui/icons-material/Close';
-import { DownloadStatus } from '../../models/api';
+import { Link, useLocation } from "react-router-dom";
+import Logo from "../assets/bbd.svg";
+import HomeIcon from "@mui/icons-material/Home";
+import DownloadIcon from "@mui/icons-material/Download";
+import SearchIcon from "@mui/icons-material/Search";
+import CloseIcon from "@mui/icons-material/Close";
+import { DownloadStatus } from "../../models/api";
 
 interface PropTypes {
-  downloadStatus: DownloadStatus
+  downloadStatus: DownloadStatus;
 }
 
 export const Menu = ({ downloadStatus }: PropTypes) => {
-  const { pathname } = useLocation()
+  const { pathname } = useLocation();
 
   const closeApp = () => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-    window.electron.quit()
-  }
+    window.electron.quit();
+  };
 
   const pages = [
     { link: "/", title: "Home", icon: <HomeIcon /> },
     { link: "/query", title: "Map Search", icon: <SearchIcon /> },
     { link: "/downloads", title: "Downloads", icon: <DownloadIcon /> },
-  ]
+  ];
 
   return (
-    <div id="menu" className="w-52 flex flex-col h-screen bg-monokai-light text-white dark:bg-monokai-dark shadow">
+    <div
+      id="menu"
+      className="w-52 flex flex-col h-screen bg-monokai-light text-white dark:bg-monokai-dark shadow"
+    >
       <img className="m-4" src={Logo} />
       <div className="text-sm self-center items-center flex flex-col">
         <span className="">Batch Beatmap Downloader</span>
@@ -37,9 +40,12 @@ export const Menu = ({ downloadStatus }: PropTypes) => {
             <Link
               key={link}
               to={link}
-              className={`${pathname === link ? 'bg-monokai-dark dark:bg-monokai-light' : 'dark:hover:bg-monokai-light hover:bg-monokai-dark'}
-                 font-medium text-lg py-3 text-center`
+              className={`${
+                pathname === link
+                  ? "bg-monokai-dark dark:bg-monokai-light"
+                  : "dark:hover:bg-monokai-light hover:bg-monokai-dark"
               }
+                 font-medium text-lg py-3 text-center`}
             >
               <div className="flex items-center justify-between mx-4">
                 {title}
@@ -57,5 +63,5 @@ export const Menu = ({ downloadStatus }: PropTypes) => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};

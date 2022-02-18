@@ -1,5 +1,5 @@
-import { SampleFilters } from "../components/SampleFilters"
-import { Settings } from "../components/Settings"
+import { SampleFilters } from "../components/SampleFilters";
+import { Settings } from "../components/Settings";
 
 export const Home = () => {
   return (
@@ -7,5 +7,5 @@ export const Home = () => {
       <Settings />
       <SampleFilters />
     </div>
-  )
-}
+  );
+};

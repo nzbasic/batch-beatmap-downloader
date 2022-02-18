@@ -1,4 +1,4 @@
-import { Rule, RuleType } from "./rules"
+import { Rule, RuleType } from "./rules";
 
 export interface ConnectorDetails {
   type: string;
@@ -6,14 +6,14 @@ export interface ConnectorDetails {
 }
 
 export interface Group {
-  connector: ConnectorDetails,
-  children: Node[]
+  connector: ConnectorDetails;
+  children: Node[];
 }
 
 export interface Node {
-  id: string,
-  group?: Group
-  rule?: Rule
+  id: string;
+  group?: Group;
+  rule?: Rule;
 }
 
 export const sampleTree: Node = {
@@ -21,7 +21,7 @@ export const sampleTree: Node = {
   group: {
     connector: {
       type: "AND",
-      not: false
+      not: false,
     },
     children: [
       {
@@ -30,8 +30,8 @@ export const sampleTree: Node = {
           type: RuleType.STATUS,
           value: "ranked",
           operator: "=",
-          field: "Approved"
-        }
+          field: "Approved",
+        },
       },
       {
         id: "2",
@@ -39,19 +39,19 @@ export const sampleTree: Node = {
           type: RuleType.MODE,
           value: "osu!",
           operator: "=",
-          field: "Mode"
-        }
+          field: "Mode",
+        },
       },
-    ]
-  }
-}
+    ],
+  },
+};
 
 export const allRankedOsu: Node = {
   id: "root",
   group: {
     connector: {
       type: "AND",
-      not: false
+      not: false,
     },
     children: [
       {
@@ -60,8 +60,8 @@ export const allRankedOsu: Node = {
           type: RuleType.STATUS,
           value: "ranked",
           operator: "=",
-          field: "Approved"
-        }
+          field: "Approved",
+        },
       },
       {
         id: "2",
@@ -69,19 +69,19 @@ export const allRankedOsu: Node = {
           type: RuleType.MODE,
           value: "osu!",
           operator: "=",
-          field: "Mode"
-        }
+          field: "Mode",
+        },
       },
-    ]
-  }
-}
+    ],
+  },
+};
 
 export const allLoved: Node = {
   id: "root",
   group: {
     connector: {
       type: "AND",
-      not: false
+      not: false,
     },
     children: [
       {
@@ -90,12 +90,12 @@ export const allLoved: Node = {
           type: RuleType.STATUS,
           value: "loved",
           operator: "=",
-          field: "Approved"
-        }
+          field: "Approved",
+        },
       },
-    ]
-  }
-}
+    ],
+  },
+};
 
 // export const allFarm: Node = {
 
@@ -114,7 +114,7 @@ export const allSotarks: Node = {
   group: {
     connector: {
       type: "AND",
-      not: false
+      not: false,
     },
     children: [
       {
@@ -123,8 +123,8 @@ export const allSotarks: Node = {
           type: RuleType.STATUS,
           value: "ranked",
           operator: "=",
-          field: "Approved"
-        }
+          field: "Approved",
+        },
       },
       {
         id: "2",
@@ -132,19 +132,19 @@ export const allSotarks: Node = {
           type: RuleType.TEXT,
           value: "Sotarks",
           operator: "=",
-          field: "Creator"
-        }
+          field: "Creator",
+        },
       },
-    ]
-  }
-}
+    ],
+  },
+};
 
 export const allRanked7Star: Node = {
   id: "root",
   group: {
     connector: {
       type: "AND",
-      not: false
+      not: false,
     },
     children: [
       {
@@ -153,15 +153,15 @@ export const allRanked7Star: Node = {
           type: RuleType.STATUS,
           value: "ranked",
           operator: "=",
-          field: "Approved"
-        }
+          field: "Approved",
+        },
       },
       {
         id: "2",
         group: {
           connector: {
             type: "AND",
-            not: false
+            not: false,
           },
           children: [
             {
@@ -170,8 +170,8 @@ export const allRanked7Star: Node = {
                 type: RuleType.NUMBER,
                 value: "7",
                 operator: ">=",
-                field: "Stars"
-              }
+                field: "Stars",
+              },
             },
             {
               id: "4",
@@ -179,13 +179,12 @@ export const allRanked7Star: Node = {
                 type: RuleType.NUMBER,
                 value: "8",
                 operator: "<=",
-                field: "Stars"
-              }
-            }
-          ]
-        }
-      }
-    ]
-  }
-}
-
+                field: "Stars",
+              },
+            },
+          ],
+        },
+      },
+    ],
+  },
+};

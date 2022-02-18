@@ -1,25 +1,34 @@
-import { useEffect, useState } from "react"
-import Select from "react-select"
-import DatePicker from 'react-datepicker'
+import { useEffect, useState } from "react";
+import Select from "react-select";
+import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { dropdownMap, inputTypeMap, InputType, RuleType, Rule, DropdownOption } from "../../../models/rules"
+import {
+  dropdownMap,
+  inputTypeMap,
+  InputType,
+  RuleType,
+  Rule,
+  DropdownOption,
+} from "../../../models/rules";
 
 interface PropTypes {
-  rule: Rule,
-  onChange: (rule: Rule) => void
+  rule: Rule;
+  onChange: (rule: Rule) => void;
 }
 
 const RuleInputDropdown = ({ rule, onChange }: PropTypes) => {
-  const [selectedOption, setSelectedOption] = useState<DropdownOption>(null)
+  const [selectedOption, setSelectedOption] = useState<DropdownOption>(null);
 
   useEffect(() => {
-    const option = dropdownMap.get(rule.type as RuleType).find(i => i.value === rule.value)
+    const option = dropdownMap
+      .get(rule.type as RuleType)
+      .find((i) => i.value === rule.value);
     if (!option) {
-      setSelectedOption(dropdownMap.get(rule.type as RuleType)[0])
+      setSelectedOption(dropdownMap.get(rule.type as RuleType)[0]);
     } else {
-      setSelectedOption(option)
+      setSelectedOption(option);
     }
-  }, [rule])
+  }, [rule]);
 
   return (
     <Select
@@ -29,8 +38,8 @@ const RuleInputDropdown = ({ rule, onChange }: PropTypes) => {
       value={selectedOption}
       onChange={(e) => onChange({ ...rule, value: e.value })}
     />
-  )
-}
+  );
+};
 
 const RuleInputNumber = ({ rule, onChange }: PropTypes) => {
   return (
@@ -40,8 +49,8 @@ const RuleInputNumber = ({ rule, onChange }: PropTypes) => {
       defaultValue={rule.value}
       onChange={(e) => onChange({ ...rule, value: e.target.value })}
     />
-  )
-}
+  );
+};
 
 const RuleInputText = ({ rule, onChange }: PropTypes) => {
   return (
@@ -50,23 +59,25 @@ const RuleInputText = ({ rule, onChange }: PropTypes) => {
       defaultValue={rule.value}
       onChange={(e) => onChange({ ...rule, value: e.target.value })}
     />
-  )
-}
+  );
+};
 
 const RuleInputDate = ({ rule, onChange }: PropTypes) => {
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date(parseInt(rule.value)))
+  const [selectedDate, setSelectedDate] = useState<Date>(
+    new Date(parseInt(rule.value))
+  );
   useEffect(() => {
-    onChange({ ...rule, value: selectedDate.getTime().toString()})
-  }, [selectedDate])
+    onChange({ ...rule, value: selectedDate.getTime().toString() });
+  }, [selectedDate]);
 
   return (
     <DatePicker
       className="input-height p-2 w-40 border-gray-300 border rounded focus:outline-blue-500"
       selected={new Date(parseInt(rule.value))}
-      onChange={date => setSelectedDate(date)}
+      onChange={(date) => setSelectedDate(date)}
     />
-  )
-}
+  );
+};
 
 export const RuleInput = ({ rule, onChange }: PropTypes) => {
   const inputMap = new Map<InputType, JSX.Element>([
@@ -74,11 +85,11 @@ export const RuleInput = ({ rule, onChange }: PropTypes) => {
     [InputType.TEXT, <RuleInputText rule={rule} onChange={onChange} />],
     [InputType.DROPDOWN, <RuleInputDropdown rule={rule} onChange={onChange} />],
     [InputType.DATE, <RuleInputDate rule={rule} onChange={onChange} />],
-  ])
+  ]);
 
   return (
     <div className="">
       {inputMap.get(inputTypeMap.get(rule.type as RuleType))}
     </div>
-  )
-}
+  );
+};

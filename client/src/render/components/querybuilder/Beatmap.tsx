@@ -1,20 +1,26 @@
-import { BeatmapDetails } from "../../../models/api"
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import { BeatmapDetails } from "../../../models/api";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import { useState } from "react";
 
 interface PropTypes {
-  details: BeatmapDetails
+  details: BeatmapDetails;
 }
 
 export const Beatmap = ({ details }: PropTypes) => {
-  const [expanded, setExpanded] = useState(false)
+  const [expanded, setExpanded] = useState(false);
 
   return (
     <div className="flex flex-col">
-      <div onClick={() => setExpanded(!expanded)} className="flex items-center hover:underline hover:cursor-pointer">
+      <div
+        onClick={() => setExpanded(!expanded)}
+        className="flex items-center hover:underline hover:cursor-pointer"
+      >
         {expanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-        <span>{details.Artist} - {details.Title} [{details.Version}] by {details.Creator}</span>
+        <span>
+          {details.Artist} - {details.Title} [{details.Version}] by{" "}
+          {details.Creator}
+        </span>
       </div>
 
       {expanded && (
@@ -35,5 +41,5 @@ export const Beatmap = ({ details }: PropTypes) => {
         </div>
       )}
     </div>
-  )
-}
+  );
+};
