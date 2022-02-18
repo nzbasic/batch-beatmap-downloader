@@ -50,8 +50,8 @@ ipcMain.on("quit", () => {
 
 ipcMain.handle(
   "download",
-  async (event, ids: number[], size: number, force: boolean) => {
-    return await download(ids, size, force);
+  async (event, ids: number[], size: number, force: boolean, hashes: string[], collectionName: string) => {
+    return await download(ids, size, force, hashes, collectionName);
   }
 );
 

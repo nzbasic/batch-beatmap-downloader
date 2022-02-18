@@ -4,8 +4,13 @@ import { loadBeatmaps } from "./beatmaps";
 import Download from "nodejs-file-downloader";
 import { window } from "../main";
 import { serverUri } from "./ipc/main";
+import { addCollection } from "./collection/collection";
 
-export const download = async (ids: number[], size: number, force: boolean) => {
+export const download = async (ids: number[], size: number, force: boolean, hashes: string[], collectionName: string) => {
+  if (collectionName) {
+    await addCollection(hashes, collectionName)
+  }
+
   // save the download request to store in case of app closing
   const status: DownloadStatus = {
     all: ids,

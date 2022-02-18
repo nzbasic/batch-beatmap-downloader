@@ -124,6 +124,7 @@
     "electron-squirrel-startup": "^1.0.0",
     "lodash": "^4.17.21",
     "nodejs-file-downloader": "^4.9.3",
+    "osu-buffer": "^2.0.2",
     "prettier": "^2.5.1",
     "react": "^17.0.2",
     "react-datepicker": "^4.6.0",
@@ -136,6 +137,7 @@
     "react-toastify": "^8.2.0",
     "redux-persist": "^6.0.0",
     "url2file": "^1.0.2",
+    "utf8-string-bytes": "^1.0.3",
     "uuid": "^8.3.2"
   }
 }

@@ -17,7 +17,7 @@ export const DownloadSettings = ({ result, existing }: PropTypes) => {
 
   const download = () => {
     toast.success(`Download started!`);
-    window.electron.download(result.SetIds, calculateSize(), force);
+    window.electron.download(result.SetIds, calculateSize(), force, result.Hashes, collectionName);
   };
 
   const matching = (condition: boolean) => {
@@ -50,6 +50,10 @@ export const DownloadSettings = ({ result, existing }: PropTypes) => {
     return totalSize;
   };
 
+  const downloadDisabled = () => {
+    return collection && (collectionName === "")
+  }
+
   return (
     <div className="flex flex-col gap-4">
       <span className="font-bold text-lg dark:text-white">Download</span>
@@ -79,7 +83,6 @@ export const DownloadSettings = ({ result, existing }: PropTypes) => {
             {collection && (
               <input
                 className="input-height p-2 w-40 border-gray-300 border rounded focus:outline-blue-500"
-                type="number"
                 placeholder="Name"
                 value={collectionName}
                 onChange={(e) => setCollectionName(e.target.value)}
@@ -88,14 +91,22 @@ export const DownloadSettings = ({ result, existing }: PropTypes) => {
           </div>
         </div>
       </div>
-      <Link to="/downloads">
-        <button
-          onClick={download}
-          className="bg-green-500 hover:bg-green-400 text-white transition duration-150 px-2 py-1 rounded text-lg font-medium self-start"
-        >
-          Download
-        </button>
-      </Link>
+      <div className="flex items-center">
+        <Link className={`${downloadDisabled() ? 'pointer-events-none' : ''}`} to="/downloads">
+          <button
+            onClick={download}
+            disabled={downloadDisabled()}
+            className="bg-green-500 hover:bg-green-400 text-white transition duration-150 px-2 py-1 rounded text-lg font-medium self-start"
+          >
+            Download
+          </button>
+        </Link>
+        {downloadDisabled() && (
+          <span className="text-red-500 text-sm ml-4">
+            Collection name cannot be empty
+            </span>
+        )}
+      </div>
     </div>
   );
 };

@@ -6,6 +6,7 @@ export interface FilterRequest {
 export interface FilterResponse {
   Ids: number[];
   SetIds: number[];
+  Hashes: string[]
   SizeMap: Map<number, number>;
 }
 

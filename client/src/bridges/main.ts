@@ -80,8 +80,8 @@ export const electronBridge = {
     ipcRenderer.send("quit");
   },
 
-  download: (ids: number[], size: number, force: boolean) => {
-    ipcRenderer.invoke("download", ids, size, force);
+  download: (ids: number[], size: number, force: boolean, hashes: string[], collectionName: string) => {
+    ipcRenderer.invoke("download", ids, size, force, hashes, collectionName);
   },
 
   listenForDownloads: (callback: (status: DownloadStatus) => void) => {
