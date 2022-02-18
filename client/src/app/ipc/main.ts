@@ -9,7 +9,7 @@ import fs from 'fs'
 import Download from 'nodejs-file-downloader'
 import { window } from '../../main'
 
-const serverUri = "http://192.168.1.233:7373"
+const serverUri = "https://api.nzbasic.com"
 
 ipcMain.handle("query", async (event, node: Node, limit: number) => {
   return (await axios.post<FilterResponse>(`${serverUri}/filter`, { node, limit })).data
