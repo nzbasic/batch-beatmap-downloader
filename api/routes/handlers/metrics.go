@@ -2,31 +2,33 @@ package handlers
 
 import (
 	"net/http"
+
+	"github.com/nzbasic/batch-beatmap-downloader/metrics"
 )
 
-type DownloadStart struct {
-}
-
-type DownloadEnd struct {
-}
-
-type BeatmapDownload struct {
-}
-
 func MetricsDownloadStartHandler(w http.ResponseWriter, r *http.Request) {
-	var req DownloadStart
+	var req metrics.DownloadStart
 	genericJSONDecode(req, r.Body)
+	metrics.AddMetricData(req)
 	genericJSONSend(w, req)
 }
 
 func MetricsDownloadEndHandler(w http.ResponseWriter, r *http.Request) {
-	var req DownloadEnd
+	var req metrics.DownloadEnd
 	genericJSONDecode(req, r.Body)
+	metrics.AddMetricData(req)
 	genericJSONSend(w, req)
 }
 
 func MetricsBeatmapDownloadHandler(w http.ResponseWriter, r *http.Request) {
-	var req BeatmapDownload
+	var req metrics.BeatmapDownload
 	genericJSONDecode(req, r.Body)
+	metrics.AddMetricData(req)
 	genericJSONSend(w, req)
+}
+
+func MetricsPoll(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+	w.Write([]byte("{}"))
 }
