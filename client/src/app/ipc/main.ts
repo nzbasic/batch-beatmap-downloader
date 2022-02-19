@@ -1,73 +1,60 @@
-import { app, BrowserWindow, dialog, ipcMain } from "electron";
-import { Node } from '../../models/filter'
-import axios from 'axios'
+import { app, dialog, ipcMain } from "electron";
+import { Node } from "../../models/filter";
+import axios from "axios";
 import { BeatmapDetails, FilterResponse } from "../../models/api";
-import settings from 'electron-settings'
+import settings from "electron-settings";
 import { SettingsObject } from "../../global";
-import fs from 'fs'
-import Download from 'nodejs-file-downloader'
+import { download } from "../download";
+import { loadBeatmaps } from "../beatmaps";
 
-const serverUri = "http://localhost:7373"
+export const serverUri = "https://api.nzbasic.com";
 
 ipcMain.handle("query", async (event, node: Node, limit: number) => {
-  return (await axios.post<FilterResponse>(`${serverUri}/filter`, { node, limit })).data
-})
+  return (
+    await axios.post<FilterResponse>(`${serverUri}/filter`, { node, limit })
+  ).data;
+});
 
 ipcMain.handle("get-beatmap-details", async (event, node: Node) => {
-  return (await axios.post<BeatmapDetails[]>(`${serverUri}/beatmapDetails`, node)).data
-})
+  return (
+    await axios.post<BeatmapDetails[]>(`${serverUri}/beatmapDetails`, node)
+  ).data;
+});
 
 ipcMain.handle("get-settings", async () => {
-  return await settings.get()
-})
+  return await settings.get();
+});
 
 ipcMain.handle("set-settings", async (event, s: SettingsObject) => {
-  return await settings.set(s)
-})
+  return await settings.set(s);
+});
 
 ipcMain.handle("set-theme", async (event, theme: boolean) => {
-  return await settings.set('darkMode', theme)
-})
+  return await settings.set("darkMode", theme);
+});
 
 ipcMain.handle("set-path", async (event, path: string) => {
-  return await settings.set('path', path)
-})
+  return await settings.set("path", path);
+});
 
 ipcMain.handle("browse", async () => {
-  const dialogResult = await dialog.showOpenDialog({ properties: ['openDirectory'] })
-  return dialogResult
-})
+  const dialogResult = await dialog.showOpenDialog({
+    properties: ["openDirectory"],
+  });
+  return dialogResult;
+});
 
 ipcMain.on("quit", () => {
-  app.quit()
-})
+  app.quit();
+});
 
-ipcMain.handle("download", async (event, ids: number[]) => {
-  const path = (await settings.get('path')) as string + "/Songs"
-
-  for (const id of ids) {
-    const uri = `${serverUri}/beatmapset/${id}`
-    const outPath = `${path}/Songs`
-    const download = new Download({ url: uri, directory: outPath, maxAttempts: 3 })
-    try {
-      await download.download()
-    } catch (err) {
-      console.log(err)
-    }
-
+ipcMain.handle(
+  "download",
+  async (event, ids: number[], size: number, force: boolean) => {
+    return await download(ids, size, force);
   }
-})
+);
 
 ipcMain.handle("load-beatmaps", async () => {
-  const path = await settings.get("path") as string
-  const dir = await fs.promises.readdir(path + "/Songs")
-
-  // get number at start of each file name
-  const beatmapIds = dir.map(file => {
-    const number = /^\d+/.exec(file)
-    return number ? parseInt(number[0]) : 0
-  })
-
-  return beatmapIds
-})
-
+  return await loadBeatmaps();
+});

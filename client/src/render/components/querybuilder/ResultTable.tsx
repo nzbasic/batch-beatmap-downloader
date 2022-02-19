@@ -1,43 +1,50 @@
-import { useEffect, useState } from "react"
-import { BeatmapDetails, FilterResponse } from "../../models/api"
-import { Beatmap } from "./Beatmap"
-import { Row, Table } from "./Table"
+import { useEffect, useState } from "react";
+import { BeatmapDetails, FilterResponse } from "../../../models/api";
+import { Beatmap } from "./Beatmap";
+import { toast } from "react-toastify";
 
 interface PropTypes {
-  result: FilterResponse
+  result: FilterResponse;
 }
 
 export const ResultTable = ({ result }: PropTypes) => {
-  const [page, setPage] = useState<BeatmapDetails[]>([])
-  const [pageSize, setPageSize] = useState<number>(25)
-  const [pageNumber, setPageNumber] = useState(1)
+  const [page, setPage] = useState<BeatmapDetails[]>([]);
+  const [pageSize, setPageSize] = useState<number>(25);
+  const [pageNumber, setPageNumber] = useState(1);
 
   const getNewPage = async (): Promise<BeatmapDetails[]> => {
-    const ids = result.Ids.slice((pageNumber - 1) * pageSize, pageNumber * pageSize)
-    const res = await window.electron.getBeatmapDetails(ids)
-    return res
-  }
+    const ids = result.Ids.slice(
+      (pageNumber - 1) * pageSize,
+      pageNumber * pageSize
+    );
+    const res = await window.electron.getBeatmapDetails(ids);
+    if (typeof res === "string") {
+      toast.error(res);
+      return [];
+    } else {
+      return res;
+    }
+  };
 
   useEffect(() => {
     if (pageNumber != 1) {
-      setPageNumber(1)
+      setPageNumber(1);
     } else {
-      getNewPage().then(res => {
-        setPage(res)
-      })
+      getNewPage().then((res) => {
+        setPage(res);
+      });
     }
-  }, [result])
+  }, [result]);
 
   useEffect(() => {
-    getNewPage().then(res => {
-      setPage(res)
-    })
-  }, [pageNumber])
+    getNewPage().then((res) => {
+      setPage(res);
+    });
+  }, [pageNumber]);
 
   return (
     <div className="w-full">
-
-      {page.map(map => (
+      {page.map((map) => (
         <Beatmap key={map.Id} details={map} />
       ))}
 
@@ -59,6 +66,5 @@ export const ResultTable = ({ result }: PropTypes) => {
         </button>
       </div>
     </div>
-  )
-
-}
+  );
+};

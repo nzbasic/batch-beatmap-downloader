@@ -24,6 +24,8 @@ const createStores = (): void => {
   });
 };
 
+export let window: BrowserWindow;
+
 const createWindow = (): void => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
@@ -41,10 +43,12 @@ const createWindow = (): void => {
     },
   });
 
-  mainWindow.setMenu(null)
+  window = mainWindow;
+
+  mainWindow.setMenu(null);
   mainWindow.on("close", () => {
     mainWindow.destroy();
-  })
+  });
 
   // enable dev tools
   if (isDev) {
@@ -56,8 +60,8 @@ const createWindow = (): void => {
 };
 
 app.on("activate", () => {
-  app.disableHardwareAcceleration()
-})
+  app.disableHardwareAcceleration();
+});
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -65,7 +69,7 @@ app.on("activate", () => {
 app.on("ready", () => {
   createStores();
   createWindow();
-  nativeTheme.themeSource = "dark"
+  nativeTheme.themeSource = "dark";
 });
 
 // Quit when all windows are closed, except on macOS. There, it's common
