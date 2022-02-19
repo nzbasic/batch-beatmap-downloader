@@ -1,9 +1,9 @@
-import settings from "electron-settings";
 import fs from "fs";
+import { getSongsFolder } from "./settings";
 
 export const loadBeatmaps = async () => {
-  const path = (await settings.get("path")) as string;
-  const dir = await fs.promises.readdir(path + "/Songs");
+  const path = await getSongsFolder()
+  const dir = await fs.promises.readdir(path);
 
   // get number at start of each file name
   const beatmapIds = dir.map((file) => {

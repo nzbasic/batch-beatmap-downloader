@@ -6,7 +6,8 @@ import settings from "electron-settings";
 import { SettingsObject } from "../../global";
 import { download } from "../download";
 import { loadBeatmaps } from "../beatmaps";
-import { readCollections } from "../collection/parse";
+import { window } from '../../main'
+import fs from 'fs'
 
 export const serverUri = "https://api.nzbasic.com";
 
@@ -34,8 +35,28 @@ ipcMain.handle("set-theme", async (event, theme: boolean) => {
   return await settings.set("darkMode", theme);
 });
 
-ipcMain.handle("set-path", async (event, path: string) => {
-  return await settings.set("path", path);
+ipcMain.handle("set-alt-path", async (event, path: string) => {
+  return await settings.set("altPath", path);
+});
+
+ipcMain.handle("set-path", async (event, path: string): Promise<boolean> => {
+  // check path contains a db file
+  console.log(path)
+
+  try {
+    const files = await fs.promises.readdir(path);
+    if (!files.includes("collection.db")) {
+      window.webContents.send("error", "Could not find collection.db");
+      return false;
+    }
+  } catch(err) {
+    window.webContents.send("error", "Could not find collection.db");
+    return false;
+  }
+
+
+  await settings.set("path", path);
+  return true
 });
 
 ipcMain.handle("browse", async () => {

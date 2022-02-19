@@ -35,7 +35,7 @@ const App = () => {
             />
           </Routes>
         </div>
-        <ToastContainer />
+        <ToastContainer autoClose={1000} />
       </div>
     </HashRouter>
   );

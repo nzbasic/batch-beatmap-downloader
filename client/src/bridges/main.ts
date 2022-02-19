@@ -64,6 +64,10 @@ export const electronBridge = {
     )) as Electron.OpenDialogReturnValue;
   },
 
+  checkValidPath: async (): Promise<void> => {
+    return (await ipcRenderer.invoke("check-valid-path")) as void;
+  },
+
   loadBeatmaps: async (): Promise<number[]> => {
     return (await ipcRenderer.invoke("load-beatmaps")) as number[];
   },
@@ -72,8 +76,12 @@ export const electronBridge = {
     return (await ipcRenderer.invoke("set-theme", theme)) as void;
   },
 
-  setPath: async (path: string): Promise<void> => {
-    return (await ipcRenderer.invoke("set-path", path)) as void;
+  setPath: async (path: string): Promise<boolean> => {
+    return (await ipcRenderer.invoke("set-path", path)) as boolean;
+  },
+
+  setAltPath: async (path: string) => {
+    return (await ipcRenderer.invoke("set-alt-path", path)) as void;
   },
 
   quit: (): void => {

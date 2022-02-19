@@ -137,6 +137,7 @@
     "react-toastify": "^8.2.0",
     "redux-persist": "^6.0.0",
     "url2file": "^1.0.2",
+    "username": "^6.0.0",
     "utf8-string-bytes": "^1.0.3",
     "uuid": "^8.3.2"
   }

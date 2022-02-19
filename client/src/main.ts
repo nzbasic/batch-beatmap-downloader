@@ -1,6 +1,7 @@
 import { app, BrowserWindow, nativeTheme } from "electron";
 import isDev from "electron-is-dev";
 import Store from "electron-persist-secure/lib/store";
+
 // Import all IPCs to make sure they register their respective listeners
 import "./app/ipc/main";
 // import "./app/ipc/anything";
@@ -25,6 +26,7 @@ const createStores = (): void => {
 };
 
 export let window: BrowserWindow;
+export const name: string = "james"
 
 const createWindow = (): void => {
   // Create the browser window.
@@ -38,7 +40,7 @@ const createWindow = (): void => {
     backgroundColor: "#fff",
     webPreferences: {
       contextIsolation: true,
-      nodeIntegration: false,
+      nodeIntegration: true,
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
     },
   });

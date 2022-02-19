@@ -5,6 +5,7 @@ import Download from "nodejs-file-downloader";
 import { window } from "../main";
 import { serverUri } from "./ipc/main";
 import { addCollection } from "./collection/collection";
+import { getSongsFolder } from "./settings";
 
 export const download = async (ids: number[], size: number, force: boolean, hashes: string[], collectionName: string) => {
   if (collectionName) {
@@ -25,7 +26,7 @@ export const download = async (ids: number[], size: number, force: boolean, hash
   };
   await setDownloadStatus(status);
 
-  const path = ((await settings.get("path")) as string) + "/Songs";
+  const path = await getSongsFolder()
   const beatmapIds = await loadBeatmaps();
 
   for (const id of ids) {
