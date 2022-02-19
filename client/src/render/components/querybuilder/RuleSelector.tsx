@@ -15,6 +15,7 @@ export const RuleSelector = ({ rule, onChange }: PropTypes) => {
     [RuleType.TEXT, ""],
     [RuleType.GENRE, "any"],
     [RuleType.LANGUAGE, "any"],
+    [RuleType.MODE, "osu!"]
   ]);
 
   const defaultOperators = new Map<RuleType, string>([
@@ -25,6 +26,7 @@ export const RuleSelector = ({ rule, onChange }: PropTypes) => {
     [RuleType.TEXT, "like"],
     [RuleType.GENRE, "="],
     [RuleType.LANGUAGE, "="],
+    [RuleType.MODE, "="]
   ]);
 
   return (
