@@ -12,4 +12,7 @@ func init() {
 	Router.HandleFunc("/beatmapset/{setId}", handlers.BeatmapDownloadHandler)
 	Router.HandleFunc("/beatmapDetails", handlers.BeatmapDetailsHandler)
 	Router.HandleFunc("/filter", handlers.FilterHandler)
+	Router.HandleFunc("/metrics/downloadStart", handlers.MetricsDownloadStartHandler)
+	Router.HandleFunc("/metrics/downloadEnd", handlers.MetricsDownloadEndHandler)
+	Router.HandleFunc("/metrics/beatmapDownload", handlers.MetricsBeatmapDownloadHandler)
 }

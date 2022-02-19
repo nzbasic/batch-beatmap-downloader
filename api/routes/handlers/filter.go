@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"encoding/json"
 	"net/http"
 
 	"github.com/nzbasic/batch-beatmap-downloader/filter"
@@ -34,8 +33,7 @@ func removeDuplicateValues(intSlice []int) []int {
 
 func FilterHandler(w http.ResponseWriter, r *http.Request) {
 	var request FilterRequest
-	decoder := json.NewDecoder(r.Body)
-	decoder.Decode(&request)
+	genericJSONDecode(request, r.Body)
 
 	ids, setIds, size, hashes, err := filter.QueryNode(request.Node, request.Limit)
 	if err != nil {
@@ -52,6 +50,5 @@ func FilterHandler(w http.ResponseWriter, r *http.Request) {
 		Hashes:  hashes,
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
+	genericJSONSend(w, response)
 }

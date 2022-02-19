@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"database/sql"
-	"encoding/json"
 	"io/ioutil"
 	"net/http"
 	"strconv"
@@ -42,8 +41,7 @@ func BeatmapDownloadHandler(w http.ResponseWriter, r *http.Request) {
 
 func BeatmapDetailsHandler(w http.ResponseWriter, r *http.Request) {
 	var ids []int
-	decoder := json.NewDecoder(r.Body)
-	decoder.Decode(&ids)
+	genericJSONDecode(ids, r.Body)
 
 	beatmaps := []osu.BeatmapData{}
 	for _, id := range ids {
@@ -57,6 +55,5 @@ func BeatmapDetailsHandler(w http.ResponseWriter, r *http.Request) {
 		beatmaps = append(beatmaps, beatmap)
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(beatmaps)
+	genericJSONSend(w, beatmaps)
 }
