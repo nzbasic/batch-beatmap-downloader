@@ -44,7 +44,9 @@ func init() {
 		"lastUpdate INTEGER, " +
 		"passCount INTEGER, " +
 		"playCount INTEGER," +
-		"path TEXT" +
+		"path TEXT," +
+		"stream INTEGER," +
+		"farm INTEGER" +
 		")"
 
 	_, err := database.Exec(table)

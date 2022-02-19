@@ -59,20 +59,20 @@ func addValidOperator(operator string, list []string, query string) (string, err
 	}
 }
 
-func QueryNode(node Node, limit *int) ([]int, []int, error) {
+func QueryNode(node Node, limit *int) ([]int, []int, map[int]int, []string, error) {
 	var values = []string{}
-	query := "SELECT id, setId FROM beatmaps WHERE"
+	query := "SELECT id, setId, size, hash FROM beatmaps WHERE"
 	query += RecursiveQueryBuilder(node, &values)
 	if limit != nil {
 		query += " LIMIT " + fmt.Sprintf("%d", *limit)
 	}
 
-	ids, setIds, err := database.QueryIds(query, values)
+	ids, setIds, sizeMap, hashes, err := database.QueryIds(query, values)
 	if err != nil {
-		return []int{}, []int{}, errors.New("Invalid query " + query)
+		return ids, setIds, sizeMap, hashes, errors.New("Invalid query " + query)
 	}
 
-	return ids, setIds, nil
+	return ids, setIds, sizeMap, hashes, nil
 }
 
 func RecursiveQueryBuilder(node Node, values *[]string) string {

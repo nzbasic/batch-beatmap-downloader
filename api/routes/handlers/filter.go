@@ -8,8 +8,10 @@ import (
 )
 
 type FilterResponse struct {
-	Ids    []int
-	SetIds []int
+	Ids     []int
+	SetIds  []int
+	SizeMap map[int]int
+	Hashes  []string
 }
 
 type FilterRequest struct {
@@ -35,7 +37,7 @@ func FilterHandler(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	decoder.Decode(&request)
 
-	ids, setIds, err := filter.QueryNode(request.Node, request.Limit)
+	ids, setIds, size, hashes, err := filter.QueryNode(request.Node, request.Limit)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Header().Set("Content-Type", "application/text")
@@ -44,8 +46,10 @@ func FilterHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response := FilterResponse{
-		Ids:    ids,
-		SetIds: removeDuplicateValues(setIds),
+		Ids:     ids,
+		SetIds:  removeDuplicateValues(setIds),
+		SizeMap: size,
+		Hashes:  hashes,
 	}
 
 	w.Header().Set("Content-Type", "application/json")
