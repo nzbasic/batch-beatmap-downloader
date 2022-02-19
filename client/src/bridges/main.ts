@@ -50,6 +50,10 @@ export const electronBridge = {
     return await shell.openExternal(url, options);
   },
 
+  getVersion: async (): Promise<string> => {
+    return (await ipcRenderer.invoke("get-version")) as string
+  },
+
   getSettings: async (): Promise<SettingsObject> => {
     return (await ipcRenderer.invoke("get-settings")) as SettingsObject;
   },

@@ -11,8 +11,13 @@ import "react-toastify/dist/ReactToastify.css";
 
 const App = () => {
   const [downloadStatus, setDownloadStatus] = useState<DownloadStatus>(null);
+  const [version, setVersion] = useState("1.0.0")
 
   useEffect(() => {
+    window.electron.getVersion().then(version => {
+      setVersion(version);
+    })
+
     window.electron.getSettings().then((res) => {
       const mode = res.darkMode as boolean;
       document.documentElement.classList.toggle("dark", mode);
@@ -24,7 +29,7 @@ const App = () => {
   return (
     <HashRouter>
       <div className="flex w-screen">
-        <Menu downloadStatus={downloadStatus} />
+        <Menu version={version} downloadStatus={downloadStatus} />
         <div className="main p-4 overflow-auto overflow-x-hidden h-screen">
           <Routes>
             <Route path="/" element={<Home />} />

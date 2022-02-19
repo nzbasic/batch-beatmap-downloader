@@ -23,6 +23,10 @@ ipcMain.handle("get-beatmap-details", async (event, node: Node) => {
   ).data;
 });
 
+ipcMain.handle("get-version", () => {
+  return app.getVersion();
+})
+
 ipcMain.handle("get-settings", async () => {
   return await settings.get();
 });

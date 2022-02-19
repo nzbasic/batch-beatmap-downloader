@@ -8,9 +8,10 @@ import { DownloadStatus } from "../../models/api";
 
 interface PropTypes {
   downloadStatus: DownloadStatus;
+  version: string
 }
 
-export const Menu = ({ downloadStatus }: PropTypes) => {
+export const Menu = ({ version, downloadStatus }: PropTypes) => {
   const { pathname } = useLocation();
 
   const closeApp = () => {
@@ -33,6 +34,7 @@ export const Menu = ({ downloadStatus }: PropTypes) => {
       <div className="text-sm self-center items-center flex flex-col">
         <span className="">Batch Beatmap Downloader</span>
         <span>by nzbasic</span>
+        <span className="text-xs">v{version}</span>
       </div>
       <div className="flex flex-col justify-between h-full mt-4">
         <div className="flex flex-col">
