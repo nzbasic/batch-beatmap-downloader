@@ -97,17 +97,115 @@ export const allLoved: Node = {
   },
 };
 
-// export const allFarm: Node = {
+export const allFarm: Node = {
+  id: "root",
+  group: {
+    connector: {
+      type: "AND",
+      not: false,
+    },
+    children: [
+      {
+        id: "1",
+        rule: {
+          type: RuleType.MODE,
+          value: "osu!",
+          operator: "=",
+          field: "Mode",
+        },
+      },
+      {
+        id: "2",
+        rule: {
+          type: RuleType.BOOLEAN,
+          value: "1",
+          operator: "=",
+          field: "Farm",
+        },
+      }
+    ],
+  },
+}
 
-// }
+export const allStream: Node = {
+  id: "root",
+  group: {
+    connector: {
+      type: "AND",
+      not: false,
+    },
+    children: [
+      {
+        id: "1",
+        rule: {
+          type: RuleType.MODE,
+          value: "osu!",
+          operator: "=",
+          field: "Mode",
+        },
+      },
+      {
+        id: "2",
+        rule: {
+          type: RuleType.BOOLEAN,
+          value: "1",
+          operator: "=",
+          field: "Stream",
+        },
+      }
+    ],
+  },
+}
 
-// export const allStream: Node = {
-
-// }
-
-// export const ranked2015: Node = {
-
-// }
+export const ranked2015: Node = {
+  id: "root",
+  group: {
+    connector: {
+      type: "AND",
+      not: false,
+    },
+    children: [
+      {
+        id: "1",
+        rule: {
+          type: RuleType.STATUS,
+          value: "ranked",
+          operator: "=",
+          field: "Approved",
+        },
+      },
+      {
+        id: "2",
+        group: {
+          connector: {
+            type: "AND",
+            not: false,
+          },
+          children: [
+            {
+              id: "3",
+              rule: {
+                type: RuleType.DATE,
+                value: "1420023600000",
+                operator: ">",
+                field: "ApprovedDate",
+              },
+            },
+            {
+              id: "4",
+              rule: {
+                type: RuleType.DATE,
+                value: "1451559600000",
+                operator: "<",
+                field: "ApprovedDate",
+              },
+            },
+          ],
+        },
+      },
+    ],
+  },
+}
 
 export const allSotarks: Node = {
   id: "root",

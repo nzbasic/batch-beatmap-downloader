@@ -5,6 +5,9 @@ import {
   allSotarks,
   allRanked7Star,
   Node,
+  allStream,
+  allFarm,
+  ranked2015,
 } from "../../models/filter";
 
 interface Filter {
@@ -14,10 +17,13 @@ interface Filter {
 }
 
 const filters: Filter[] = [
-  { name: "All Ranked osu! Maps", tree: allRankedOsu, colour: "#ff5370" },
-  { name: "Every Loved Map", tree: allLoved, colour: "#fd971f" },
+  { name: "Ranked osu! Maps", tree: allRankedOsu, colour: "#ff5370" },
+  { name: "Loved Maps", tree: allLoved, colour: "#fd971f" },
   { name: "Sotarks Maps", tree: allSotarks, colour: "#b267e6" },
-  { name: "Every Ranked 7*", tree: allRanked7Star, colour: "#ff6600" },
+  { name: "Ranked 7* Maps", tree: allRanked7Star, colour: "#ff6600" },
+  { name: "Stream Maps", tree: allStream, colour: "#b78aff" },
+  { name: "Farm Maps", tree: allFarm, colour: "#ff2c96" },
+  { name: "Ranked 2015 Maps", tree: ranked2015, colour: "#2edcff" }
 ];
 
 export const SampleFilters = () => {
