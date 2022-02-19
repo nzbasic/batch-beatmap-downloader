@@ -4,10 +4,11 @@ import { toast } from 'react-toastify'
 import { Browse } from "./Browse";
 
 interface PropTypes {
+  onValidPath: (valid: boolean) => void
   onBeatmapsLoaded?: (ids: number[]) => void;
 }
 
-export const Settings = ({ onBeatmapsLoaded }: PropTypes) => {
+export const Settings = ({ onValidPath, onBeatmapsLoaded }: PropTypes) => {
   const [path, setPath] = useState<string>("");
   const [altPathEnabled, setAltPathEnabled] = useState(false)
   const [altPath, setAltPath] = useState<string>("")
@@ -24,6 +25,7 @@ export const Settings = ({ onBeatmapsLoaded }: PropTypes) => {
   useEffect(() => {
     if (!path) return
     window.electron.setPath(path).then(res => {
+      onValidPath(res)
       if (res && !altPathEnabled) {
         loadBeatmaps()
       }

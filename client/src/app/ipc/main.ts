@@ -40,9 +40,6 @@ ipcMain.handle("set-alt-path", async (event, path: string) => {
 });
 
 ipcMain.handle("set-path", async (event, path: string): Promise<boolean> => {
-  // check path contains a db file
-  console.log(path)
-
   try {
     const files = await fs.promises.readdir(path);
     if (!files.includes("collection.db")) {
@@ -53,7 +50,6 @@ ipcMain.handle("set-path", async (event, path: string): Promise<boolean> => {
     window.webContents.send("error", "Could not find collection.db");
     return false;
   }
-
 
   await settings.set("path", path);
   return true
