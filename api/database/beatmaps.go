@@ -7,8 +7,10 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/blockloop/scan"
+	"github.com/nzbasic/batch-beatmap-downloader/logs"
 	"github.com/nzbasic/batch-beatmap-downloader/osu"
 )
 
@@ -90,6 +92,13 @@ func GetBeatmapById(id int) (osu.BeatmapData, error) {
 	return beatmap, nil
 }
 
+type QueryLog struct {
+	Query    string
+	Duration string
+	Size     int
+	Values   []string
+}
+
 func QueryIds(query string, values []string) ([]int, []int, map[int]int, []string, error) {
 	ids := []int{}
 	setIds := []int{}
@@ -100,8 +109,7 @@ func QueryIds(query string, values []string) ([]int, []int, map[int]int, []strin
 		iValues[i] = v
 	}
 
-	println(query)
-	fmt.Printf("%+v", iValues)
+	before := time.Now()
 	rows, err := database.Query(query, iValues...)
 	if err != nil {
 		return ids, setIds, sizeMap, hashes, err
@@ -119,7 +127,23 @@ func QueryIds(query string, values []string) ([]int, []int, map[int]int, []strin
 		hashes = append(hashes, hash)
 	}
 
+	after := time.Now()
+	difference := after.Sub(before)
+
+	totalSize := 0
+	for _, size := range sizeMap {
+		totalSize += size
+	}
+
+	queryLog := QueryLog{
+		Duration: difference.String(),
+		Query:    query,
+		Size:     totalSize,
+		Values:   values,
+	}
+
+	bytes, _ := json.Marshal(queryLog)
+	logs.Log("query", string(bytes))
 	rows.Close()
-	println("query complete")
 	return ids, setIds, sizeMap, hashes, nil
 }
