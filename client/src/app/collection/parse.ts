@@ -21,6 +21,7 @@ export interface Collection {
  * @param path Path to collection.db file
  */
 export const readCollections = async (path: string) => {
+  console.log(path + "\\collection.db")
   const buffer = await fs.promises.readFile(path + "\\collection.db");
   const reader = new OsuReader(buffer.buffer);
 

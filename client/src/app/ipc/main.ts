@@ -6,6 +6,7 @@ import settings from "electron-settings";
 import { SettingsObject } from "../../global";
 import { download } from "../download";
 import { loadBeatmaps } from "../beatmaps";
+import { readCollections } from "../collection/parse";
 
 export const serverUri = "https://api.nzbasic.com";
 

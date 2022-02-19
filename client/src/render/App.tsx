@@ -6,7 +6,7 @@ import { Downloads } from "./pages/Downloads";
 import { Home } from "./pages/Home";
 import { useEffect, useState } from "react";
 import { DownloadStatus } from "../models/api";
-import { ToastContainer } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const App = () => {
@@ -18,16 +18,14 @@ const App = () => {
       document.documentElement.classList.toggle("dark", mode);
     });
     window.electron.listenForDownloads((status) => setDownloadStatus(status));
+    window.electron.listenForErrors((error) => toast.error(error))
   }, []);
 
   return (
     <HashRouter>
       <div className="flex w-screen">
         <Menu downloadStatus={downloadStatus} />
-        <div
-          id=""
-          className="main p-4 overflow-auto overflow-x-hidden h-screen"
-        >
+        <div className="main p-4 overflow-auto overflow-x-hidden h-screen">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/query" element={<Query />} />

@@ -80,8 +80,8 @@ export const electronBridge = {
     ipcRenderer.send("quit");
   },
 
-  download: (ids: number[], size: number, force: boolean, hashes: string[], collectionName: string) => {
-    ipcRenderer.invoke("download", ids, size, force, hashes, collectionName);
+  download: async (ids: number[], size: number, force: boolean, hashes: string[], collectionName: string) => {
+    return await ipcRenderer.invoke("download", ids, size, force, hashes, collectionName) as void;
   },
 
   listenForDownloads: (callback: (status: DownloadStatus) => void) => {
@@ -89,6 +89,12 @@ export const electronBridge = {
       callback(status);
     });
   },
+
+  listenForErrors: (callback: (error: string) => void) => {
+    ipcRenderer.on("error", (event, error: string) => {
+      callback(error);
+    });
+  }
 };
 
 contextBridge.exposeInMainWorld("electron", electronBridge);
