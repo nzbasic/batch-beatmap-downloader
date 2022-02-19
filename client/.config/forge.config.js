@@ -2,7 +2,9 @@ const path = require("path");
 const package = require("../package.json");
 require("dotenv").config();
 
-const packageAssetsPath = path.join(__dirname, "..", "assets", "package");
+const packageAssetsPath = path.join(__dirname, "..", "src", "render", "assets");
+
+console.log(packageAssetsPath);
 
 module.exports = {
   packagerConfig: {
@@ -13,8 +15,8 @@ module.exports = {
       name: "@electron-forge/publisher-github",
       config: {
         repository: {
-          owner: "saucesteals",
-          name: "electron-typescript-react-tailwind-redux",
+          owner: "nzbasic",
+          name: "batch-beatmap-downloader",
           authToken: process.env.GITHUB_TOKEN,
         },
         draft: true,
@@ -29,11 +31,8 @@ module.exports = {
       config: {
         // https://js.electronforge.io/maker/squirrel/interfaces/makersquirrelconfig
         setupExe: "Windows Setup.exe",
-        iconUrl:
-          "https://raw.githubusercontent.com/saucesteals/electron-typescript-react-tailwind-redux/main/assets/package/icons/win/icon.ico",
-        setupIcon: path.join(packageAssetsPath, "icons", "win", "icon.ico"),
-        authors: "saucesteals & fourwadu",
-        loadingGif: path.join(packageAssetsPath, "loading.gif"),
+        setupIcon: path.join(packageAssetsPath, "bbd.ico"),
+        authors: "nzbasic",
       },
     },
     // You can only build the DMG target on macOS machines.
@@ -41,10 +40,9 @@ module.exports = {
       name: "@electron-forge/maker-dmg",
       config: {
         // https://js.electronforge.io/maker/dmg/interfaces/makerdmgconfig
-        icon: path.join(packageAssetsPath, "icons", "mac", "icon.icns"),
-        background: path.join(packageAssetsPath, "source.png"),
+        icon: path.join(packageAssetsPath, "bbd.png"),
         overwrite: true,
-        name: "electron-boilerplate", // NEEDS TO BE SHORTER THAN 27 CHARACTERS
+        name: "Batch Beatmap Downloader", // NEEDS TO BE SHORTER THAN 27 CHARACTERS
       },
     },
 
@@ -59,7 +57,7 @@ module.exports = {
       name: "@electron-forge/maker-deb",
       config: {
         // https://js.electronforge.io/maker/deb/interfaces/makerdebconfig
-        icon: path.join(packageAssetsPath, "icons", "png", "1024x1024.png"),
+        icon: path.join(packageAssetsPath, "bbd.png"),
       },
     },
   ],
