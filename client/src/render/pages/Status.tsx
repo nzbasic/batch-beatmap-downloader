@@ -42,7 +42,7 @@ export const Status = () => {
               style={{ backgroundColor: downloadsScale.getColor(getActiveDownloads()).toHexString() }}
               className="bg-green-500 rounded shadow w-full h-24"
             >
-              <div className="text-black flex justify-between items-center w-full h-full px-8">
+              <div className="text-monokai-dark flex justify-between items-center w-full h-full px-8">
                 <span className="font-bold text-5xl w-full text-center">{getActiveDownloads()}</span>
                 <span className="text-xl w-full font-medium text-center">Active Downloads</span>
               </div>
@@ -51,7 +51,7 @@ export const Status = () => {
               style={{ backgroundColor: bandwidthScale.getColor(metrics.Download.CurrentBandwidthUsage ?? 0).toHexString() }}
               className="bg-red-500 rounded shadow w-full h-24"
             >
-              <div className="text-black flex justify-between items-center w-full h-full px-8">
+              <div className="text-monokai-dark flex justify-between items-center w-full h-full px-8">
                 <div className="flex flex-col items-center w-full">
                   <span className="font-bold text-3xl">{metrics.Download.CurrentBandwidthUsage.toFixed(0)}Mbps</span>
                   <span className="text-xl">(500Mpbs Max)</span>
