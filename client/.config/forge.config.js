@@ -33,6 +33,8 @@ module.exports = {
         setupExe: "Windows Setup.exe",
         setupIcon: path.join(packageAssetsPath, "bbd.ico"),
         icon: path.join(packageAssetsPath, "bbd.ico"),
+        iconUrl:
+          "https://cdn.discordapp.com/attachments/882111142355435540/944838015153475594/bbd.ico",
         authors: "nzbasic",
       },
     },
