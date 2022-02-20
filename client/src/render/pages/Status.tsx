@@ -7,11 +7,12 @@ export const Status = () => {
   const [status, setStatus] = useState(false)
   const [metrics, setMetrics] = useState<Metrics>(null)
   const currentDownloads = metrics?.Download?.CurrentDownloads??[]
+
   const downloadsScale = new ColorScales(0, 50, ['#00ff00', '#ff0000'])
   const bandwidthScale = new ColorScales(0, 500, ['#00ff00', '#ff0000'])
 
   const getActiveDownloads = () => {
-    return currentDownloads.filter(i => !i.Ended).length
+    return currentDownloads.filter(i => i.Ended).length
   }
 
   const collectMetrics = () => {
@@ -42,18 +43,18 @@ export const Status = () => {
               style={{ backgroundColor: downloadsScale.getColor(getActiveDownloads()).toHexString() }}
               className="bg-green-500 rounded shadow w-full h-24"
             >
-              <div className="text-monokai-dark flex justify-between items-center w-full h-full px-8">
+              <div className="text-black flex justify-between items-center w-full h-full px-8">
                 <span className="font-bold text-5xl w-full text-center">{getActiveDownloads()}</span>
                 <span className="text-xl w-full font-medium text-center">Active Downloads</span>
               </div>
             </div>
             <div
-              style={{ backgroundColor: bandwidthScale.getColor(metrics.Download.CurrentBandwidthUsage ?? 0).toHexString() }}
+              style={{ backgroundColor: bandwidthScale.getColor((metrics.Download.CurrentBandwidthUsage??0)/1e6).toHexString() }}
               className="bg-red-500 rounded shadow w-full h-24"
             >
-              <div className="text-monokai-dark flex justify-between items-center w-full h-full px-8">
+              <div className="text-black flex justify-between items-center w-full h-full px-8">
                 <div className="flex flex-col items-center w-full">
-                  <span className="font-bold text-3xl">{metrics.Download.CurrentBandwidthUsage.toFixed(0)}Mbps</span>
+                  <span className="font-bold text-3xl">{(metrics.Download.CurrentBandwidthUsage/1e6).toFixed(0)}Mbps</span>
                   <span className="text-xl">(500Mpbs Max)</span>
                 </div>
                 <span className="text-xl w-full font-medium text-center">Bandwidth Usage</span>
@@ -80,8 +81,8 @@ export const Status = () => {
                 <div className="flex flex-col">
                   <span>{metrics.Download.DailyStats.Maps} Beatmap Sets Downloaded</span>
                   <span>{bytesToFileSize(metrics.Download.DailyStats.Size)} Downloaded</span>
-                  <span>{metrics.Download.DailyStats.Speed}Mbps Average Download Speed</span>
-                  <span>{currentDownloads.filter(i => i.Ended).length} Completed Downloads</span>
+                  <span>{(metrics.Download.DailyStats.Speed/1e6).toFixed(0)} Mbps Average Download Speed</span>
+                  <span>{currentDownloads.filter(i => !i.Ended).length} Completed Downloads</span>
                 </div>
               </div>
             </div>
@@ -90,7 +91,7 @@ export const Status = () => {
           <div className="bg-white dark:bg-monokai-dark rounded shadow p-6 flex flex-col dark:text-white w-full">
             <div className="flex flex-col gap-2">
               <span className="font-bold text-lg">Current Downloads</span>
-              {currentDownloads.filter(i => !i.Ended).length ?
+              {currentDownloads.filter(i => i.Ended).length ?
               (
                 <table className="border border-black rounded mt-2">
                   <thead className="border-b border-black">
@@ -102,12 +103,12 @@ export const Status = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {currentDownloads.filter(i => !i.Ended).map(i => (
+                    {currentDownloads.filter(i => i.Ended).map(i => (
                       <tr key={i.Id} className="even:bg-gray-200 dark:even:bg-gray-800 text-left">
                         <td className="border-black border pl-1">{bytesToFileSize(i.TotalSize)}</td>
                         <td className="border-black border pl-1">{bytesToFileSize(i.RemainingSize)}</td>
-                        <td className="border-black border pl-1">{i.AverageSpeed}Mbps</td>
-                        <td className="border-black border pl-1">{i.EstTimeLeft}s</td>
+                        <td className="border-black border pl-1">{(i.AverageSpeed/1e6).toFixed(0)}Mbps</td>
+                        <td className="border-black border pl-1">{(i.EstTimeLeft).toFixed(0)}s</td>
                       </tr>
                     ))}
                   </tbody>
