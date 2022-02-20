@@ -8,6 +8,7 @@ import { download } from "../download";
 import { loadBeatmaps } from "../beatmaps";
 import { window } from '../../main'
 import fs from 'fs'
+import { Metrics } from "../../models/metrics";
 
 export const serverUri = "https://api.nzbasic.com";
 
@@ -16,6 +17,15 @@ ipcMain.handle("query", async (event, node: Node, limit: number) => {
     await axios.post<FilterResponse>(`${serverUri}/filter`, { node, limit })
   ).data;
 });
+
+ipcMain.handle("get-metrics", async () => {
+  const res = await axios.get<Metrics>(`${serverUri}/metrics`);
+  if (res.status !== 200) {
+    return [false, null]
+  } else {
+    return [true, res.data]
+  }
+})
 
 ipcMain.handle("get-beatmap-details", async (event, node: Node) => {
   return (

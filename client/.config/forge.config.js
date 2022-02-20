@@ -32,6 +32,7 @@ module.exports = {
         // https://js.electronforge.io/maker/squirrel/interfaces/makersquirrelconfig
         setupExe: "Windows Setup.exe",
         setupIcon: path.join(packageAssetsPath, "bbd.ico"),
+        icon: path.join(packageAssetsPath, "bbd.ico"),
         authors: "nzbasic",
       },
     },

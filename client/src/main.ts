@@ -39,7 +39,7 @@ const createWindow = (): void => {
     minWidth: 1280,
     title: "Batch Beatmap Downloader",
     titleBarStyle: "hidden",
-    icon: "./render/assets/bbd.svg",
+    icon: "./render/assets/bbd.ico",
     backgroundColor: "#fff",
     webPreferences: {
       contextIsolation: true,
@@ -49,7 +49,6 @@ const createWindow = (): void => {
   });
 
   window = mainWindow;
-
   mainWindow.setMenu(null);
   mainWindow.on("close", () => {
     mainWindow.destroy();

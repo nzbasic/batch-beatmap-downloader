@@ -6,8 +6,13 @@ import { window } from "../main";
 import { serverUri } from "./ipc/main";
 import { addCollection } from "./collection/collection";
 import { getSongsFolder } from "./settings";
+import axios from 'axios'
+import { v4 as uuidv4 } from 'uuid'
 
 export const download = async (ids: number[], size: number, force: boolean, hashes: string[], collectionName: string) => {
+  const downloadId = uuidv4()
+  await axios.post(`${serverUri}/metrics/downloadStart`, { downloadId, ids, size, force })
+
   if (collectionName) {
     await addCollection(hashes, collectionName)
   }
@@ -49,7 +54,11 @@ export const download = async (ids: number[], size: number, force: boolean, hash
       });
 
       try {
+        const before = new Date()
         await download.download();
+        const after = new Date()
+        const difference = after.getTime() - before.getTime()
+        await axios.post(`${serverUri}/metrics/beatmapDownload`, { downloadId, id, size: currentSize, time: difference })
         status.completed.push(id);
         status.totalProgress += currentSize;
       } catch (err) {
@@ -62,6 +71,8 @@ export const download = async (ids: number[], size: number, force: boolean, hash
     window.webContents.send("download-status", status);
     setDownloadStatus(status);
   }
+
+  await axios.post(`${serverUri}/metrics/downloadEnd`, { downloadId })
 };
 
 const setDownloadStatus = async (status: DownloadStatus) => {

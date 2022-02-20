@@ -8,6 +8,7 @@ import { createStoreBindings } from "electron-persist-secure/lib/bindings";
 import { SettingsObject } from "../global";
 import { BeatmapDetails, DownloadStatus, FilterResponse } from "../models/api";
 import { Node } from "../models/filter";
+import { Metrics } from "../models/metrics";
 
 const handleGenericError = (e: unknown) => {
   if (typeof e === "string") {
@@ -29,6 +30,10 @@ export const electronBridge = {
     } catch (e) {
       return handleGenericError(e);
     }
+  },
+
+  getMetrics: async (): Promise<[boolean, Metrics]> => {
+    return (await ipcRenderer.invoke("get-metrics") as [boolean, Metrics])
   },
 
   getBeatmapDetails: async (ids: number[]) => {
