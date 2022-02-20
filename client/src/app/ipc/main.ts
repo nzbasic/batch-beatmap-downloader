@@ -19,11 +19,15 @@ ipcMain.handle("query", async (event, node: Node, limit: number) => {
 });
 
 ipcMain.handle("get-metrics", async () => {
-  const res = await axios.get<Metrics>(`${serverUri}/metrics`);
-  if (res.status !== 200) {
+  try {
+    const res = await axios.get<Metrics>(`${serverUri}/metrics`);
+    if (res.status !== 200) {
+      return [false, null]
+    } else {
+      return [true, res.data]
+    }
+  } catch(err) {
     return [false, null]
-  } else {
-    return [true, res.data]
   }
 })
 
