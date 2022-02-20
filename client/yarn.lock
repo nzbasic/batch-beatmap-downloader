@@ -2769,6 +2769,11 @@ color-name@^1.1.4, color-name@~1.1.4:
   resolved "https://registry.yarnpkg.com/color-name/-/color-name-1.1.4.tgz#c2a09a87acbde69543de6f63fa3995c826c536a2"
   integrity sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA==
 
+color-scales@^3.0.2:
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/color-scales/-/color-scales-3.0.2.tgz#fb0c398b5a9c08e21984695495828cfb2ec72fcc"
+  integrity sha512-AwX0kUE1Ps6Gv0b8if20DAfgchAs5HRmr+ulBbP4anqcBqUevaj8S9OWVFlYynsfuvB9GF1oSpCWOVNtox7aRA==
+
 colorette@^1.2.2:
   version "1.2.2"
   resolved "https://registry.yarnpkg.com/colorette/-/colorette-1.2.2.tgz#cbcc79d5e99caea2dbf10eb3a26fd8b3e6acfa94"

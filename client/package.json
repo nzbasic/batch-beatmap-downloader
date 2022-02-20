@@ -120,6 +120,7 @@
     "@types/react-datepicker": "^4.3.4",
     "@types/uuid": "^8.3.4",
     "axios": "^0.26.0",
+    "color-scales": "^3.0.2",
     "colors": "^1.4.0",
     "custom-electron-titlebar": "^4.0.1",
     "electron-is-dev": "^2.0.0",

@@ -1,5 +1,6 @@
 import axios from "axios"
 import { useEffect, useState } from "react"
+import { Link } from "react-router-dom"
 import { Metrics } from "../../models/metrics"
 
 export const BasicStatus = () => {
@@ -23,7 +24,7 @@ export const BasicStatus = () => {
       <div className="flex flex-col gap-2">
         <span className="font-bold text-lg">Basic Status</span>
         <div className="flex flex-col">
-          <span>Server connection: {status ? "Online" : "Offline"}</span>
+          <span className={`${status ? 'text-green-500' : 'text-red-500'}`}>Server connection: {status ? "Online" : "Offline"}</span>
           {metrics && (
             <div className="flex flex-col">
               <span>Active downloads: {(metrics.Download?.CurrentDownloads??[]).filter(i => !i.Ended).length}</span>
@@ -34,6 +35,7 @@ export const BasicStatus = () => {
             </div>
           )}
         </div>
+        <Link to="/status" className="text-blue-500 font-medium">See more stats</Link>
       </div>
     </div>
   )

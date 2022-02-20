@@ -1,3 +1,5 @@
+import { toast } from "react-toastify";
+
 interface PropTypes {
   path: string
   update: React.Dispatch<React.SetStateAction<string>>
@@ -8,6 +10,7 @@ export const Browse = ({ path, update }: PropTypes) => {
     const res = await window.electron.browse();
     if (!res.canceled) {
       const path = res.filePaths[0]
+      toast.success(`Path updated!`)
       update(path);
     }
   };
