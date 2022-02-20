@@ -63,6 +63,7 @@ func QueryNode(node Node, limit *int) ([]int, []int, map[int]int, []string, erro
 	var values = []string{}
 	query := "SELECT id, setId, size, hash FROM beatmaps WHERE"
 	query += RecursiveQueryBuilder(node, &values)
+
 	if limit != nil {
 		query += " LIMIT " + fmt.Sprintf("%d", *limit)
 	}
