@@ -18,6 +18,10 @@ func Query(query string) (*sql.Rows, error) {
 	return database.Query(query)
 }
 
+func QueryRow(query string) *sql.Row {
+	return database.QueryRow(query)
+}
+
 var farmSets []string
 
 func refreshFarm() {

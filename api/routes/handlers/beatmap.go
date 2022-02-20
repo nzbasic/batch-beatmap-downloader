@@ -41,7 +41,7 @@ func BeatmapDownloadHandler(w http.ResponseWriter, r *http.Request) {
 
 func BeatmapDetailsHandler(w http.ResponseWriter, r *http.Request) {
 	var ids []int
-	genericJSONDecode(ids, r.Body)
+	ids = genericJSONDecode(ids, r.Body)
 
 	beatmaps := []osu.BeatmapData{}
 	for _, id := range ids {

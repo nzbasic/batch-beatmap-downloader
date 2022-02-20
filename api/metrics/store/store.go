@@ -1,6 +1,7 @@
-package metrics
+package store
 
 import (
+	"log"
 	"os"
 
 	"github.com/asdine/storm/v3"
@@ -11,19 +12,16 @@ var db *storm.DB
 
 func init() {
 	godotenv.Load()
-	db, err := storm.Open(os.Getenv("METRICS_LOCATION"))
-	if err != nil {
-		panic(err)
-	}
-
-	AddMetricData(DownloadStart{})
-
-	defer db.Close()
+	db, _ = storm.Open(os.Getenv("METRICS_LOCATION"))
 }
 
 func AddMetricData[T MetricsTypes](metric T) {
 	err := db.Save(&metric)
 	if err != nil {
-		panic(err)
+		log.Println(err.Error())
 	}
+}
+
+func GetDb() *storm.DB {
+	return db
 }

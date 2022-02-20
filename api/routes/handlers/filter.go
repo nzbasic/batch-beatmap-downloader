@@ -33,7 +33,7 @@ func removeDuplicateValues(intSlice []int) []int {
 
 func FilterHandler(w http.ResponseWriter, r *http.Request) {
 	var request FilterRequest
-	genericJSONDecode(request, r.Body)
+	request = genericJSONDecode(request, r.Body)
 
 	ids, setIds, size, hashes, err := filter.QueryNode(request.Node, request.Limit)
 	if err != nil {

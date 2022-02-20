@@ -1,7 +1,10 @@
-package metrics
+package store
+
+import "time"
 
 type DownloadStart struct {
 	DownloadId string `storm:"id"`
+	CreatedAt  time.Time
 	Ids        []int
 	Size       int
 	Force      bool
@@ -12,7 +15,9 @@ type DownloadEnd struct {
 }
 
 type BeatmapDownload struct {
-	DownloadId string `storm:"id"`
+	Pk         int `storm:"id,increment"`
+	CreatedAt  time.Time
+	DownloadId string
 	Id         int
 	Size       int
 	Time       int

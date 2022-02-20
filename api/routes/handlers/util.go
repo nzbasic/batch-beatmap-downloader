@@ -7,13 +7,15 @@ import (
 	"net/http"
 )
 
-func genericJSONDecode[T any](req T, r io.ReadCloser) {
+func genericJSONDecode[T any](req T, r io.ReadCloser) T {
 	decoder := json.NewDecoder(r)
 	err := decoder.Decode(&req)
 
 	if err != nil {
 		log.Println(err)
 	}
+
+	return req
 }
 
 func genericJSONSend[T any](w http.ResponseWriter, req T) {
