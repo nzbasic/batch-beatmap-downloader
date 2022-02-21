@@ -48,7 +48,7 @@ export const inputOptions: InputOption[] = [
   { value: "FavouriteCount", label: "Favourite Count", type: RuleType.NUMBER },
   { value: "PassCount", label: "Pass Count", type: RuleType.NUMBER },
   { value: "PlayCount", label: "Play Count", type: RuleType.NUMBER },
-  { value: "LastUpdated", label: "Last Updated Date", type: RuleType.DATE },
+  { value: "LastUpdate", label: "Last Update Date", type: RuleType.DATE },
   { value: "SetId", label: "Beatmap Set ID", type: RuleType.NUMBER },
   { value: "Id", label: "Beatmap ID", type: RuleType.NUMBER },
 ];
