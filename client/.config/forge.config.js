@@ -9,6 +9,7 @@ console.log(packageAssetsPath);
 module.exports = {
   packagerConfig: {
     asar: true,
+    icon: path.join(packageAssetsPath, "bbd.ico"),
   },
   publishers: [
     {
@@ -30,7 +31,7 @@ module.exports = {
       name: "@electron-forge/maker-squirrel",
       config: {
         // https://js.electronforge.io/maker/squirrel/interfaces/makersquirrelconfig
-        setupExe: "Windows Setup.exe",
+        setupExe: "BBDWindowsSetup.exe",
         setupIcon: path.join(packageAssetsPath, "bbd.ico"),
         icon: path.join(packageAssetsPath, "bbd.ico"),
         iconUrl:
