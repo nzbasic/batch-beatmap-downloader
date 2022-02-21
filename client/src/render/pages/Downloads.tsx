@@ -3,6 +3,8 @@ import LinearProgress from "@mui/material/LinearProgress";
 import { bytesToFileSize } from "../util/fileSize";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import { CircularProgress } from "@mui/material";
 
 interface PropTypes {
   downloadStatus: DownloadStatus;
@@ -43,13 +45,21 @@ export const Downloads = ({ downloadStatus }: PropTypes) => {
   const filesRemaining = filesQueue - filesDownloaded - filesSkipped - filesFailed
 
   const pause = () => {
-    window.electron.pauseDownload();
+    setLoading(true)
     setPaused(true)
+    window.electron.pauseDownload().then(() => {
+      toast.success("Download paused")
+      setLoading(false)
+    })
   }
 
   const resume = () => {
-    window.electron.resumeDownload();
+    setLoading(true)
     setPaused(false)
+    window.electron.resumeDownload().then(() => {
+      toast.success("Download resumed")
+      setLoading(false)
+    });
   }
 
   const calculateTotalProgress = () => {
@@ -98,14 +108,16 @@ export const Downloads = ({ downloadStatus }: PropTypes) => {
               {parseInt(downloadStatus.currentProgress)}%
             </span>
           </div>
-          {!isLoading && (filesRemaining !== 0) && (
-            <div className="flex gap-2 mt-2">
-              {paused && (filesRemaining !== 0) ? (
-                <button onClick={() => resume()} className="text-white px-2 py-1 bg-green-500 hover:bg-green-600 rounded">Resume</button>
-              ) : (
-                <button onClick={() => pause()} className="text-white px-2 py-1 bg-red-500 hover:bg-red-600 rounded">Pause</button>
-              )}
-          </div>
+          {(filesRemaining !== 0) && (
+            isLoading ? (<CircularProgress />) : (
+              <div className="flex gap-2 mt-2">
+                {paused && (filesRemaining !== 0) ? (
+                  <button onClick={() => resume()} className="text-white px-2 py-1 bg-green-500 hover:bg-green-600 rounded">Resume</button>
+                ) : (
+                  <button onClick={() => pause()} className="text-white px-2 py-1 bg-red-500 hover:bg-red-600 rounded">Pause</button>
+                )}
+              </div>
+            )
           )}
         </div>
       </div>

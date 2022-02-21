@@ -42,7 +42,7 @@ export const download = async (ids: number[], size: number, force: boolean, hash
 
   const path = await getSongsFolder()
   const beatmapIds = await loadBeatmaps();
-  const updateLimiter = 10
+  const updateLimiter = 1000000
   const newIds = ids.filter(id => {
     return !status.completed.includes(id) && !status.skipped.includes(id) && !status.failed.includes(id)
   })

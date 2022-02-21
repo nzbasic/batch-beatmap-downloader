@@ -101,8 +101,9 @@ ipcMain.handle("is-download-paused", () => {
   return isPaused;
 })
 
-ipcMain.on("pause-download", () => {
+ipcMain.handle("pause-download", () => {
   isPaused = true
+  return
 })
 
 ipcMain.handle("resume-download", async () => {
