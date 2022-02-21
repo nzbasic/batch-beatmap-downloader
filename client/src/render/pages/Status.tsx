@@ -12,11 +12,11 @@ export const Status = () => {
   const bandwidthScale = new ColorScales(0, 500, ['#00ff00', '#ff0000'])
 
   const getActiveDownloads = () => {
-    return currentDownloads.filter(i => !i.Ended).length
+    return currentDownloads.filter(i => !i.Ended).filter(i => i.EstTimeLeft > 0)
   }
 
   const getCurrentBandwidth = () => {
-    const active = currentDownloads.filter(i => !i.Ended)
+    const active = getActiveDownloads()
     return active.reduce<number>((acc, cur) => acc + cur.AverageSpeed, 0)
   }
 
@@ -45,11 +45,11 @@ export const Status = () => {
         <div className="flex flex-col gap-4">
           <div className="flex gap-4">
             <div
-              style={{ backgroundColor: downloadsScale.getColor(getActiveDownloads()).toHexString() }}
+              style={{ backgroundColor: downloadsScale.getColor(getActiveDownloads().length).toHexString() }}
               className="bg-green-500 rounded shadow w-full h-24"
             >
               <div className="text-black flex justify-between items-center w-full h-full px-8">
-                <span className="font-bold text-5xl w-full text-center">{getActiveDownloads()}</span>
+                <span className="font-bold text-5xl w-full text-center">{getActiveDownloads().length}</span>
                 <span className="text-xl w-full font-medium text-center">Active Downloads</span>
               </div>
             </div>
@@ -96,7 +96,7 @@ export const Status = () => {
           <div className="bg-white dark:bg-monokai-dark rounded shadow p-6 flex flex-col dark:text-white w-full">
             <div className="flex flex-col gap-2">
               <span className="font-bold text-lg">Current Downloads</span>
-              {getActiveDownloads() ?
+              {getActiveDownloads().length ?
               (
                 <table className="border border-black rounded mt-2">
                   <thead className="border-b border-black">
@@ -108,7 +108,7 @@ export const Status = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {currentDownloads.filter(i => !i.Ended).map(i => (
+                    {getActiveDownloads().map(i => (
                       <tr key={i.Id} className="even:bg-gray-200 dark:even:bg-gray-800 text-left">
                         <td className="border-black border pl-1">{bytesToFileSize(i.TotalSize)}</td>
                         <td className="border-black border pl-1">{bytesToFileSize(i.RemainingSize)}</td>
