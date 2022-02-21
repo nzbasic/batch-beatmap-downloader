@@ -15,6 +15,11 @@ export const Status = () => {
     return currentDownloads.filter(i => !i.Ended).length
   }
 
+  const getCurrentBandwidth = () => {
+    const active = currentDownloads.filter(i => !i.Ended)
+    return active.reduce<number>((acc, cur) => acc + cur.AverageSpeed, 0)
+  }
+
   const collectMetrics = () => {
     window.electron.getMetrics().then(([online, data]) => {
       setStatus(online)
@@ -49,13 +54,13 @@ export const Status = () => {
               </div>
             </div>
             <div
-              style={{ backgroundColor: bandwidthScale.getColor((metrics.Download.CurrentBandwidthUsage??0)/1e6).toHexString() }}
+              style={{ backgroundColor: bandwidthScale.getColor(getCurrentBandwidth()/1e6).toHexString() }}
               className="bg-red-500 rounded shadow w-full h-24"
             >
               <div className="text-black flex justify-between items-center w-full h-full px-8">
                 <div className="flex flex-col items-center w-full">
-                  <span className="font-bold text-3xl">{(metrics.Download.CurrentBandwidthUsage/1e6).toFixed(0)}Mbps</span>
-                  <span className="text-xl">(500Mpbs Max)</span>
+                  <span className="font-bold text-3xl">{(getCurrentBandwidth()/1e6).toFixed(0)}Mbps</span>
+                  <span className="">{(metrics.Download.CurrentBandwidthUsage/1e6).toFixed(0)}Mbps Avg 1min</span>
                 </div>
                 <span className="text-xl w-full font-medium text-center">Bandwidth Usage</span>
               </div>
