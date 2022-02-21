@@ -1,4 +1,3 @@
-import axios from "axios"
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import { Metrics } from "../../models/metrics"
@@ -16,7 +15,8 @@ export const BasicStatus = () => {
 
   useEffect(() => {
     collectMetrics()
-    setInterval(() => collectMetrics(), 5000)
+    const interval = setInterval(() => collectMetrics(), 5000)
+    return () => clearInterval(interval)
   }, [])
 
   return (

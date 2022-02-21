@@ -29,7 +29,8 @@ export const Status = () => {
 
   useEffect(() => {
     collectMetrics()
-    setInterval(() => collectMetrics(), 5000)
+    const interval = setInterval(() => collectMetrics(), 5000)
+    return () => clearInterval(interval)
   }, [])
 
   return (
