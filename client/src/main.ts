@@ -2,7 +2,8 @@ import { app, BrowserWindow, nativeTheme } from "electron";
 import isDev from "electron-is-dev";
 import Store from "electron-persist-secure/lib/store";
 import updateElectronApp from 'update-electron-app'
-updateElectronApp()
+import log from 'electron-log'
+updateElectronApp({ logger: log })
 
 // Import all IPCs to make sure they register their respective listeners
 import "./app/ipc/main";
