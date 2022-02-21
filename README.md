@@ -8,7 +8,7 @@
 </h1>
 
 <div align="center">
-  <a href="https://github.com/nzbasic/batch-beatmap-downloader/releases/latest">Latest Release</a>
+  <h3><a href="https://github.com/nzbasic/batch-beatmap-downloader/releases/latest">Download Latest Release</a><h3>
 </div>
 
 <div align="center">
