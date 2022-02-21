@@ -19,6 +19,10 @@ const App = () => {
       setVersion(version);
     })
 
+    window.electron.getDownloadStatus().then(res => {
+      setDownloadStatus(res)
+    })
+
     window.electron.getSettings().then((res) => {
       const mode = res.darkMode as boolean;
       document.documentElement.classList.toggle("dark", mode);

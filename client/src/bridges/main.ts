@@ -101,6 +101,22 @@ export const electronBridge = {
     return await ipcRenderer.invoke("download", ids, size, force, hashes, collectionName) as void;
   },
 
+  pauseDownload: (): void => {
+    ipcRenderer.send("pause-download");
+  },
+
+  resumeDownload: async (): Promise<void> => {
+    return (await ipcRenderer.invoke("resume-download") as void);
+  },
+
+  isDownloadPaused: async (): Promise<boolean> => {
+    return await ipcRenderer.invoke("is-download-paused") as boolean;
+  },
+
+  getDownloadStatus: async (): Promise<DownloadStatus> => {
+    return (await ipcRenderer.invoke("get-download-status")) as DownloadStatus;
+  },
+
   listenForDownloads: (callback: (status: DownloadStatus) => void) => {
     ipcRenderer.on("download-status", (event, status: DownloadStatus) => {
       callback(status);

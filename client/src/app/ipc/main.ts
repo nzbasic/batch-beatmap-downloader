@@ -4,7 +4,7 @@ import axios from "axios";
 import { BeatmapDetails, FilterResponse } from "../../models/api";
 import settings from "electron-settings";
 import { SettingsObject } from "../../global";
-import { download } from "../download";
+import { download, getDownloadStatus } from "../download";
 import { loadBeatmaps } from "../beatmaps";
 import { window } from '../../main'
 import fs from 'fs'
@@ -29,6 +29,10 @@ ipcMain.handle("get-metrics", async () => {
   } catch(err) {
     return [false, null]
   }
+})
+
+ipcMain.handle("get-download-status", async () => {
+  return await getDownloadStatus()
 })
 
 ipcMain.handle("get-beatmap-details", async (event, node: Node) => {
@@ -84,12 +88,34 @@ ipcMain.on("quit", () => {
   app.quit();
 });
 
+export let isPaused = true
 ipcMain.handle(
   "download",
   async (event, ids: number[], size: number, force: boolean, hashes: string[], collectionName: string) => {
+    isPaused = false
     return await download(ids, size, force, hashes, collectionName);
   }
 );
+
+ipcMain.handle("is-download-paused", () => {
+  return isPaused;
+})
+
+ipcMain.on("pause-download", () => {
+  isPaused = true
+})
+
+ipcMain.handle("resume-download", async () => {
+  const status = await getDownloadStatus()
+  const ids = status.all.filter(id => !status.completed.includes(id))
+  const size = status.totalSize - status.totalProgress
+  const force = status.force
+  const hashes = []
+  const collectionName = ""
+  isPaused = false
+  download(ids, size, force, hashes, collectionName, status)
+  return
+})
 
 ipcMain.handle("load-beatmaps", async () => {
   return await loadBeatmaps();
