@@ -94,9 +94,9 @@ export const Status = () => {
                 <span className="font-bold text-lg">Daily Stats</span>
                 <div className="flex flex-col">
                   <span>{metrics.Download.DailyStats.Maps} Beatmap Sets Downloaded</span>
-                  <span>{bytesToFileSize(metrics.Download.DailyStats.Size)}{" "}Downloaded</span>
-                  <span>{(metrics.Download.DailyStats.Speed / 1e6).toFixed(0)} MbpsAverage Download Speed</span>
-                  <span>{currentDownloads.filter((i) => i.Ended).length} CompletedDownloads</span>
+                  <span>{bytesToFileSize(metrics.Download.DailyStats.Size)} Downloaded</span>
+                  <span>{(metrics.Download.DailyStats.Speed / 1e6).toFixed(0)}Mbps Average Download Speed</span>
+                  <span>{currentDownloads.filter((i) => i.Ended).length} Completed Downloads</span>
                 </div>
               </div>
             </div>

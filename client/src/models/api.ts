@@ -22,6 +22,8 @@ export interface DownloadStatus {
   totalSize: number;
   totalProgress: number;
   force: boolean;
+  lastDownloadTime?: number
+  lastDownloadSize?: number
 }
 
 export interface Group {

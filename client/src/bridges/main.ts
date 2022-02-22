@@ -127,6 +127,12 @@ export const electronBridge = {
     ipcRenderer.on("error", (event, error: string) => {
       callback(error);
     });
+  },
+
+  listenForServerDown: (callback: (down: boolean) => void) => {
+    ipcRenderer.on("server-down", (event, down: boolean) => {
+      callback(down);
+    });
   }
 };
 
