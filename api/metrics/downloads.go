@@ -1,7 +1,10 @@
 package metrics
 
 import (
+	"log"
 	"time"
+
+	"github.com/asdine/storm/v3"
 
 	"github.com/nzbasic/batch-beatmap-downloader/metrics/store"
 )
@@ -51,7 +54,15 @@ func GetDownloadMetrics() DownloadMetrics {
 		id := download.DownloadId
 		var end store.DownloadEnd
 		err := db.One("DownloadId", id, &end)
-		downloadHasEnded := (err != nil)
+		// if there is an error, it will be a no rows found error. therefore if err, then the download is active
+		downloadHasEnded := true
+		if err != nil {
+			if err == storm.ErrNotFound {
+				downloadHasEnded = false
+			} else {
+				log.Println(err)
+			}
+		}
 
 		// if download has ended and its older than 24h then not relevant
 		if downloadHasEnded && download.CreatedAt.Before(timeYesterday) {
@@ -64,7 +75,12 @@ func GetDownloadMetrics() DownloadMetrics {
 
 		downloadedSize := 0
 		downloadedTime := 0
+		lastDownloadTime := timeYesterday
 		for _, downloaded := range allDownloaded {
+			if downloaded.CreatedAt.After(lastDownloadTime) {
+				lastDownloadTime = downloaded.CreatedAt
+			}
+
 			downloadedSize += downloaded.Size
 			downloadedTime += downloaded.Time
 			totalCount++
@@ -74,6 +90,11 @@ func GetDownloadMetrics() DownloadMetrics {
 				minuteTime += downloaded.Time
 			}
 		}
+
+		if lastDownloadTime.Before(timeMinuteAgo) {
+			downloadHasEnded = true
+		}
+
 		totalSize += downloadedSize
 		totalTime += downloadedTime
 

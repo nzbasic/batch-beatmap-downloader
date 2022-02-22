@@ -33,14 +33,15 @@ func removeDuplicateValues(intSlice []int) []int {
 
 func FilterHandler(w http.ResponseWriter, r *http.Request) {
 	var request FilterRequest
-	request = genericJSONDecode(request, r.Body)
+	var err error
+	request, err = genericJSONDecode(request, r.Body)
+	if err != nil {
+		textErrorReponse(w, "Invalid filter request, please make sure client is up to date")
+	}
 
 	ids, setIds, size, hashes, err := filter.QueryNode(request.Node, request.Limit)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Header().Set("Content-Type", "application/text")
-		w.Write([]byte(err.Error()))
-		return
+		textErrorReponse(w, err.Error())
 	}
 
 	response := FilterResponse{
