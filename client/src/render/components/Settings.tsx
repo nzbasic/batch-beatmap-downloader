@@ -17,7 +17,6 @@ export const Settings = ({ onValidPath, onBeatmapsLoaded }: PropTypes) => {
 
   const loadBeatmaps = () => {
     window.electron.loadBeatmaps().then(ids => {
-      toast.success(`Found ${ids.length} beatmap sets`)
       setBeatmaps(ids);
     })
   }

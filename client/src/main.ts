@@ -2,7 +2,8 @@ import { app, BrowserWindow, nativeTheme } from "electron";
 import isDev from "electron-is-dev";
 import Store from "electron-persist-secure/lib/store";
 import updateElectronApp from 'update-electron-app'
-updateElectronApp()
+import log from 'electron-log'
+updateElectronApp({ logger: log })
 
 // Import all IPCs to make sure they register their respective listeners
 import "./app/ipc/main";
@@ -39,7 +40,7 @@ const createWindow = (): void => {
     minWidth: 1280,
     title: "Batch Beatmap Downloader",
     titleBarStyle: "hidden",
-    icon: "./render/assets/bbd.svg",
+    icon: "./render/assets/bbd.ico",
     backgroundColor: "#fff",
     webPreferences: {
       contextIsolation: true,
@@ -49,7 +50,6 @@ const createWindow = (): void => {
   });
 
   window = mainWindow;
-
   mainWindow.setMenu(null);
   mainWindow.on("close", () => {
     mainWindow.destroy();

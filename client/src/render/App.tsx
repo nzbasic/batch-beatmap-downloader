@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { DownloadStatus } from "../models/api";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { Status } from "./pages/Status";
 
 const App = () => {
   const [downloadStatus, setDownloadStatus] = useState<DownloadStatus>(null);
@@ -16,6 +17,10 @@ const App = () => {
   useEffect(() => {
     window.electron.getVersion().then(version => {
       setVersion(version);
+    })
+
+    window.electron.getDownloadStatus().then(res => {
+      setDownloadStatus(res)
     })
 
     window.electron.getSettings().then((res) => {
@@ -38,9 +43,10 @@ const App = () => {
               path="/downloads"
               element={<Downloads downloadStatus={downloadStatus} />}
             />
+            <Route path="/status" element={<Status />} />
           </Routes>
         </div>
-        <ToastContainer autoClose={1000} />
+        <ToastContainer autoClose={2500} />
       </div>
     </HashRouter>
   );

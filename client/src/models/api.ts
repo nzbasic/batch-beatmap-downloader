@@ -1,3 +1,5 @@
+export const serverUri = "api.nzbasic.com"
+
 export interface FilterRequest {
   groups: Group[];
   rules: Rule[];

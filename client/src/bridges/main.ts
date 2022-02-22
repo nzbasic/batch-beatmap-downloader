@@ -8,6 +8,7 @@ import { createStoreBindings } from "electron-persist-secure/lib/bindings";
 import { SettingsObject } from "../global";
 import { BeatmapDetails, DownloadStatus, FilterResponse } from "../models/api";
 import { Node } from "../models/filter";
+import { Metrics } from "../models/metrics";
 
 const handleGenericError = (e: unknown) => {
   if (typeof e === "string") {
@@ -29,6 +30,10 @@ export const electronBridge = {
     } catch (e) {
       return handleGenericError(e);
     }
+  },
+
+  getMetrics: async (): Promise<[boolean, Metrics]> => {
+    return (await ipcRenderer.invoke("get-metrics") as [boolean, Metrics])
   },
 
   getBeatmapDetails: async (ids: number[]) => {
@@ -58,8 +63,8 @@ export const electronBridge = {
     return (await ipcRenderer.invoke("get-settings")) as SettingsObject;
   },
 
-  setSettings: async (settings: SettingsObject): Promise<void> => {
-    return (await ipcRenderer.invoke("set-settings", settings)) as void;
+  setSettings: async (settings: SettingsObject) => {
+    await ipcRenderer.invoke("set-settings", settings)
   },
 
   browse: async (): Promise<Electron.OpenDialogReturnValue> => {
@@ -68,16 +73,16 @@ export const electronBridge = {
     )) as Electron.OpenDialogReturnValue;
   },
 
-  checkValidPath: async (): Promise<void> => {
-    return (await ipcRenderer.invoke("check-valid-path")) as void;
+  checkValidPath: async () => {
+    await ipcRenderer.invoke("check-valid-path")
   },
 
   loadBeatmaps: async (): Promise<number[]> => {
     return (await ipcRenderer.invoke("load-beatmaps")) as number[];
   },
 
-  setTheme: async (theme: boolean): Promise<void> => {
-    return (await ipcRenderer.invoke("set-theme", theme)) as void;
+  setTheme: async (theme: boolean) => {
+    await ipcRenderer.invoke("set-theme", theme)
   },
 
   setPath: async (path: string): Promise<boolean> => {
@@ -85,7 +90,7 @@ export const electronBridge = {
   },
 
   setAltPath: async (path: string) => {
-    return (await ipcRenderer.invoke("set-alt-path", path)) as void;
+    await ipcRenderer.invoke("set-alt-path", path)
   },
 
   quit: (): void => {
@@ -93,7 +98,23 @@ export const electronBridge = {
   },
 
   download: async (ids: number[], size: number, force: boolean, hashes: string[], collectionName: string) => {
-    return await ipcRenderer.invoke("download", ids, size, force, hashes, collectionName) as void;
+    await ipcRenderer.invoke("download", ids, size, force, hashes, collectionName)
+  },
+
+  pauseDownload: async () => {
+    await ipcRenderer.invoke("pause-download");
+  },
+
+  resumeDownload: async () => {
+    await ipcRenderer.invoke("resume-download")
+  },
+
+  isDownloadPaused: async (): Promise<boolean> => {
+    return await ipcRenderer.invoke("is-download-paused") as boolean;
+  },
+
+  getDownloadStatus: async (): Promise<DownloadStatus> => {
+    return (await ipcRenderer.invoke("get-download-status")) as DownloadStatus;
   },
 
   listenForDownloads: (callback: (status: DownloadStatus) => void) => {

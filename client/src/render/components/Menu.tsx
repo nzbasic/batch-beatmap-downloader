@@ -4,6 +4,7 @@ import HomeIcon from "@mui/icons-material/Home";
 import DownloadIcon from "@mui/icons-material/Download";
 import SearchIcon from "@mui/icons-material/Search";
 import CloseIcon from "@mui/icons-material/Close";
+import StorageIcon from '@mui/icons-material/Storage';
 import { DownloadStatus } from "../../models/api";
 
 interface PropTypes {
@@ -15,7 +16,6 @@ export const Menu = ({ version, downloadStatus }: PropTypes) => {
   const { pathname } = useLocation();
 
   const closeApp = () => {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     window.electron.quit();
   };
 
@@ -23,6 +23,7 @@ export const Menu = ({ version, downloadStatus }: PropTypes) => {
     { link: "/", title: "Home", icon: <HomeIcon /> },
     { link: "/query", title: "Map Search", icon: <SearchIcon /> },
     { link: "/downloads", title: "Downloads", icon: <DownloadIcon /> },
+    { link: "/status", title: "Server Status", icon: <StorageIcon /> },
   ];
 
   return (
