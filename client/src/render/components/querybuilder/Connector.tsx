@@ -5,9 +5,31 @@ const types = ["AND", "OR"];
 interface PropTypes {
   details: ConnectorDetails;
   update: (connector: ConnectorDetails) => void;
+  id: string;
 }
 
-export const Connector = ({ details, update }: PropTypes) => {
+export const Connector = ({ id, details, update }: PropTypes) => {
+
+  const isNot = () => {
+    return details.not.includes(id);
+  }
+
+  const handleUpdate = () => {
+    // if NOT is toggled on, add id to not array
+    // if NOT is toggled off, remove id from the not array
+    if (isNot()) { // is on, turning off
+      update({
+        ...details,
+        not: details.not.filter((existingId) => existingId !== id),
+      });
+    } else { // is off, turning on
+      update({
+        ...details,
+        not: [...details.not, id],
+      });
+    }
+  }
+
   return (
     <div className="flex items-center py-2 text-black dark:text-white">
       <div className="">
@@ -39,12 +61,12 @@ export const Connector = ({ details, update }: PropTypes) => {
       <button
         className={`
           ${
-            details.not
+            isNot()
               ? "bg-red-500 dark:bg-red-600"
               : "hover:bg-red-500 bg-white dark:bg-monokai-light2 dark:hover:bg-red-600"
           }
           ml-2 border-gray-600 dark:border-monokai-border border px-2 py-1 rounded transition duration-100`}
-        onClick={() => update({ ...details, not: !details.not })}
+        onClick={() => handleUpdate()}
       >
         NOT
       </button>

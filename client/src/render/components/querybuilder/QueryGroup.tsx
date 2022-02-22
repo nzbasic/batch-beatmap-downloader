@@ -30,7 +30,7 @@ const defaultGroup = {
   group: {
     connector: {
       type: "AND",
-      not: false,
+      not: [],
     },
     children: [],
   },
@@ -103,7 +103,7 @@ export const QueryGroup = ({ group, id, updateParent }: PropTypes) => {
           {state.children.map((child, index) => (
             <div key={child.id}>
               {index == 0 ? null : (
-                <Connector details={state.connector} update={updateConnector} />
+                <Connector id={child.id} details={state.connector} update={updateConnector} />
               )}
               {child.group ? (
                 <div className="flex">
