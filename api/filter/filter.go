@@ -10,7 +10,7 @@ import (
 
 type ConnectorDetails struct {
 	Type string
-	Not  bool
+	Not  []string
 }
 
 type Group struct {
@@ -84,6 +84,10 @@ func RecursiveQueryBuilder(node Node, values *[]string) string {
 			queryAddition += RecursiveQueryBuilder(child, values)
 			if index != len(node.Group.Children)-1 {
 				queryAddition += " " + node.Group.Connector.Type + " "
+				nextChild := node.Group.Children[index+1]
+				if contains(node.Group.Connector.Not, nextChild.Id) {
+					queryAddition += "NOT "
+				}
 			}
 		}
 		queryAddition += ")"

@@ -3,22 +3,22 @@ package handlers
 import (
 	"encoding/json"
 	"io"
-	"log"
 	"net/http"
 )
 
-func genericJSONDecode[T any](req T, r io.ReadCloser) T {
+func genericJSONDecode[T any](req T, r io.ReadCloser) (T, error) {
 	decoder := json.NewDecoder(r)
 	err := decoder.Decode(&req)
-
-	if err != nil {
-		log.Println(err)
-	}
-
-	return req
+	return req, err
 }
 
 func genericJSONSend[T any](w http.ResponseWriter, req T) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(req)
+}
+
+func textErrorReponse(w http.ResponseWriter, text string) {
+	w.WriteHeader(http.StatusInternalServerError)
+	w.Header().Set("Content-Type", "application/text")
+	w.Write([]byte(text))
 }
