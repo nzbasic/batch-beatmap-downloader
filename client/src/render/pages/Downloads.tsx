@@ -74,6 +74,7 @@ export const Downloads = ({ downloadStatus }: PropTypes) => {
   const lastDownloadSize = downloadStatus.lastDownloadSize??0
 
   const currentSpeed = () => {
+    if (paused) return 0
     return averageSpeed.reduce((acc, { speed }) => acc + speed, 0) / averageSpeed.length
   }
 
@@ -105,6 +106,7 @@ export const Downloads = ({ downloadStatus }: PropTypes) => {
   const pause = () => {
     setLoading(true)
     setPaused(true)
+    setAverageSpeed([])
     window.electron.pauseDownload().then(() => {
       toast.success("Download paused")
       setLoading(false)
