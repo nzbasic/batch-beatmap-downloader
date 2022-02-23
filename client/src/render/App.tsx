@@ -25,7 +25,11 @@ const App = () => {
 
     window.electron.getSettings().then((res) => {
       const mode = res.darkMode as boolean;
-      document.documentElement.classList.toggle("dark", mode);
+      if (mode) {
+        document.documentElement.classList.add("dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+      }
     });
     window.electron.listenForDownloads((status) => setDownloadStatus(status));
     window.electron.listenForErrors((error) => toast.error(error))
