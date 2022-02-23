@@ -48,7 +48,7 @@ export const Downloads = ({ downloadStatus }: PropTypes) => {
     })
   }, [])
 
-  if (!downloadStatus) {
+  if (!downloadStatus || !downloadStatus.all) {
     return (
       <div className="bg-white dark:bg-monokai-dark rounded shadow p-6">
         <div className="flex flex-col gap-2">
