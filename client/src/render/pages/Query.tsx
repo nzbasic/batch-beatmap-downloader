@@ -41,6 +41,9 @@ export const Query = () => {
     const replaceRuleType = (node: Node) => {
       if ("rule" in node) {
         node.rule.type = map.get(node.rule.type as RuleType);
+        if (node.rule.field === "LastUpdate") {
+          node.rule.value = node.rule.value.slice(0, -3)
+        }
       }
       if ("group" in node) {
         node.group.children.forEach(replaceRuleType);
