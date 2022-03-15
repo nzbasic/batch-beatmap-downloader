@@ -30,6 +30,7 @@ const createStores = (): void => {
 
 export let window: BrowserWindow;
 export const name: string = "james"
+export let shouldBeClosed = false
 
 const createWindow = (): void => {
   // Create the browser window.
@@ -51,9 +52,10 @@ const createWindow = (): void => {
 
   window = mainWindow;
   mainWindow.setMenu(null);
-  mainWindow.on("close", () => {
-    mainWindow.destroy();
-  });
+  window.on("closed", () => {
+    app.quit()
+    window = null
+  })
 
   // enable dev tools
   if (isDev) {
@@ -77,13 +79,17 @@ app.on("ready", () => {
   nativeTheme.themeSource = "dark";
 });
 
+app.once("before-quit", () => {
+  window.removeAllListeners()
+})
+
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.
 app.on("window-all-closed", () => {
-  if (process.platform !== "darwin") {
-    app.quit();
-  }
+  shouldBeClosed = true
+  window.removeAllListeners()
+  app.exit()
 });
 
 app.on("activate", () => {
