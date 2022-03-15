@@ -2,7 +2,7 @@ import settings from "electron-settings";
 import { DownloadStatus } from "../models/api";
 import { loadBeatmaps } from "./beatmaps";
 import Download from "nodejs-file-downloader";
-import { window } from "../main";
+import { window, shouldBeClosed } from "../main";
 import { isPaused, pauseDownload, serverUri } from "./ipc/main";
 import { addCollection } from "./collection/collection";
 import { getSongsFolder } from "./settings";
@@ -92,6 +92,7 @@ export const download = async (
   });
 
   for (const id of newIds) {
+    if (shouldBeClosed) return
     if (isPaused) {
       try {
         await axios.post(`${serverUri}/metrics/downloadEnd`, { downloadId });
