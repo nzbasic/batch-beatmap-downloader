@@ -18,6 +18,17 @@ const handleServerError = (err: Error) => {
   }
 }
 
+const pause = (downloadId: string) => {
+  try {
+    axios.post(`${serverUri}/metrics/downloadEnd`, { downloadId });
+  } catch(err) {
+    if (err instanceof Error) {
+      handleServerError(err)
+    }
+  }
+  return;
+}
+
 let interval: NodeJS.Timer
 const serverUpLoop = () => {
   interval = setInterval(() => {
@@ -93,16 +104,12 @@ export const download = async (
 
   for (const id of newIds) {
     if (shouldBeClosed) return
+
     if (isPaused) {
-      try {
-        await axios.post(`${serverUri}/metrics/downloadEnd`, { downloadId });
-      } catch(err) {
-        if (err instanceof Error) {
-          handleServerError(err)
-        }
-      }
-      return;
+      pause(downloadId)
+      return
     }
+
     if (!beatmapIds.includes(id) || force) {
       const uri = `${serverUri}/beatmapset/${id}`;
       let currentSize = 0;
@@ -112,17 +119,23 @@ export const download = async (
         maxAttempts: 3,
         onProgress: (percentage) => {
           status.currentProgress = percentage;
-          window.webContents.send("download-status", status);
         },
         onResponse: (response) => {
           currentSize = parseInt(response.headers["content-length"]);
           status.currentSize = response.headers["content-length"];
+          if (isPaused) download.cancel()
         },
       });
 
       try {
         const before = new Date();
         await download.download();
+
+        if (isPaused) {
+          pause(downloadId)
+          return
+        }
+
         const after = new Date();
         const difference = after.getTime() - before.getTime();
         await axios.post(`${serverUri}/metrics/beatmapDownload`, {

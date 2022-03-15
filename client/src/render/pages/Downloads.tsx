@@ -107,10 +107,9 @@ export const Downloads = ({ downloadStatus }: PropTypes) => {
     setLoading(true)
     setPaused(true)
     setAverageSpeed([])
-    window.electron.pauseDownload().then(() => {
-      toast.success("Download paused")
-      setLoading(false)
-    })
+    window.electron.pauseDownload()
+    toast.success("Download paused")
+    setLoading(false)
   }
 
   const resume = () => {
@@ -144,7 +143,9 @@ export const Downloads = ({ downloadStatus }: PropTypes) => {
             Size of remaining downloads:{" "}
             {bytesToFileSize(totalSize - totalProgress)}
           </span>
-          <span>Current Speed: {currentSpeed().toFixed(0)}Mbps</span>
+          <span>
+            Current Speed: {Number.isNaN(currentSpeed()) ? "Loading..." : currentSpeed().toFixed(2) + "Mbps"}
+          </span>
           {!paused && <span>Estimated time left: {estimatedTimeLeft()}</span>}
           <span className="font-medium mt-4">Total Progress</span>
           <div className="flex items-center">
