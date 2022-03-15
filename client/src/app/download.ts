@@ -23,7 +23,7 @@ const serverUpLoop = () => {
   interval = setInterval(() => {
     try {
       axios.get(serverUri).then(res => {
-        if (res.status === 200) {
+        if (res.status === 204) {
           window.webContents.send("server-down", false)
           clearInterval(interval)
         }
@@ -83,7 +83,6 @@ export const download = async (
 
   const path = await getSongsFolder();
   const beatmapIds = await loadBeatmaps();
-  const updateLimiter = 100000000;
   const newIds = ids.filter((id) => {
     return (
       !status.completed.includes(id) &&
@@ -106,7 +105,6 @@ export const download = async (
     if (!beatmapIds.includes(id) || force) {
       const uri = `${serverUri}/beatmapset/${id}`;
       let currentSize = 0;
-      let currentUpdateLimiterValue = 0;
       const download = new Download({
         url: uri,
         directory: path,
@@ -118,11 +116,6 @@ export const download = async (
         onResponse: (response) => {
           currentSize = parseInt(response.headers["content-length"]);
           status.currentSize = response.headers["content-length"];
-          currentUpdateLimiterValue++;
-          if (currentUpdateLimiterValue >= updateLimiter) {
-            currentUpdateLimiterValue = 0;
-            window.webContents.send("download-status", status);
-          }
         },
       });
 

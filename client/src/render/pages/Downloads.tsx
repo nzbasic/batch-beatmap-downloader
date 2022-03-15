@@ -158,18 +158,6 @@ export const Downloads = ({ downloadStatus }: PropTypes) => {
               {calculateTotalProgress().toFixed(0)}%
             </span>
           </div>
-          <span className="font-medium mt-4">Current Beatmap Progress</span>
-          <div className="flex items-center">
-            <div className="w-full">
-              <LinearProgress
-                variant="determinate"
-                value={parseFloat(downloadStatus.currentProgress)}
-              />
-            </div>
-            <span className="ml-2">
-              {parseInt(downloadStatus.currentProgress)}%
-            </span>
-          </div>
           {(filesRemaining !== 0) && (
             isLoading ? (<CircularProgress />) : (
               <div className="flex gap-2 mt-2">
