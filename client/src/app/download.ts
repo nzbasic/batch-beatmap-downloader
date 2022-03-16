@@ -102,7 +102,14 @@ export const download = async (
     );
   });
 
-  for (const id of newIds) {
+  const toDownload = newIds.filter(id => {
+    if (force) return true;
+    return !beatmapIds.includes(id)
+  })
+
+  status.skipped = newIds.filter(id => !toDownload.includes(id))
+
+  for (const id of toDownload) {
     if (shouldBeClosed) return
 
     if (isPaused) {
@@ -110,54 +117,50 @@ export const download = async (
       return
     }
 
-    if (!beatmapIds.includes(id) || force) {
-      const uri = `${serverUri}/beatmapset/${id}`;
-      let currentSize = 0;
-      const download = new Download({
-        url: uri,
-        directory: path,
-        maxAttempts: 3,
-        onProgress: (percentage) => {
-          status.currentProgress = percentage;
-        },
-        onResponse: (response) => {
-          currentSize = parseInt(response.headers["content-length"]);
-          status.currentSize = response.headers["content-length"];
-          if (isPaused) download.cancel()
-        },
+    const uri = `${serverUri}/beatmapset/${id}`;
+    let currentSize = 0;
+    const download = new Download({
+      url: uri,
+      directory: path,
+      maxAttempts: 3,
+      onProgress: (percentage) => {
+        status.currentProgress = percentage;
+      },
+      onResponse: (response) => {
+        currentSize = parseInt(response.headers["content-length"]);
+        status.currentSize = response.headers["content-length"];
+        if (isPaused) download.cancel()
+      },
+    });
+
+    try {
+      const before = new Date();
+      await download.download();
+
+      if (isPaused) {
+        pause(downloadId)
+        return
+      }
+
+      const after = new Date();
+      const difference = after.getTime() - before.getTime();
+      await axios.post(`${serverUri}/metrics/beatmapDownload`, {
+        downloadId,
+        id,
+        size: currentSize,
+        time: difference,
       });
-
-      try {
-        const before = new Date();
-        await download.download();
-
-        if (isPaused) {
-          pause(downloadId)
-          return
-        }
-
-        const after = new Date();
-        const difference = after.getTime() - before.getTime();
-        await axios.post(`${serverUri}/metrics/beatmapDownload`, {
-          downloadId,
-          id,
-          size: currentSize,
-          time: difference,
-        });
-        status.lastDownloadTime = difference
-        status.lastDownloadSize = currentSize
-        status.completed.push(id);
-        status.totalProgress += currentSize;
-      } catch (err) {
-        status.failed.push(id);
+      status.lastDownloadTime = difference
+      status.lastDownloadSize = currentSize
+      status.completed.push(id);
+      status.totalProgress += currentSize;
+    } catch (err) {
+      status.failed.push(id);
+      if (err instanceof Error) {
         if (err instanceof Error) {
-          if (err instanceof Error) {
-            handleServerError(err)
-          }
+          handleServerError(err)
         }
       }
-    } else {
-      status.skipped.push(id);
     }
     window.webContents.send("download-status", status);
     setDownloadStatus(status);
