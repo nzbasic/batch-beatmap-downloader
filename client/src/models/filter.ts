@@ -2,7 +2,7 @@ import { Rule, RuleType } from "./rules";
 
 export interface ConnectorDetails {
   type: string;
-  not: boolean;
+  not: string[]
 }
 
 export interface Group {
@@ -21,7 +21,7 @@ export const sampleTree: Node = {
   group: {
     connector: {
       type: "AND",
-      not: false,
+      not: [],
     },
     children: [
       {
@@ -51,7 +51,7 @@ export const allRankedOsu: Node = {
   group: {
     connector: {
       type: "AND",
-      not: false,
+      not: [],
     },
     children: [
       {
@@ -81,7 +81,7 @@ export const allLoved: Node = {
   group: {
     connector: {
       type: "AND",
-      not: false,
+      not: [],
     },
     children: [
       {
@@ -102,7 +102,7 @@ export const allFarm: Node = {
   group: {
     connector: {
       type: "AND",
-      not: false,
+      not: [],
     },
     children: [
       {
@@ -132,7 +132,7 @@ export const allStream: Node = {
   group: {
     connector: {
       type: "AND",
-      not: false,
+      not: [],
     },
     children: [
       {
@@ -162,7 +162,7 @@ export const ranked2015: Node = {
   group: {
     connector: {
       type: "AND",
-      not: false,
+      not: [],
     },
     children: [
       {
@@ -179,7 +179,7 @@ export const ranked2015: Node = {
         group: {
           connector: {
             type: "AND",
-            not: false,
+            not: [],
           },
           children: [
             {
@@ -212,7 +212,7 @@ export const allSotarks: Node = {
   group: {
     connector: {
       type: "AND",
-      not: false,
+      not: [],
     },
     children: [
       {
@@ -242,7 +242,7 @@ export const allRanked7Star: Node = {
   group: {
     connector: {
       type: "AND",
-      not: false,
+      not: [],
     },
     children: [
       {
@@ -259,7 +259,7 @@ export const allRanked7Star: Node = {
         group: {
           connector: {
             type: "AND",
-            not: false,
+            not: [],
           },
           children: [
             {

@@ -37,7 +37,7 @@ export const Menu = ({ version, downloadStatus }: PropTypes) => {
         <span>by nzbasic</span>
         <span className="text-xs">v{version}</span>
       </div>
-      <div className="flex flex-col justify-between h-full mt-4">
+      <div className="flex flex-col justify-between h-screen mt-4">
         <div className="flex flex-col">
           {pages.map(({ link, title, icon }) => (
             <Link

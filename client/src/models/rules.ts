@@ -69,6 +69,7 @@ export const operatorMap = new Map<RuleType, Operator[]>([
     [
       { label: "exactly matches", value: "=" },
       { label: "contains", value: "like" },
+      { label: "does not contain", value: "not like" },
     ],
   ],
   [

@@ -11,7 +11,7 @@ func open() {
 	godotenv.Load()
 	database, _ = sql.Open("sqlite3", os.Getenv("DB_LOCATION"))
 	println("Total Maps:", GetBeatmapCount())
-	refreshFarm()
+	//refreshFarm()
 
 	var count int
 	row := database.QueryRow("SELECT COUNT(*) FROM beatmaps WHERE farm=1")

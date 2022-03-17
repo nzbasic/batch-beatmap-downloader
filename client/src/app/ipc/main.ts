@@ -101,9 +101,10 @@ ipcMain.handle("is-download-paused", () => {
   return isPaused;
 })
 
-ipcMain.handle("pause-download", () => {
-  isPaused = true
-  return
+export const pauseDownload = () => { isPaused = true }
+ipcMain.on("pause-download", (event) => {
+  pauseDownload()
+  event.returnValue = isPaused
 })
 
 ipcMain.handle("resume-download", async () => {

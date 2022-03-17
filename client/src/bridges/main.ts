@@ -101,8 +101,8 @@ export const electronBridge = {
     await ipcRenderer.invoke("download", ids, size, force, hashes, collectionName)
   },
 
-  pauseDownload: async () => {
-    await ipcRenderer.invoke("pause-download");
+  pauseDownload: () => {
+    ipcRenderer.sendSync("pause-download")
   },
 
   resumeDownload: async () => {
@@ -126,6 +126,12 @@ export const electronBridge = {
   listenForErrors: (callback: (error: string) => void) => {
     ipcRenderer.on("error", (event, error: string) => {
       callback(error);
+    });
+  },
+
+  listenForServerDown: (callback: (down: boolean) => void) => {
+    ipcRenderer.on("server-down", (event, down: boolean) => {
+      callback(down);
     });
   }
 };

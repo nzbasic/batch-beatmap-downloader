@@ -92,7 +92,7 @@ func RecursiveQueryBuilder(node Node, values *[]string) string {
 		}
 		queryAddition += ")"
 	} else { // node is a rule
-		if node.Rule.Operator == "like" {
+		if strings.Contains(node.Rule.Operator, "like") {
 			node.Rule.Value = "%" + node.Rule.Value + "%"
 		}
 
