@@ -1,10 +1,7 @@
 package metrics
 
 import (
-	"log"
 	"time"
-
-	"github.com/asdine/storm/v3"
 
 	"github.com/nzbasic/batch-beatmap-downloader/metrics/store"
 )
@@ -36,8 +33,10 @@ func GetDownloadMetrics() DownloadMetrics {
 	timeMinuteAgo := time.Now().Add(-1 * time.Minute)
 	var started []store.DownloadStart
 	var ended []store.DownloadEnd
+	var details []store.BeatmapDownload
 	db.All(&started)
 	db.All(&ended)
+	db.All(&details)
 
 	var current []CurrentDownload
 	// go through all downloads, trying to find:
@@ -52,26 +51,37 @@ func GetDownloadMetrics() DownloadMetrics {
 
 	for _, download := range started {
 		id := download.DownloadId
-		var end store.DownloadEnd
-		err := db.One("DownloadId", id, &end)
-		// if there is an error, it will be a no rows found error. therefore if err, then the download is active
-		downloadHasEnded := true
-		if err != nil {
-			if err == storm.ErrNotFound {
-				downloadHasEnded = false
-			} else {
-				log.Println(err)
+		downloadHasEnded := false
+		for _, end := range ended {
+			if end.DownloadId == download.DownloadId {
+				downloadHasEnded = true
+				break
 			}
 		}
 
 		// if download has ended and its older than 24h then not relevant
 		if downloadHasEnded && download.CreatedAt.Before(timeYesterday) {
+			for _, detail := range details {
+				if detail.DownloadId == download.DownloadId {
+					db.DeleteStruct(&detail)
+				}
+			}
+
+			db.DeleteStruct(&download)
 			continue
 		}
 
-		// find any completed downloads
+		// // find any completed downloads
+
 		var allDownloaded []store.BeatmapDownload
-		db.Find("DownloadId", id, &allDownloaded)
+		for _, detail := range details {
+			if detail.DownloadId == download.DownloadId {
+				allDownloaded = append(allDownloaded, detail)
+			}
+		}
+
+		// var allDownloaded []store.BeatmapDownload
+		// db.Find("DownloadId", id, &allDownloaded)
 
 		downloadedSize := 0
 		downloadedTime := 0
