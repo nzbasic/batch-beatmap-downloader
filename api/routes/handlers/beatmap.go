@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
 
@@ -34,7 +35,13 @@ func BeatmapDownloadHandler(w http.ResponseWriter, r *http.Request) {
 	filenames := strings.Split(beatmap.Path, "/")
 	filename := filenames[len(filenames)-1]
 
-	w.Header().Set("Content-Length", strconv.Itoa(beatmap.Size))
+	fi, err := os.Stat(beatmap.Path)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Length", strconv.FormatInt(fi.Size(), 10))
 	w.Header().Set("Content-Disposition", "attachment; filename="+filename)
 	w.Write(file)
 }
