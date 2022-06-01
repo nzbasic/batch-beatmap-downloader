@@ -155,16 +155,21 @@ export const download = async (
       status.completed.push(id);
       status.totalProgress += currentSize;
     } catch (err) {
+      console.log(err)
       status.failed.push(id);
+      status.totalProgress += currentSize;
       if (err instanceof Error) {
-        if (err instanceof Error) {
-          handleServerError(err)
-        }
+        handleServerError(err)
       }
     }
+
     window.webContents.send("download-status", status);
     setDownloadStatus(status);
   }
+
+  // this prevents failed downloads not adding to the progress bar
+  status.totalProgress = status.totalSize;
+  window.webContents.send("download-status", status);
 
   try {
     await axios.post(`${serverUri}/metrics/downloadEnd`, { downloadId });
