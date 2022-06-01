@@ -9,6 +9,7 @@ import { loadBeatmaps } from "../beatmaps";
 import { window } from '../../main'
 import fs from 'fs'
 import { Metrics } from "../../models/metrics";
+import { checkCollections } from "../collection/collection";
 
 export const serverUri = "https://api.nzbasic.com";
 
@@ -122,3 +123,7 @@ ipcMain.handle("resume-download", async () => {
 ipcMain.handle("load-beatmaps", async () => {
   return await loadBeatmaps();
 });
+
+ipcMain.handle("check-collections", async () => {
+  return await checkCollections()
+})

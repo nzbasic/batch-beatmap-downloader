@@ -25,7 +25,7 @@ export const readCollections = async (path: string) => {
   const buffer = await fs.promises.readFile(path + "\\collection.db");
   const reader = new OsuReader(buffer.buffer);
 
-  const collections = {
+  const collections: Collections = {
     version: reader.readInt32(),
     numberCollections: reader.readInt32(),
     collections: [],

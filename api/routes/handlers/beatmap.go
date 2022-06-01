@@ -74,3 +74,21 @@ func BeatmapHashMap(w http.ResponseWriter, r *http.Request) {
 
 	genericJSONSend(w, hashMap)
 }
+
+func CalculateSizeOfBeatmaps(w http.ResponseWriter, r *http.Request) {
+	var ids []int
+	ids, _ = genericJSONDecode(ids, r.Body)
+
+	totalSize := 0
+	for _, id := range ids {
+		beatmapDetails, err := database.GetBeatmapBySetId(strconv.Itoa(id))
+
+		if err != nil {
+			continue
+		}
+
+		totalSize += beatmapDetails.Size
+	}
+
+	genericJSONSend(w, totalSize)
+}

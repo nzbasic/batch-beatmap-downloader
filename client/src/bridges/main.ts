@@ -6,7 +6,7 @@ import {
 } from "electron";
 import { createStoreBindings } from "electron-persist-secure/lib/bindings";
 import { SettingsObject } from "../global";
-import { BeatmapDetails, DownloadStatus, FilterResponse } from "../models/api";
+import { BeatmapDetails, DownloadStatus, FilterResponse, MissingMaps } from "../models/api";
 import { Node } from "../models/filter";
 import { Metrics } from "../models/metrics";
 
@@ -115,6 +115,10 @@ export const electronBridge = {
 
   getDownloadStatus: async (): Promise<DownloadStatus> => {
     return (await ipcRenderer.invoke("get-download-status")) as DownloadStatus;
+  },
+
+  checkCollections: async (): Promise<MissingMaps> => {
+    return (await ipcRenderer.invoke("check-collections") as MissingMaps)
   },
 
   listenForDownloads: (callback: (status: DownloadStatus) => void) => {

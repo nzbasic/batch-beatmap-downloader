@@ -74,3 +74,12 @@ export interface BeatmapDetails {
   Path: string;
   Stream: number;
 }
+
+export interface BeatmapHashMap {
+  [hash: string]: number;
+}
+
+export interface MissingMaps {
+  ids: number[],
+  totalSize: number
+}

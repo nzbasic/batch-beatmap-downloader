@@ -17,4 +17,5 @@ func init() {
 	Router.HandleFunc("/metrics/beatmapDownload", handlers.MetricsBeatmapDownloadHandler)
 	Router.HandleFunc("/metrics", handlers.MetricsPollHandler)
 	Router.HandleFunc("/hashMap", handlers.BeatmapHashMap)
+	Router.HandleFunc("/totalSize", handlers.CalculateSizeOfBeatmaps)
 }

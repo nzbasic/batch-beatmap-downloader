@@ -106,7 +106,3 @@ export const Settings = ({ onValidPath, onBeatmapsLoaded }: PropTypes) => {
     </div>
   );
 };
-function setAltPath(arg0: string) {
-  throw new Error("Function not implemented.");
-}
-
