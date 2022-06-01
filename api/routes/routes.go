@@ -16,4 +16,5 @@ func init() {
 	Router.HandleFunc("/metrics/downloadEnd", handlers.MetricsDownloadEndHandler)
 	Router.HandleFunc("/metrics/beatmapDownload", handlers.MetricsBeatmapDownloadHandler)
 	Router.HandleFunc("/metrics", handlers.MetricsPollHandler)
+	Router.HandleFunc("/hashMap", handlers.BeatmapHashMap)
 }

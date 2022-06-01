@@ -57,3 +57,13 @@ func BeatmapDetailsHandler(w http.ResponseWriter, r *http.Request) {
 
 	genericJSONSend(w, beatmaps)
 }
+
+func BeatmapHashMap(w http.ResponseWriter, r *http.Request) {
+	hashMap, err := database.GetBeatmapHashMap()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	genericJSONSend(w, hashMap)
+}

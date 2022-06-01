@@ -151,3 +151,21 @@ func QueryIds(query string, values []string) ([]int, []int, map[int]int, []strin
 	rows.Close()
 	return ids, setIds, sizeMap, hashes, nil
 }
+
+func GetBeatmapHashMap() (map[string]int, error) {
+	rows, err := database.Query("SELECT setId, hash FROM beatmaps")
+
+	if err != nil {
+		return nil, err
+	}
+
+	hashMap := make(map[string]int)
+	for rows.Next() {
+		var setId int
+		var hash string
+		rows.Scan(&setId, &hash)
+		hashMap[hash] = setId
+	}
+
+	return hashMap, nil
+}
