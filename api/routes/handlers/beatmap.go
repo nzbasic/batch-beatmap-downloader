@@ -9,9 +9,17 @@ import (
 	"strings"
 
 	"github.com/gorilla/mux"
+	"github.com/joho/godotenv"
 	"github.com/nzbasic/batch-beatmap-downloader/database"
 	"github.com/nzbasic/batch-beatmap-downloader/osu"
 )
+
+var cdnUrl string
+
+func init() {
+	godotenv.Load()
+	cdnUrl = os.Getenv("CDN_URL")
+}
 
 func BeatmapDownloadHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
@@ -24,6 +32,17 @@ func BeatmapDownloadHandler(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusInternalServerError)
 		}
 		return
+	}
+
+	if cdnUrl != "" {
+		resource := cdnUrl + vars["setId"] + ".osz"
+		res, err := http.Head(resource)
+		if err == nil {
+			if res.StatusCode == http.StatusOK {
+				http.Redirect(w, r, cdnUrl, http.StatusFound)
+				return
+			}
+		}
 	}
 
 	file, err := ioutil.ReadFile(beatmap.Path)
