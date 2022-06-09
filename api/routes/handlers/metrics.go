@@ -8,6 +8,11 @@ import (
 	metricsstore "github.com/nzbasic/batch-beatmap-downloader/metrics/store"
 )
 
+func Ping(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("alive :)"))
+}
+
 func MetricsDownloadStartHandler(w http.ResponseWriter, r *http.Request) {
 	var req metricsstore.DownloadStart
 	req, _ = genericJSONDecode(req, r.Body)
