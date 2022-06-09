@@ -24,7 +24,7 @@ func QueryRow(query string) *sql.Row {
 
 var farmSets []string
 
-func refreshFarm() {
+func RefreshFarm() {
 	uri := "https://osutracker.com/api/stats/farmSets"
 	resp, err := http.Get(uri)
 	if err != nil {
@@ -36,8 +36,6 @@ func refreshFarm() {
 	if err != nil {
 		log.Fatalln(err)
 	}
-
-	BatchUpdate(AddFarm)
 }
 
 func GetBeatmapCount() int {
