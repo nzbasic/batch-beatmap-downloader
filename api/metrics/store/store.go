@@ -12,7 +12,12 @@ var db *storm.DB
 
 func init() {
 	godotenv.Load()
-	db, _ = storm.Open(os.Getenv("METRICS_LOCATION"))
+	open, err := storm.Open(os.Getenv("METRICS_LOCATION"))
+	if err != nil {
+		panic(err)
+	}
+
+	db = open
 }
 
 func AddMetricData[T MetricsTypes](metric T) {
