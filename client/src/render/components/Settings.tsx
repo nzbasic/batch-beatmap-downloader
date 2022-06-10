@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Switch from "react-switch";
 import { toast } from 'react-toastify'
 import { Browse } from "./Browse";
+import { NumberRangeSelector } from "./NumberRangeSelector";
 
 interface PropTypes {
   onValidPath: (valid: boolean) => void
@@ -14,6 +15,7 @@ export const Settings = ({ onValidPath, onBeatmapsLoaded }: PropTypes) => {
   const [altPath, setAltPath] = useState<string>("")
   const [beatmaps, setBeatmaps] = useState<number[]>([]);
   const [darkMode, setDarkMode] = useState<boolean>(false);
+  const [maxConcurrentDownloads, setMaxConcurrentDownloads] = useState(3)
 
   const loadBeatmaps = () => {
     window.electron.loadBeatmaps().then(ids => {
@@ -50,6 +52,11 @@ export const Settings = ({ onValidPath, onBeatmapsLoaded }: PropTypes) => {
     document.documentElement.classList.toggle("dark", mode);
   };
 
+  const updateConcurrentDownloads = async (number: number) => {
+    setMaxConcurrentDownloads(number)
+    await window.electron.setMaxConcurrentDownloads(number)
+  }
+
   useEffect(() => {
     window.electron.getSettings().then((res) => {
       if (res.altPath) {
@@ -68,6 +75,10 @@ export const Settings = ({ onValidPath, onBeatmapsLoaded }: PropTypes) => {
         const mode = res.darkMode as boolean;
         setDarkMode(mode);
         document.documentElement.classList.toggle("dark", mode);
+      }
+
+      if (res.maxConcurrentDownloads) {
+        setMaxConcurrentDownloads(res.maxConcurrentDownloads as number)
       }
     });
   }, []);
@@ -88,19 +99,28 @@ export const Settings = ({ onValidPath, onBeatmapsLoaded }: PropTypes) => {
       <span className="font-bold text-lg">Settings</span>
       <div className="flex flex-col gap-4">
         <div className="flex items-center mt-4 gap-2">
-          <span className="w-44">osu! Path:</span>
+          <span className="w-52">osu! Path:</span>
           <Browse path={path} update={setPath} />
           {!altPathEnabled && <span>{beatmaps.length} Beatmap Sets Found</span>}
         </div>
         <div className="flex items-center gap-2">
-          <span className="w-44">Alternate Songs Path:</span>
+          <span className="w-52">Alternate Songs Path:</span>
           <Switch onChange={(mode) => enableAltPath(mode)} checked={altPathEnabled} />
           {altPathEnabled && <Browse path={altPath} update={setAltPath} />}
           {altPathEnabled && <span>{beatmaps.length} Beatmap Sets Found</span>}
         </div>
         <div className="flex items-center gap-2">
-          <span className="w-44">Dark Mode:</span>
+          <span className="w-52">Dark Mode:</span>
           <Switch onChange={(mode) => updateTheme(mode)} checked={darkMode} />
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="w-52">Max Concurrent Downloads</span>
+          <NumberRangeSelector
+            min={1}
+            max={5}
+            initial={maxConcurrentDownloads}
+            onChange={i => updateConcurrentDownloads(i)}
+          />
         </div>
       </div>
     </div>

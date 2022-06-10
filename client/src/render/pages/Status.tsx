@@ -11,7 +11,7 @@ export const Status = () => {
   const currentDownloads = metrics?.Download?.CurrentDownloads ?? [];
 
   const downloadsScale = new ColorScales(0, 50, ["#00ff00", "#ff0000"]);
-  const bandwidthScale = new ColorScales(0, 500, ["#00ff00", "#ff0000"]);
+  const bandwidthScale = new ColorScales(0, 5000, ["#00ff00", "#ff0000"]);
 
   const getActiveDownloads = () => {
     return currentDownloads
@@ -95,7 +95,6 @@ export const Status = () => {
                 <div className="flex flex-col">
                   <span>{metrics.Download.DailyStats.Maps} Beatmap Sets Downloaded</span>
                   <span>{bytesToFileSize(metrics.Download.DailyStats.Size)} Downloaded</span>
-                  <span>{(metrics.Download.DailyStats.Speed / 1e6).toFixed(0)}Mbps Average Download Speed</span>
                   <span>{currentDownloads.filter((i) => i.Ended).length} Completed Downloads</span>
                 </div>
               </div>

@@ -58,6 +58,10 @@ ipcMain.handle("set-theme", async (event, theme: boolean) => {
   return await settings.set("darkMode", theme);
 });
 
+ipcMain.handle("set-max-concurrent-downloads", async (event, number: number) => {
+  return await settings.set("maxConcurrentDownloads", number);
+})
+
 ipcMain.handle("set-alt-path", async (event, path: string) => {
   return await settings.set("altPath", path);
 });

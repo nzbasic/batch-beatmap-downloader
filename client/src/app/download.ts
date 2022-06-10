@@ -43,6 +43,12 @@ const serverUpLoop = () => {
   }, 1000);
 }
 
+enum Status {
+  FINISHED,
+  PAUSED,
+  ERROR
+}
+
 export const download = async (
   ids: number[],
   size: number,
@@ -102,23 +108,39 @@ export const download = async (
     );
   });
 
+  const skipped: number[] = []
   const toDownload = newIds.filter(id => {
     if (force) return true;
-    return !beatmapIds.includes(id)
+
+    const hasMap = beatmapIds.includes(id)
+
+    if (hasMap) {
+      skipped.push(id)
+      return false
+    }
+
+    return true
   })
 
-  status.skipped = newIds.filter(id => !toDownload.includes(id))
+  if (!status.skipped.length) {
+    status.skipped = skipped
+  }
 
-  for (const id of toDownload) {
-    if (shouldBeClosed) return
+  const downloadMapSet = async (): Promise<Status | (() => Promise<void>)> => {
+    if (shouldBeClosed) return Status.PAUSED
 
     if (isPaused) {
       pause(downloadId)
-      return
+      return Status.PAUSED
     }
+
+    const id = toDownload.pop()
+    if (!id) return Status.FINISHED
 
     const uri = `${serverUri}/beatmapset/${id}`;
     let currentSize = 0;
+    let cancelled = false
+
     const download = new Download({
       url: uri,
       directory: path,
@@ -130,46 +152,82 @@ export const download = async (
         currentSize = parseInt(response.headers["content-length"]);
         status.currentSize = response.headers["content-length"];
         if (isPaused) download.cancel()
+        cancelled = true
       },
-    });
+    })
+
+    await download.download()
 
     try {
       const before = new Date();
       await download.download();
-
-      if (isPaused) {
-        pause(downloadId)
-        return
-      }
-
       const after = new Date();
       const difference = after.getTime() - before.getTime();
+
+      const downloadStats: { time: number, size: number }[] = status.currentDownloads??[]
+      if (downloadStats.length == maxConcurrentDownloads) {
+        downloadStats.shift()
+      }
+
+      downloadStats.push({
+        time: difference,
+        size: currentSize
+      })
+
+      let totalDownloadSpeed = 0
+      for (const downloadStat of downloadStats) {
+        const size = downloadStat.size * 8 / 1000 / 1000
+        const time = downloadStat.time / 1000
+        totalDownloadSpeed += (size / time)
+      }
+
       await axios.post(`${serverUri}/metrics/beatmapDownload`, {
         downloadId,
         id,
         size: currentSize,
         time: difference,
+        totalDownloadSpeed
       });
+
+      status.currentDownloads = downloadStats
       status.lastDownloadTime = difference
       status.lastDownloadSize = currentSize
       status.completed.push(id);
       status.totalProgress += currentSize;
     } catch (err) {
-      console.log(err)
-      status.failed.push(id);
-      status.totalProgress += currentSize;
-      if (err instanceof Error) {
-        handleServerError(err)
+      if (!cancelled) {
+        status.failed.push(id);
+        status.totalProgress += currentSize;
+
+        if (err instanceof Error) {
+          handleServerError(err)
+        }
       }
     }
 
     window.webContents.send("download-status", status);
-    setDownloadStatus(status);
+    await setDownloadStatus(status);
+
+    return downloadMapSet()
   }
 
-  // this prevents failed downloads not adding to the progress bar
-  status.totalProgress = status.totalSize;
-  window.webContents.send("download-status", status);
+  const maxConcurrentDownloads = (await settings.get("maxConcurrentDownloads"))??3
+  const downloads: Promise<Status | (() => Promise<void>)>[] = []
+  for (let i = 0; i < maxConcurrentDownloads; i++) {
+    downloads.push(downloadMapSet())
+  }
+
+  const results = await Promise.all(downloads)
+
+  for (const result of results) {
+    if (result === Status.FINISHED) {
+      // this prevents failed downloads not adding to the progress bar
+      status.totalProgress = status.totalSize;
+      window.webContents.send("download-status", status);
+    }
+  }
+
+  await setDownloadStatus(status)
 
   try {
     await axios.post(`${serverUri}/metrics/downloadEnd`, { downloadId });

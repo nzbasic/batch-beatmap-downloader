@@ -85,6 +85,10 @@ export const electronBridge = {
     await ipcRenderer.invoke("set-theme", theme)
   },
 
+  setMaxConcurrentDownloads: async (number: number): Promise<void> => {
+    await ipcRenderer.invoke("set-max-concurrent-downloads", number)
+  },
+
   setPath: async (path: string): Promise<boolean> => {
     return (await ipcRenderer.invoke("set-path", path)) as boolean;
   },

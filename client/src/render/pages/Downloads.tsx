@@ -23,14 +23,28 @@ export const Downloads = ({ downloadStatus }: PropTypes) => {
   const [averageSpeed, setAverageSpeed] = useState<Speed[]>([])
 
   useEffect(() => {
-    // keep track of speed in last minute
-    if (lastDownloadTime && lastDownloadSize) {
+    if (downloadStatus.currentDownloads) {
+      let totalDownloadSpeed = 0
+      for (const download of downloadStatus.currentDownloads) {
+        const size = download.size * 8 / 1000 / 1000
+        const time = download.time / 1000
+        totalDownloadSpeed += (size / time)
+      }
+
       const now = Date.now()
-      const speed = calulcateSpeed()
       const timeMinuteAgo = now - 60000
       const filtered = averageSpeed.filter(({ time }) => time > timeMinuteAgo)
-      setAverageSpeed([...filtered, { speed, time: now }])
+      setAverageSpeed([...filtered, { speed: totalDownloadSpeed, time: now }])
     }
+
+    // // keep track of speed in last minute
+    // if (lastDownloadTime && lastDownloadSize) {
+    //   const now = Date.now()
+    //   const speed = calculateSpeed()
+    //   const timeMinuteAgo = now - 60000
+    //   const filtered = averageSpeed.filter(({ time }) => time > timeMinuteAgo)
+    //   setAverageSpeed([...filtered, { speed, time: now }])
+    // }
   }, [downloadStatus])
 
   useEffect(() => {
@@ -78,7 +92,7 @@ export const Downloads = ({ downloadStatus }: PropTypes) => {
     return averageSpeed.reduce((acc, { speed }) => acc + speed, 0) / averageSpeed.length
   }
 
-  const calulcateSpeed = () => {
+  const calculateSpeed = () => {
     if (lastDownloadTime === 0) {
       return 0
     }

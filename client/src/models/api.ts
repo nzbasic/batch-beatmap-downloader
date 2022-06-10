@@ -24,6 +24,10 @@ export interface DownloadStatus {
   force: boolean;
   lastDownloadTime?: number
   lastDownloadSize?: number
+  currentDownloads?: {
+    time: number,
+    size: number
+  }[]
 }
 
 export interface Group {
