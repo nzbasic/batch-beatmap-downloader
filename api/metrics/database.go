@@ -17,7 +17,7 @@ func GetDatabaseMetrics() DatabaseMetrics {
 	database.QueryRow("SELECT approvedDate FROM beatmaps ORDER BY approvedDate DESC LIMIT 1").Scan(&time)
 	database.QueryRow("SELECT COUNT(*) FROM beatmaps WHERE Approved = 'ranked'").Scan(&ranked)
 	database.QueryRow("SELECT COUNT(*) FROM beatmaps WHERE Approved = 'loved'").Scan(&loved)
-	database.QueryRow("SELECT COUNT(*) FROM beatmaps WHERE Approved = 'unranked'").Scan(&unranked)
+	database.QueryRow("SELECT COUNT(*) FROM beatmaps WHERE Approved = 'WIP' OR Approved = 'graveyard' OR Approved = 'pending'").Scan(&unranked)
 
 	return DatabaseMetrics{
 		NumberStoredRanked:   ranked,
