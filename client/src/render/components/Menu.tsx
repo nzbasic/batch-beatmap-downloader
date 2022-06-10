@@ -5,6 +5,7 @@ import DownloadIcon from "@mui/icons-material/Download";
 import SearchIcon from "@mui/icons-material/Search";
 import CloseIcon from "@mui/icons-material/Close";
 import StorageIcon from '@mui/icons-material/Storage';
+import HistoryIcon from '@mui/icons-material/History';
 import { DownloadStatus } from "../../models/api";
 
 interface PropTypes {
@@ -24,6 +25,7 @@ export const Menu = ({ version, downloadStatus }: PropTypes) => {
     { link: "/query", title: "Map Search", icon: <SearchIcon /> },
     { link: "/downloads", title: "Downloads", icon: <DownloadIcon /> },
     { link: "/status", title: "Server Status", icon: <StorageIcon /> },
+    { link: "/changelog", title: "Change Log", icon: <HistoryIcon /> }
   ];
 
   return (

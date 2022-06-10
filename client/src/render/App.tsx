@@ -9,6 +9,7 @@ import { DownloadStatus } from "../models/api";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Status } from "./pages/Status";
+import { Changelog } from "./pages/Changelog";
 
 const App = () => {
   const [downloadStatus, setDownloadStatus] = useState<DownloadStatus>(null);
@@ -48,6 +49,7 @@ const App = () => {
               element={<Downloads downloadStatus={downloadStatus} />}
             />
             <Route path="/status" element={<Status />} />
+            <Route path="/changelog" element={<Changelog />} />
           </Routes>
         </div>
         <ToastContainer autoClose={2500} />
