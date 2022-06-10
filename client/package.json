@@ -1,7 +1,7 @@
 {
   "name": "batch-beatmap-downloader",
   "productName": "Batch Beatmap Downloader",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "A way to mass download osu! beatmaps with a user friendly query builder.",
   "main": ".webpack/main",
   "repository": {
