@@ -156,8 +156,6 @@ export const download = async (
       },
     })
 
-    await download.download()
-
     try {
       const before = new Date();
       await download.download();
