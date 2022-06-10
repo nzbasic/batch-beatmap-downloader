@@ -35,11 +35,11 @@ func BeatmapDownloadHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if cdnUrl != "" {
-		resource := cdnUrl + vars["setId"] + ".osz"
+		resource := cdnUrl + "/" + vars["setId"] + ".osz"
 		res, err := http.Head(resource)
 		if err == nil {
 			if res.StatusCode == http.StatusOK {
-				http.Redirect(w, r, cdnUrl, http.StatusFound)
+				http.Redirect(w, r, resource, http.StatusFound)
 				return
 			}
 		}
