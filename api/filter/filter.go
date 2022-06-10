@@ -92,6 +92,18 @@ func RecursiveQueryBuilder(node Node, values *[]string) string {
 		}
 		queryAddition += ")"
 	} else { // node is a rule
+		if node.Rule.Field == "Approved" && node.Rule.Value == "Unranked" {
+			queryAddition += "approved = \"WIP\" or approved = \"graveyard\" or approved = \"pending\""
+		}
+
+		if node.Rule.Field == "Archetype" {
+			if node.Rule.Operator == "=" {
+				node.Rule.Operator = "like"
+			} else {
+				node.Rule.Operator = "not like"
+			}
+		}
+
 		if strings.Contains(node.Rule.Operator, "like") {
 			node.Rule.Value = "%" + node.Rule.Value + "%"
 		}
