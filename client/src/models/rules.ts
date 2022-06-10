@@ -14,6 +14,7 @@ export enum RuleType {
   MODE,
   DATE,
   BOOLEAN,
+  TOURNAMENT
 }
 
 export interface InputOption {
@@ -24,6 +25,7 @@ export interface InputOption {
 
 export const inputOptions: InputOption[] = [
   { value: "Approved", label: "Map Status", type: RuleType.STATUS },
+  { value: "Archetype", label: "Tournament Archetype", type: RuleType.TOURNAMENT },
   { value: "ApprovedDate", label: "Approved Date", type: RuleType.DATE },
   { value: "Farm", label: "Farm", type: RuleType.BOOLEAN },
   { value: "Stream", label: "Stream", type: RuleType.BOOLEAN },
@@ -95,6 +97,7 @@ export const operatorMap = new Map<RuleType, Operator[]>([
     ],
   ],
   [RuleType.BOOLEAN, defaultOperators],
+  [RuleType.TOURNAMENT, defaultOperators],
 ]);
 
 export enum InputType {
@@ -114,6 +117,7 @@ export const inputTypeMap = new Map<RuleType, InputType>([
   [RuleType.LANGUAGE, InputType.DROPDOWN],
   [RuleType.DATE, InputType.DATE],
   [RuleType.BOOLEAN, InputType.DROPDOWN],
+  [RuleType.TOURNAMENT, InputType.DROPDOWN]
 ]);
 
 export interface DropdownOption {
@@ -127,6 +131,7 @@ export const dropdownMap = new Map<RuleType, DropdownOption[]>([
     [
       { value: "ranked", label: "Ranked" },
       { value: "loved", label: "Loved" },
+      { value: "unranked", label: "Unranked" }
     ],
   ],
   [
@@ -175,4 +180,57 @@ export const dropdownMap = new Map<RuleType, DropdownOption[]>([
       { value: "0", label: "False" },
     ],
   ],
+  [
+    RuleType.TOURNAMENT,
+    [
+      { value: "Any", label: "Any" },
+      { value: "NM1", label: "NM1" },
+      { value: "NM2", label: "NM2" },
+      { value: "NM3", label: "NM3" },
+      { value: "NM4", label: "NM4" },
+      { value: "NM5", label: "NM5" },
+      { value: "NM6", label: "NM6" },
+      { value: "HD1", label: "HD1" },
+      { value: "HD2", label: "HD2" },
+      { value: "HD3", label: "HD3" },
+      { value: "HD4", label: "HD4" },
+      { value: "HR1", label: "HR1" },
+      { value: "HR2", label: "HR2" },
+      { value: "HR3", label: "HR3" },
+      { value: "HR4", label: "HR4" },
+      { value: "DT1", label: "DT1" },
+      { value: "DT2", label: "DT2" },
+      { value: "DT3", label: "DT3" },
+      { value: "DT4", label: "DT4" },
+      { value: "FM1", label: "FM1" },
+      { value: "FM2", label: "FM2" },
+      { value: "FM3", label: "FM3" },
+      { value: "FM4", label: "FM4" },
+      { value: "TB", label: "TB" },
+    ]
+  ]
+]);
+
+export const defaultValuesMap = new Map<RuleType, string>([
+  [RuleType.STATUS, "ranked"],
+  [RuleType.BOOLEAN, "1"],
+  [RuleType.DATE, new Date().getTime().toString()],
+  [RuleType.NUMBER, "1"],
+  [RuleType.TEXT, ""],
+  [RuleType.GENRE, "any"],
+  [RuleType.LANGUAGE, "any"],
+  [RuleType.MODE, "osu!"],
+  [RuleType.TOURNAMENT, "Any"],
+]);
+
+export const defaultOperatorsMap = new Map<RuleType, string>([
+  [RuleType.STATUS, "="],
+  [RuleType.BOOLEAN, "="],
+  [RuleType.DATE, "<"],
+  [RuleType.NUMBER, "="],
+  [RuleType.TEXT, "like"],
+  [RuleType.GENRE, "="],
+  [RuleType.LANGUAGE, "="],
+  [RuleType.MODE, "="],
+  [RuleType.TOURNAMENT, "="],
 ]);

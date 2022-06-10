@@ -35,6 +35,7 @@ export const Query = () => {
       [RuleType.NUMBER, "Numeric"],
       [RuleType.TEXT, "Text"],
       [RuleType.BOOLEAN, "Numeric"],
+      [RuleType.TOURNAMENT, "Text"]
     ]);
 
     // replace all rule types with the correct string from the Map
