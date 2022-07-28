@@ -13,11 +13,12 @@ import { useStickyState } from "../hooks/stickystate";
 import { DownloadSettings } from "../components/DownloadSettings";
 import { toast } from "react-toastify";
 import { InvalidPath } from "../components/InvalidPath";
+import React from "react";
 
 export const Query = () => {
   const [validPath, setValidPath] = useState(false)
   const [tree, setTree] = useStickyState<Node>(sampleTree, "tree");
-  const [result, setResult] = useState<FilterResponse>(null);
+  const [result, setResult] = useState<FilterResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [limit, setLimit] = useState<number | null>(null);
   const [existing, setExisting] = useState<number[]>([]);
@@ -26,34 +27,38 @@ export const Query = () => {
     setResult(null);
     setLoading(true);
 
-    const map = new Map<RuleType, string>([
-      [RuleType.STATUS, "Text"],
-      [RuleType.GENRE, "Text"],
-      [RuleType.MODE, "Text"],
-      [RuleType.LANGUAGE, "Text"],
-      [RuleType.DATE, "Numeric"],
-      [RuleType.NUMBER, "Numeric"],
-      [RuleType.TEXT, "Text"],
-      [RuleType.BOOLEAN, "Numeric"],
-      [RuleType.TOURNAMENT, "Text"]
-    ]);
+    const map: Record<RuleType, string> = {
+      0: "Text",
+      1: "Numeric",
+      2: "Text",
+      3: "Text",
+      4: "Text",
+      5: "Text",
+      6: "Numeric",
+      7: "Numeric",
+      8: "Text"
+    };
 
     // replace all rule types with the correct string from the Map
     const replaceRuleType = (node: Node) => {
       if ("rule" in node) {
-        node.rule.type = map.get(node.rule.type as RuleType);
+        if (!node.rule) return
+        node.rule.type = map[node.rule.type as RuleType];
         if (node.rule.field === "LastUpdate") {
           node.rule.value = node.rule.value.slice(0, -3)
         }
       }
       if ("group" in node) {
+        if (!node.group) return
         node.group.children.forEach(replaceRuleType);
       }
     };
 
     const clone = cloneDeep(tree);
     replaceRuleType(clone);
-    const res = await window.electron.query(clone, limit);
+    const res = await window.electron.query(clone, limit ?? Number.MAX_SAFE_INTEGER);
+    if (!res) return
+
     if (typeof res === "string") {
       toast.error(res);
     } else {
@@ -68,6 +73,7 @@ export const Query = () => {
     setTree({ ...tree, group });
   };
 
+  if (!tree.group) return null
   return (
     <div className="flex flex-col w-full gap-4">
       <Settings onValidPath={valid => setValidPath(valid)} onBeatmapsLoaded={(ids) => setExisting(ids)} />
@@ -97,7 +103,7 @@ export const Query = () => {
           </div>
         </div>
       )}
-      {(result?.Ids??[]).length ? (
+      {result && (result?.Ids??[]).length ? (
         <div className="flex flex-col gap-4">
           <div className="bg-white dark:bg-monokai-dark rounded shadow p-6">
             <DownloadSettings result={result} existing={existing} />

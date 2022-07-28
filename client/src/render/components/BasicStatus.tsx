@@ -1,11 +1,11 @@
 import { CircularProgress } from "@mui/material";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Metrics } from "../../models/metrics";
 
 export const BasicStatus = () => {
   const [status, setStatus] = useState(false);
-  const [metrics, setMetrics] = useState<Metrics>(null);
+  const [metrics, setMetrics] = useState<Metrics | null>(null);
   const [isLoading, setLoading] = useState(true);
 
   const collectMetrics = () => {

@@ -1,4 +1,5 @@
 import isNumber from "is-number";
+import React from "react";
 import Switch from "react-switch";
 
 interface PropTypes {

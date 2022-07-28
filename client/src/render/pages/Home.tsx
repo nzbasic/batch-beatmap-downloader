@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { BasicStatus } from "../components/BasicStatus";
 import { InvalidPath } from "../components/InvalidPath";
 import { FindMissingMaps } from "../components/MissingMaps";
@@ -24,13 +24,12 @@ export const Home = () => {
       <Settings onValidPath={valid => setValidPath(valid)} />
       <BasicStatus />
 
-      {validPath ? (
+      {!validPath ? <InvalidPath /> : (
         <div className="flex flex-col gap-4">
           <FindMissingMaps />
           <SampleFilters />
         </div>
-      ) : <InvalidPath />  }
-
+      )}
     </div>
   );
 };

@@ -2,7 +2,7 @@ import { FilterRule } from "./Rule";
 import { ConnectorDetails, Group, Node } from "../../../models/filter";
 import { RuleType, Rule } from "../../../models/rules";
 import { Connector } from "./Connector";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { cloneDeep } from "lodash";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
@@ -121,7 +121,7 @@ export const QueryGroup = ({ group, id, updateParent }: PropTypes) => {
               ) : (
                 <div className="flex gap-2 items-center">
                   <FilterRule
-                    rule={child.rule}
+                    rule={child?.rule??null}
                     id={child.id}
                     updateParent={(rule, id) => updateGroup(rule, id)}
                   />

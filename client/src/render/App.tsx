@@ -10,9 +10,10 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Status } from "./pages/Status";
 import { Changelog } from "./pages/Changelog";
+import React from "react";
 
 const App = () => {
-  const [downloadStatus, setDownloadStatus] = useState<DownloadStatus>(null);
+  const [downloadStatus, setDownloadStatus] = useState<DownloadStatus | null>(null);
   const [version, setVersion] = useState("1.0.0")
 
   useEffect(() => {
@@ -39,7 +40,7 @@ const App = () => {
   return (
     <HashRouter>
       <div className="flex w-screen">
-        <Menu version={version} downloadStatus={downloadStatus} />
+        <Menu version={version} />
         <div className="main p-4 overflow-auto overflow-x-hidden h-screen">
           <Routes>
             <Route path="/" element={<Home />} />

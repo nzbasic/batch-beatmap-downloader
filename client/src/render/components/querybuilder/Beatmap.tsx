@@ -1,7 +1,7 @@
 import { BeatmapDetails } from "../../../models/api";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
-import { useState } from "react";
+import React, { useState } from "react";
 
 interface PropTypes {
   details: BeatmapDetails;

@@ -1,3 +1,5 @@
+import React from "react";
+
 export type Row = (string | number | JSX.Element)[];
 
 interface PropTypes {

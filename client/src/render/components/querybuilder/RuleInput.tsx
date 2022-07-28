@@ -10,6 +10,7 @@ import {
   Rule,
   DropdownOption,
 } from "../../../models/rules";
+import React from "react";
 
 interface PropTypes {
   rule: Rule;
@@ -17,14 +18,14 @@ interface PropTypes {
 }
 
 const RuleInputDropdown = ({ rule, onChange }: PropTypes) => {
-  const [selectedOption, setSelectedOption] = useState<DropdownOption>(null);
+  const [selectedOption, setSelectedOption] = useState<DropdownOption | null>(null);
 
   useEffect(() => {
     const option = dropdownMap
       .get(rule.type as RuleType)
-      .find((i) => i.value === rule.value);
+      ?.find((i) => i.value === rule.value);
     if (!option) {
-      setSelectedOption(dropdownMap.get(rule.type as RuleType)[0]);
+      setSelectedOption((dropdownMap.get(rule.type as RuleType) ?? [])[0]);
     } else {
       setSelectedOption(option);
     }
@@ -36,7 +37,7 @@ const RuleInputDropdown = ({ rule, onChange }: PropTypes) => {
       classNamePrefix="my-react-select"
       options={dropdownMap.get(rule.type as RuleType)}
       value={selectedOption}
-      onChange={(e) => onChange({ ...rule, value: e.value })}
+      onChange={(e) => onChange({ ...rule, value: e?.value ?? "" })}
     />
   );
 };
@@ -74,7 +75,7 @@ const RuleInputDate = ({ rule, onChange }: PropTypes) => {
     <DatePicker
       className="input-height p-2 w-40 border-gray-300 border rounded focus:outline-blue-500"
       selected={new Date(parseInt(rule.value))}
-      onChange={(date) => setSelectedDate(date)}
+      onChange={(date) => setSelectedDate(date ?? new Date())}
     />
   );
 };
@@ -89,7 +90,7 @@ export const RuleInput = ({ rule, onChange }: PropTypes) => {
 
   return (
     <div className="">
-      {inputMap.get(inputTypeMap.get(rule.type as RuleType))}
+      {inputMap.get(inputTypeMap[rule.type as RuleType])}
     </div>
   );
 };

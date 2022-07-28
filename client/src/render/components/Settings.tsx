@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Switch from "react-switch";
-import { toast } from 'react-toastify'
 import { Browse } from "./Browse";
 import { NumberRangeSelector } from "./NumberRangeSelector";
 

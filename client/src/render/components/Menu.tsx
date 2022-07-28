@@ -6,14 +6,13 @@ import SearchIcon from "@mui/icons-material/Search";
 import CloseIcon from "@mui/icons-material/Close";
 import StorageIcon from '@mui/icons-material/Storage';
 import HistoryIcon from '@mui/icons-material/History';
-import { DownloadStatus } from "../../models/api";
+import React from "react";
 
 interface PropTypes {
-  downloadStatus: DownloadStatus;
   version: string
 }
 
-export const Menu = ({ version, downloadStatus }: PropTypes) => {
+export const Menu = ({ version }: PropTypes) => {
   const { pathname } = useLocation();
 
   const closeApp = () => {
@@ -45,12 +44,12 @@ export const Menu = ({ version, downloadStatus }: PropTypes) => {
             <Link
               key={link}
               to={link}
-              className={`${
-                pathname === link
+              className={`font-medium text-lg py-3 text-center
+                ${pathname === link
                   ? "bg-monokai-dark dark:bg-monokai-light"
                   : "dark:hover:bg-monokai-light hover:bg-monokai-dark"
+                }`
               }
-                 font-medium text-lg py-3 text-center`}
             >
               <div className="flex items-center justify-between mx-4">
                 {title}

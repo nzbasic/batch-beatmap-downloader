@@ -1,3 +1,4 @@
+import React from "react"
 import { changeLog } from "../assets/changelog"
 import { ChangeLogVersion } from "../components/ChangeLogVersion"
 

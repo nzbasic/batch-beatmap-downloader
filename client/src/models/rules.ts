@@ -65,40 +65,31 @@ export const defaultOperators = [
   { label: "is not", value: "!=" },
 ];
 
-export const operatorMap = new Map<RuleType, Operator[]>([
-  [
-    RuleType.TEXT,
-    [
-      { label: "exactly matches", value: "=" },
-      { label: "contains", value: "like" },
-      { label: "does not contain", value: "not like" },
-    ],
+export const operatorMap: Record<RuleType, Operator[]> = {
+  0: [
+    { label: "exactly matches", value: "=" },
+    { label: "contains", value: "like" },
+    { label: "does not contain", value: "not like" },
   ],
-  [
-    RuleType.NUMBER,
-    [
-      { label: "is equal to", value: "=" },
-      { label: "is not equal to", value: "!=" },
-      { label: "is less than", value: "<" },
-      { label: "is greater than", value: ">" },
-      { label: "is less than or equal to", value: "<=" },
-      { label: "is greater than or equal to", value: ">=" },
-    ],
+  1: [
+    { label: "is equal to", value: "=" },
+    { label: "is not equal to", value: "!=" },
+    { label: "is less than", value: "<" },
+    { label: "is greater than", value: ">" },
+    { label: "is less than or equal to", value: "<=" },
+    { label: "is greater than or equal to", value: ">=" },
   ],
-  [RuleType.STATUS, defaultOperators],
-  [RuleType.GENRE, defaultOperators],
-  [RuleType.MODE, defaultOperators],
-  [RuleType.LANGUAGE, defaultOperators],
-  [
-    RuleType.DATE,
-    [
-      { label: "is before", value: "<" },
-      { label: "is after", value: ">" },
-    ],
+  2: defaultOperators,
+  3:  defaultOperators,
+  4: defaultOperators,
+  5: defaultOperators,
+  6: [
+    { label: "is before", value: "<" },
+    { label: "is after", value: ">" },
   ],
-  [RuleType.BOOLEAN, defaultOperators],
-  [RuleType.TOURNAMENT, defaultOperators],
-]);
+  7: defaultOperators,
+  8: defaultOperators,
+};
 
 export enum InputType {
   TEXT,
@@ -108,17 +99,17 @@ export enum InputType {
   BOOLEAN,
 }
 
-export const inputTypeMap = new Map<RuleType, InputType>([
-  [RuleType.NUMBER, InputType.NUMBER],
-  [RuleType.TEXT, InputType.TEXT],
-  [RuleType.STATUS, InputType.DROPDOWN],
-  [RuleType.GENRE, InputType.DROPDOWN],
-  [RuleType.MODE, InputType.DROPDOWN],
-  [RuleType.LANGUAGE, InputType.DROPDOWN],
-  [RuleType.DATE, InputType.DATE],
-  [RuleType.BOOLEAN, InputType.DROPDOWN],
-  [RuleType.TOURNAMENT, InputType.DROPDOWN]
-]);
+export const inputTypeMap: Record<RuleType, InputType> = {
+  0: InputType.TEXT,
+  1: InputType.NUMBER,
+  2: InputType.DROPDOWN,
+  3: InputType.DROPDOWN,
+  4: InputType.DROPDOWN,
+  5: InputType.DROPDOWN,
+  6: InputType.DATE,
+  7: InputType.DROPDOWN,
+  8: InputType.DROPDOWN
+};
 
 export interface DropdownOption {
   label: string;
@@ -211,26 +202,26 @@ export const dropdownMap = new Map<RuleType, DropdownOption[]>([
   ]
 ]);
 
-export const defaultValuesMap = new Map<RuleType, string>([
-  [RuleType.STATUS, "ranked"],
-  [RuleType.BOOLEAN, "1"],
-  [RuleType.DATE, new Date().getTime().toString()],
-  [RuleType.NUMBER, "1"],
-  [RuleType.TEXT, ""],
-  [RuleType.GENRE, "any"],
-  [RuleType.LANGUAGE, "any"],
-  [RuleType.MODE, "osu!"],
-  [RuleType.TOURNAMENT, "Any"],
-]);
+export const defaultValuesMap: Record<RuleType, string> = {
+  0: "",
+  1: "1",
+  2: "ranked",
+  3: "any",
+  4: "any",
+  5: "osu!",
+  6: new Date().getTime().toString(),
+  7: "1",
+  8: "Any",
+};
 
-export const defaultOperatorsMap = new Map<RuleType, string>([
-  [RuleType.STATUS, "="],
-  [RuleType.BOOLEAN, "="],
-  [RuleType.DATE, "<"],
-  [RuleType.NUMBER, "="],
-  [RuleType.TEXT, "like"],
-  [RuleType.GENRE, "="],
-  [RuleType.LANGUAGE, "="],
-  [RuleType.MODE, "="],
-  [RuleType.TOURNAMENT, "="],
-]);
+export const defaultOperatorsMap: Record<RuleType, string> = {
+  0: "like",
+  1: "=",
+  2: "=",
+  3: "=",
+  4: "=",
+  5: "=",
+  6: "<",
+  7: "=",
+  8: "=",
+};

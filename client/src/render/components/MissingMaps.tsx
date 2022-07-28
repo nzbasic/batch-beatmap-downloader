@@ -1,4 +1,5 @@
 import CircularProgress from "@mui/material/CircularProgress";
+import React from "react";
 import { useCallback, useState } from "react"
 import { Link } from "react-router-dom";
 import { MissingMaps } from "../../models/api";
@@ -6,7 +7,7 @@ import { bytesToFileSize } from "../util/fileSize";
 
 export const FindMissingMaps = () => {
   const [loading, setLoading] = useState(false);
-  const [missing, setMissing] = useState<MissingMaps>(null)
+  const [missing, setMissing] = useState<MissingMaps | null>(null)
 
   const checkCollections = useCallback(async () => {
     setLoading(true);
@@ -17,7 +18,7 @@ export const FindMissingMaps = () => {
   }, [])
 
   const download = useCallback(() => {
-    window.electron.download(missing.ids, missing.totalSize, false, [], "")
+    window.electron.download(missing?.ids??[], missing?.totalSize??0, false, [], "")
   }, [missing])
 
   return (
@@ -40,7 +41,6 @@ export const FindMissingMaps = () => {
       {missing && (
         <div className="flex flex-col">
           <span>Found {missing.ids.length} map(s) that can be downloaded.</span>
-
           {missing.ids.length > 0 && (
             <div className="flex flex-col items-start gap-2">
               <span>Total size: {bytesToFileSize(missing.totalSize)}</span>
@@ -57,7 +57,6 @@ export const FindMissingMaps = () => {
           )}
         </div>
       )}
-
     </div>
   )
 }

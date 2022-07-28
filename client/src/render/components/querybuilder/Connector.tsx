@@ -1,3 +1,4 @@
+import React from "react";
 import { ConnectorDetails } from "../../../models/filter";
 
 const types = ["AND", "OR"];

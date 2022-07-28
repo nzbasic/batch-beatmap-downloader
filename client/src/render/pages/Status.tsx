@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Metrics } from "../../models/metrics";
 import ColorScales from "color-scales";
 import { bytesToFileSize } from "../util/fileSize";
@@ -6,7 +6,7 @@ import { CircularProgress } from "@mui/material";
 
 export const Status = () => {
   const [status, setStatus] = useState(false);
-  const [metrics, setMetrics] = useState<Metrics>(null);
+  const [metrics, setMetrics] = useState<Metrics | null>(null);
   const [isLoading, setLoading] = useState(true);
   const currentDownloads = metrics?.Download?.CurrentDownloads ?? [];
 

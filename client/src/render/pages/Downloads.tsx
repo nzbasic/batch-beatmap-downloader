@@ -6,9 +6,10 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { CircularProgress } from "@mui/material";
 import humanizeDuration from 'humanize-duration';
+import React from "react";
 
 interface PropTypes {
-  downloadStatus: DownloadStatus;
+  downloadStatus: DownloadStatus | null;
 }
 
 interface Speed {
@@ -23,7 +24,7 @@ export const Downloads = ({ downloadStatus }: PropTypes) => {
   const [averageSpeed, setAverageSpeed] = useState<Speed[]>([])
 
   useEffect(() => {
-    if (downloadStatus.currentDownloads) {
+    if (downloadStatus?.currentDownloads) {
       let totalDownloadSpeed = 0
       for (const download of downloadStatus.currentDownloads) {
         const size = download.size * 8 / 1000 / 1000
@@ -36,15 +37,6 @@ export const Downloads = ({ downloadStatus }: PropTypes) => {
       const filtered = averageSpeed.filter(({ time }) => time > timeMinuteAgo)
       setAverageSpeed([...filtered, { speed: totalDownloadSpeed, time: now }])
     }
-
-    // // keep track of speed in last minute
-    // if (lastDownloadTime && lastDownloadSize) {
-    //   const now = Date.now()
-    //   const speed = calculateSpeed()
-    //   const timeMinuteAgo = now - 60000
-    //   const filtered = averageSpeed.filter(({ time }) => time > timeMinuteAgo)
-    //   setAverageSpeed([...filtered, { speed, time: now }])
-    // }
   }, [downloadStatus])
 
   useEffect(() => {
@@ -84,22 +76,10 @@ export const Downloads = ({ downloadStatus }: PropTypes) => {
   const totalSize = downloadStatus.totalSize;
   const totalProgress = downloadStatus.totalProgress;
   const filesRemaining = filesQueue - filesDownloaded - filesSkipped - filesFailed
-  const lastDownloadTime = downloadStatus.lastDownloadTime??0
-  const lastDownloadSize = downloadStatus.lastDownloadSize??0
 
   const currentSpeed = () => {
     if (paused) return 0
     return averageSpeed.reduce((acc, { speed }) => acc + speed, 0) / averageSpeed.length
-  }
-
-  const calculateSpeed = () => {
-    if (lastDownloadTime === 0) {
-      return 0
-    }
-
-    const size = lastDownloadSize * 8 / 1000 / 1000
-    const time = lastDownloadTime / 1000
-    return size / time
   }
 
   const estimatedTimeLeft = () => {

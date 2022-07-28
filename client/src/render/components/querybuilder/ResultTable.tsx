@@ -2,14 +2,15 @@ import { useEffect, useState } from "react";
 import { BeatmapDetails, FilterResponse } from "../../../models/api";
 import { Beatmap } from "./Beatmap";
 import { toast } from "react-toastify";
+import React from "react";
 
 interface PropTypes {
   result: FilterResponse;
 }
 
+const pageSize = 25;
 export const ResultTable = ({ result }: PropTypes) => {
   const [page, setPage] = useState<BeatmapDetails[]>([]);
-  const [pageSize, setPageSize] = useState<number>(25);
   const [pageNumber, setPageNumber] = useState(1);
 
   const getNewPage = async (): Promise<BeatmapDetails[]> => {
@@ -22,7 +23,7 @@ export const ResultTable = ({ result }: PropTypes) => {
       toast.error(res);
       return [];
     } else {
-      return res;
+      return res ?? [];
     }
   };
 

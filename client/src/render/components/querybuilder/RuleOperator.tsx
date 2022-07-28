@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Select from "react-select";
 import { Rule, RuleType, operatorMap, Operator } from "../../../models/rules";
 
@@ -8,14 +8,13 @@ interface PropTypes {
 }
 
 export const RuleOperator = ({ rule, onChange }: PropTypes) => {
-  const [selectedOption, setSelectedOption] = useState<Operator>(null);
+  const [selectedOption, setSelectedOption] = useState<Operator | null>(null);
 
   useEffect(() => {
-    const option = operatorMap
-      .get(rule.type as RuleType)
+    const option = operatorMap[rule.type as RuleType]
       .find((i) => i.value === rule.operator);
     if (!option) {
-      setSelectedOption(operatorMap.get(rule.type as RuleType)[0]);
+      setSelectedOption(operatorMap[rule.type as RuleType][0]);
     } else {
       setSelectedOption(option);
     }
@@ -25,10 +24,10 @@ export const RuleOperator = ({ rule, onChange }: PropTypes) => {
     <Select
       className="w-52 my-react-select-container"
       classNamePrefix="my-react-select"
-      options={operatorMap.get(rule.type as RuleType)}
+      options={operatorMap[rule.type as RuleType]}
       isSearchable={false}
       value={selectedOption}
-      onChange={(e) => onChange({ ...rule, operator: e.value })}
+      onChange={(e) => onChange({ ...rule, operator: e?.value ?? "" })}
     />
   );
 };

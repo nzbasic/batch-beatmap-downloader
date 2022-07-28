@@ -1,8 +1,9 @@
+import React from "react";
 import { toast } from "react-toastify";
 
 interface PropTypes {
   path: string
-  update: React.Dispatch<React.SetStateAction<string>>
+  update: (path: string) => void
 }
 
 export const Browse = ({ path, update }: PropTypes) => {
