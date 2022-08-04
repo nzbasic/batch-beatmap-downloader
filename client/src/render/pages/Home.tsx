@@ -12,7 +12,7 @@ export const Home = () => {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="bg-white dark:bg-monokai-dark rounded shadow p-6">
+      <div className="container">
         <span className="font-bold">Video Guide:</span>
         <button
           onClick={() => window.electron.openUrl(videoUrl)}

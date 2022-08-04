@@ -13,6 +13,8 @@ export interface FilterResponse {
 }
 
 export interface DownloadStatus {
+  id: string
+  paused?: boolean
   all: number[];
   completed: number[];
   skipped: number[];
@@ -28,6 +30,11 @@ export interface DownloadStatus {
     time: number,
     size: number
   }[]
+}
+
+export interface Speed {
+  speed: number;
+  time: number;
 }
 
 export interface Group {

@@ -28,7 +28,7 @@ const createStores = (): void => {
   });
 };
 
-export let window: BrowserWindow;
+export let window: BrowserWindow | null;
 export const name: string = "james"
 export let shouldBeClosed = false
 
@@ -80,7 +80,7 @@ app.on("ready", () => {
 });
 
 app.once("before-quit", () => {
-  window.removeAllListeners()
+  window?.removeAllListeners()
 })
 
 // Quit when all windows are closed, except on macOS. There, it's common
@@ -88,7 +88,7 @@ app.once("before-quit", () => {
 // explicitly with Cmd + Q.
 app.on("window-all-closed", () => {
   shouldBeClosed = true
-  window.removeAllListeners()
+  window?.removeAllListeners()
   app.exit()
 });
 

@@ -3,7 +3,7 @@ import { DownloadStatus } from "../models/api";
 import { loadBeatmaps } from "./beatmaps";
 import Download from "nodejs-file-downloader";
 import { window, shouldBeClosed } from "../main";
-import { isPaused, pauseDownload } from "./ipc/downloads";
+import { isPaused, pauseDownload } from "./ipc/main";
 import { serverUri } from "./ipc/main";
 import { addCollection } from "./collection/collection";
 import { getSongsFolder } from "./settings";
@@ -12,8 +12,8 @@ import { v4 as uuidv4 } from "uuid";
 
 const handleServerError = (err: Error) => {
   if (err.message.includes("status code 502")) {
-    window.webContents.send("error", "Server is down");
-    window.webContents.send("server-down", true)
+    window?.webContents.send("error", "Server is down");
+    window?.webContents.send("server-down", true)
     pauseDownload()
     serverUpLoop()
   }
@@ -36,7 +36,7 @@ const serverUpLoop = () => {
     try {
       axios.get(serverUri).then(res => {
         if (res.status === 204) {
-          window.webContents.send("server-down", false)
+          window?.webContents.send("server-down", false)
           clearInterval(interval)
         }
       })
@@ -78,6 +78,7 @@ export const download = async (
 
   // save the download request to store in case of app closing
   const status: DownloadStatus = {
+    id: "",
     all: ids,
     completed: [],
     failed: [],
@@ -205,7 +206,7 @@ export const download = async (
       }
     }
 
-    window.webContents.send("download-status", status);
+    window?.webContents.send("download-status", status);
     await setDownloadStatus(status);
 
     return downloadMapSet()
@@ -223,7 +224,7 @@ export const download = async (
     if (result === Status.FINISHED) {
       // this prevents failed downloads not adding to the progress bar
       status.totalProgress = status.totalSize;
-      window.webContents.send("download-status", status);
+      window?.webContents.send("download-status", status);
     }
   }
 
@@ -260,6 +261,7 @@ export const getDownloadStatus = async (): Promise<DownloadStatus> => {
   const force = (await settings.get("status.force")) as boolean;
 
   return {
+    id: "",
     all,
     completed,
     failed,

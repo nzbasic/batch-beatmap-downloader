@@ -40,7 +40,7 @@ export const Status = () => {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="bg-white dark:bg-monokai-dark rounded shadow p-6 flex flex-col dark:text-white w-full">
+      <div className="container flex flex-col dark:text-white w-full">
         <div className="flex items-center gap-2">
           <span className="font-bold text-lg">Server Status</span>
           {isLoading ? <CircularProgress size={25} /> : (
@@ -77,7 +77,7 @@ export const Status = () => {
           </div>
 
           <div className="flex gap-4">
-            <div className="bg-white dark:bg-monokai-dark rounded shadow p-6 flex flex-col dark:text-white w-full">
+            <div className="container flex flex-col dark:text-white w-full">
               <div className="flex flex-col gap-2">
                 <span className="font-bold text-lg">Database Status</span>
                 <div className="flex flex-col">
@@ -89,7 +89,7 @@ export const Status = () => {
               </div>
             </div>
 
-            <div className="bg-white dark:bg-monokai-dark rounded shadow p-6 flex flex-col dark:text-white w-full">
+            <div className="container flex flex-col dark:text-white w-full">
               <div className="flex flex-col gap-2">
                 <span className="font-bold text-lg">Daily Stats</span>
                 <div className="flex flex-col">
@@ -101,7 +101,7 @@ export const Status = () => {
             </div>
           </div>
 
-          <div className="bg-white dark:bg-monokai-dark rounded shadow p-6 flex flex-col dark:text-white w-full">
+          <div className="container flex flex-col dark:text-white w-full">
             <div className="flex flex-col gap-2">
               <span className="font-bold text-lg">Current Downloads</span>
               {getActiveDownloads().length ? (

@@ -1,64 +1,38 @@
-import { DownloadStatus } from "../../models/api";
-import LinearProgress from "@mui/material/LinearProgress";
-import { bytesToFileSize } from "../util/fileSize";
+import { Speed } from "../../models/api";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
-import { CircularProgress } from "@mui/material";
-import humanizeDuration from 'humanize-duration';
 import React from "react";
+import { useDownloads } from "../hooks/useDownloads";
+import { useStatus } from "../hooks/useStatus";
+import { DownloadSummary } from "../components/DownloadSummary";
 
-interface PropTypes {
-  downloadStatus: DownloadStatus | null;
-}
-
-interface Speed {
-  speed: number;
-  time: number;
-}
-
-export const Downloads = ({ downloadStatus }: PropTypes) => {
-  const [paused, setPaused] = useState(true)
-  const [isLoading, setLoading] = useState(true)
-  const [serverDown, setServerDown] = useState(false)
+export const Downloads = () => {
+  const { downloads } = useDownloads()
+  const { online } = useStatus()
   const [averageSpeed, setAverageSpeed] = useState<Speed[]>([])
 
   useEffect(() => {
-    if (downloadStatus?.currentDownloads) {
-      let totalDownloadSpeed = 0
-      for (const download of downloadStatus.currentDownloads) {
-        const size = download.size * 8 / 1000 / 1000
-        const time = download.time / 1000
-        totalDownloadSpeed += (size / time)
-      }
+    console.log(downloads)
+    // if (downloadStatus?.currentDownloads) {
+    //   let totalDownloadSpeed = 0
+    //   for (const download of downloadStatus.currentDownloads) {
+    //     const size = download.size * 8 / 1000 / 1000
+    //     const time = download.time / 1000
+    //     totalDownloadSpeed += (size / time)
+    //   }
 
-      const now = Date.now()
-      const timeMinuteAgo = now - 60000
-      const filtered = averageSpeed.filter(({ time }) => time > timeMinuteAgo)
-      setAverageSpeed([...filtered, { speed: totalDownloadSpeed, time: now }])
-    }
-  }, [downloadStatus])
+    //   const now = Date.now()
+    //   const timeMinuteAgo = now - 60000
+    //   const filtered = averageSpeed.filter(({ time }) => time > timeMinuteAgo)
+    //   setAverageSpeed([...filtered, { speed: totalDownloadSpeed, time: now }])
+    // }
+  }, [downloads])
 
-  useEffect(() => {
-    window.electron.isDownloadPaused().then(res => {
-      setLoading(false)
-      setPaused(res)
-    })
-
-    window.electron.listenForServerDown((down) => {
-      if (!down && serverDown && !paused) {
-        toast.success("Server is back up, resuming download")
-        resume()
-      }
-      setServerDown(down)
-    })
-  }, [])
-
-  if (!downloadStatus || !downloadStatus.all) {
+  if (!downloads.length) {
     return (
-      <div className="bg-white dark:bg-monokai-dark rounded shadow p-6">
+      <div className="container">
         <div className="flex flex-col gap-2">
-          <span className="text-lg font-bold">No downloads in progress</span>
+          <span className="text-lg font-bold">No downloads found</span>
           <Link to="/query">
             <span className="font-medium mt-4 text-blue-500 hover:underline">
               Go to the beatmap search page to start a download
@@ -69,107 +43,14 @@ export const Downloads = ({ downloadStatus }: PropTypes) => {
     )
   }
 
-  const filesQueue = downloadStatus.all.length;
-  const filesDownloaded = downloadStatus.completed.length;
-  const filesFailed = downloadStatus.failed.length;
-  const filesSkipped = downloadStatus.skipped.length;
-  const totalSize = downloadStatus.totalSize;
-  const totalProgress = downloadStatus.totalProgress;
-  const filesRemaining = filesQueue - filesDownloaded - filesSkipped - filesFailed
-
-  const currentSpeed = () => {
-    if (paused) return 0
-    return averageSpeed.reduce((acc, { speed }) => acc + speed, 0) / averageSpeed.length
-  }
-
-  const estimatedTimeLeft = () => {
-    if (totalProgress === 0) {
-      return "Calculating..."
-    }
-
-    const remainingSize = (totalSize - totalProgress)*8
-    const speed = currentSpeed() * 1000 * 1000
-    if (speed === 0) {
-      return "Calculating..."
-    }
-
-    const remainingTime = (remainingSize / speed) * 1000
-    return humanizeDuration(remainingTime, { round: true })
-  }
-
-  const pause = () => {
-    setLoading(true)
-    setPaused(true)
-    setAverageSpeed([])
-    window.electron.pauseDownload()
-    toast.success("Download paused")
-    setLoading(false)
-  }
-
-  const resume = () => {
-    setLoading(true)
-    setPaused(false)
-    window.electron.resumeDownload().then(() => {
-      toast.success("Download resumed")
-      setLoading(false)
-    });
-  }
-
-  const calculateTotalProgress = () => {
-    if (totalSize === 0) {
-      return 0;
-    }
-    return (totalProgress / totalSize) * 100;
-  };
-
   return (
-    <div className="flex flex-col w-full gap-4">
-      <div className="bg-white dark:bg-monokai-dark rounded shadow p-6">
-        <div className="flex flex-col">
-          <span className="text-lg font-bold">Stats</span>
-          <span>Files in queue: {filesQueue}</span>
-          <span>Downloaded: {filesDownloaded}</span>
-          <span>Failed: {filesFailed}</span>
-          <span>Skipped: {filesSkipped}</span>
-          <span>Remaining: {filesRemaining}</span>
-          <span>Total size: {bytesToFileSize(totalSize)}</span>
-          <span>
-            Size of remaining downloads:{" "}
-            {bytesToFileSize(totalSize - totalProgress)}
-          </span>
-          <span>
-            Current Speed: {Number.isNaN(currentSpeed()) ? "Loading..." : currentSpeed().toFixed(2) + "Mbps"}
-          </span>
-          {!paused && <span>Estimated time left: {estimatedTimeLeft()}</span>}
-          <span className="font-medium mt-4">Total Progress</span>
-          <div className="flex items-center">
-            <div className="w-full">
-              <LinearProgress
-                variant="determinate"
-                value={calculateTotalProgress()}
-              />
-            </div>
-            <span className="ml-2">
-              {calculateTotalProgress().toFixed(0)}%
-            </span>
-          </div>
-          {(filesRemaining !== 0) && (
-            isLoading ? (<CircularProgress />) : (
-              <div className="flex gap-2 mt-2">
-                {serverDown ? (
-                  <span className="text-red-500">Server went down. Will resume when server is back up.</span>
-                ) : (
-                  (paused) && (filesRemaining !== 0) ? (
-                    <button onClick={() => resume()} className="text-white px-2 py-1 bg-green-500 hover:bg-green-600 rounded">Resume</button>
-                  ) : (
-                    <button onClick={() => pause()} className="text-white px-2 py-1 bg-red-500 hover:bg-red-600 rounded">Pause</button>
-                  )
-                )}
-              </div>
-            )
-          )}
-        </div>
+    <div className="flex flex-col gap-4">
+      <div className="container flex flex-col gap-2">
+        <h1 className="text-lg font-bold">Download Stats</h1>
       </div>
+      {downloads.map(download => (
+        <DownloadSummary key={download.id} status={download} />
+      ))}
     </div>
-  );
+  )
 };

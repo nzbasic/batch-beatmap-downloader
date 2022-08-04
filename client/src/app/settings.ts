@@ -8,3 +8,7 @@ export const getSongsFolder = async () => {
 
   return altPath
 }
+
+export const getMaxConcurrentDownloads = async () => {
+  return (await settings.get("maxConcurrentDownloads") as number)??3
+}

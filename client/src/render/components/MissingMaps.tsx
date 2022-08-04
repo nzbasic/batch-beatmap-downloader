@@ -22,7 +22,7 @@ export const FindMissingMaps = () => {
   }, [missing])
 
   return (
-    <div className="bg-white dark:bg-monokai-dark rounded shadow p-6 gap-2 flex flex-col dark:text-white w-full items-start">
+    <div className="container gap-2 flex flex-col dark:text-white w-full items-start">
       <span className="font-bold text-lg mb-4">Download missing maps (from collections)</span>
       <div className="flex items-center gap-2 mb-2">
         <button

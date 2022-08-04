@@ -118,16 +118,50 @@ export const electronBridge = {
   },
 
   getDownloadStatus: async (): Promise<DownloadStatus> => {
-    return (await ipcRenderer.invoke("get-download-status")) as DownloadStatus;
+    return (await ipcRenderer.invoke("downloads-status")) as DownloadStatus;
   },
 
   checkCollections: async (): Promise<MissingMaps> => {
     return (await ipcRenderer.invoke("check-collections") as MissingMaps)
   },
 
-  listenForDownloads: (callback: (status: DownloadStatus) => void) => {
-    ipcRenderer.on("download-status", (event, status: DownloadStatus) => {
-      callback(status);
+  createDownload: async (ids: number[], size: number, force: boolean, hashes: string[], collectionName: string): Promise<void> => {
+    return await ipcRenderer.invoke("create-download", ids, size, force, hashes, collectionName) as void
+  },
+
+  getDownloadsStatus: async (): Promise<DownloadStatus[]> => {
+    return (await ipcRenderer.invoke("get-downloads-status")) as DownloadStatus[];
+  },
+
+  resumeDownloads: async (): Promise<void> => {
+    return await ipcRenderer.invoke("resume-downloads") as void
+  },
+
+  resumeDownload2: async (downloadId: string): Promise<void> => {
+    return await ipcRenderer.invoke("resume-download2", downloadId) as void
+  },
+
+  pauseDownload2: async (downloadId: string): Promise<void> => {
+    return await ipcRenderer.invoke("pause-download2", downloadId) as void
+  },
+
+  pauseDownloads: async (): Promise<void> => {
+    return await ipcRenderer.invoke("pause-downloads") as void
+  },
+
+  deleteDownload: async (downloadId: string): Promise<void> => {
+    return await ipcRenderer.invoke("delete-download", downloadId) as void
+  },
+
+  listenForDownloads2: (callback: (downloads: DownloadStatus[]) => void) => {
+    ipcRenderer.on("downloads-status", (event, downloads: DownloadStatus[]) => {
+      callback(downloads)
+    })
+  },
+
+  listenForDownloads: (callback: (downloadId: string, status: DownloadStatus) => void) => {
+    ipcRenderer.on("download-status", (event, downloadId: string, status: DownloadStatus) => {
+      callback(downloadId, status);
     });
   },
 

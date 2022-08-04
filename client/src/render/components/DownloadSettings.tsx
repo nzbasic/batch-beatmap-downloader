@@ -17,9 +17,7 @@ export const DownloadSettings = ({ result, existing }: PropTypes) => {
 
   const download = () => {
     toast.success(`Download started!`);
-    window.electron.download(result.SetIds, calculateSize(), force, result.Hashes, collectionName).then(res => {
-      toast.success("Download Finished")
-    })
+    window.electron.createDownload(result.SetIds, calculateSize(), force, result.Hashes, collectionName)
   };
 
   const matching = (condition: boolean) => {

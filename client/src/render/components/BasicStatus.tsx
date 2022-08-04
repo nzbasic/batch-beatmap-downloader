@@ -23,7 +23,7 @@ export const BasicStatus = () => {
   }, []);
 
   return (
-    <div className="bg-white dark:bg-monokai-dark rounded shadow p-6 flex flex-col dark:text-white w-full">
+    <div className="container flex flex-col dark:text-white w-full">
       <div className="flex flex-col gap-2">
         <span className="font-bold text-lg">Basic Status</span>
         <div className="flex flex-col">

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-export const useStickyState = <Type>(
+export const useStickyState = <Type, >(
   defaultValue: Type,
   key: string
 ): [Type, React.Dispatch<React.SetStateAction<Type>>] => {

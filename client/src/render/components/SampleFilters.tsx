@@ -34,7 +34,7 @@ export const SampleFilters = () => {
   };
 
   return (
-    <div className="bg-white dark:bg-monokai-dark rounded shadow p-6 flex flex-col dark:text-white w-full">
+    <div className="container flex flex-col dark:text-white w-full">
       <span className="font-bold text-lg mb-4">Load a Preset Filter</span>
       <div className="flex flex-row flex-wrap gap-4">
         {filters.map((filter) => (

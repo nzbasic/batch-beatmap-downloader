@@ -24,7 +24,7 @@ export const addCollection = async (hashes: string[], name: string) => {
 
   // some unreproducible write error occurred at one point which caused garbage values to be written to disk
   if (testWrite.numberCollections !== newCollections.numberCollections) {
-    window.webContents.send("error", "Something went wrong when creating the new collection. Backup was restored.")
+    window?.webContents.send("error", "Something went wrong when creating the new collection. Backup was restored.")
     await writeCollections(osuPath, backup)
   }
 }

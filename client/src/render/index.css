@@ -10,6 +10,55 @@
   width: calc(100% - 13rem);
 }
 
+.button {
+  @apply dark:bg-blue-600 dark:hover:bg-blue-700 hover:bg-blue-400 bg-blue-400 text-white cursor-pointer transition-colors
+}
+
+.box-selector {
+  @apply container transition-colors button
+}
+
+.box-selector-off {
+  @apply box-selector button dark:hover:border-black hover:border-gray-600 hover:text-white cursor-pointer text-black dark:text-white !important
+}
+
+.box-selector-on {
+  @apply box-selector dark:border-black border-gray-600 text-white font-semibold text-lg cursor-default bg-blue-600 !important
+}
+
+.warning {
+  @apply text-red-600 hover:text-red-700 cursor-pointer
+}
+
+.shadow-border {
+  @apply shadow-sm rounded-md border dark:border-black dark:bg-zinc-800 border-gray-400 bg-white;
+}
+
+.container {
+  @apply bg-white dark:bg-monokai-dark p-6 shadow-border;
+}
+
+.title {
+  @apply text-gray-900 text-lg font-semibold dark:text-gray-100;
+}
+
+.subtitle {
+  @apply text-gray-500 dark:text-gray-200;
+}
+
+.input {
+  @apply bg-gray-50 rounded-md shadow-sm border-gray-300 border text-gray-600 w-full focus:outline-none focus:border-emerald-600 transition ease-in-out placeholder-gray-500;
+  @apply dark:bg-zinc-700 dark:border-black dark:placeholder-gray-200 dark:text-gray-200;
+}
+
+.input:disabled {
+  @apply bg-gray-200 hover:text-gray-600 dark:bg-zinc-900;
+}
+
+.label {
+  @apply block text-sm leading-5 font-medium dark:text-gray-200 text-gray-700;
+}
+
 @layer components {
   /* .my-react-select-container {
   } */

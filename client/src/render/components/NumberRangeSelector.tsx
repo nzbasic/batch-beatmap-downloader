@@ -19,9 +19,10 @@ export const NumberRangeSelector = ({ min, max, initial, onChange }: PropTypes) 
     for (let i = min; i <= max; i++) {
       buttons.push(
         <button
-          className={`w-6 h-6 rounded-sm transition-colors font-semibold
-            ${initial == i ? 'bg-emerald-600 ' : 'bg-blue-400 hover:bg-blue-600'}
-          `}
+          className={
+            `${initial == i ? 'bg-emerald-600 ' : 'button'}
+            w-6 h-6 rounded-sm transition-colors font-semibold text-white`
+          }
           disabled={initial == i}
           key={i}
           onClick={() => handleClick(i)}

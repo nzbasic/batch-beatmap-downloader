@@ -21,19 +21,7 @@ const App = () => {
       setVersion(version);
     })
 
-    window.electron.getDownloadStatus().then(res => {
-      setDownloadStatus(res)
-    })
-
-    window.electron.getSettings().then((res) => {
-      const mode = res.darkMode as boolean;
-      if (mode) {
-        document.documentElement.classList.add("dark");
-      } else {
-        document.documentElement.classList.remove("dark");
-      }
-    });
-    window.electron.listenForDownloads((status) => setDownloadStatus(status));
+    window.electron.listenForDownloads((id, status) => setDownloadStatus(status));
     window.electron.listenForErrors((error) => toast.error(error))
   }, []);
 
@@ -47,7 +35,7 @@ const App = () => {
             <Route path="/query" element={<Query />} />
             <Route
               path="/downloads"
-              element={<Downloads downloadStatus={downloadStatus} />}
+              element={<Downloads />}
             />
             <Route path="/status" element={<Status />} />
             <Route path="/changelog" element={<Changelog />} />
