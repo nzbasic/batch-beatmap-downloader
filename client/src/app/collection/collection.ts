@@ -6,7 +6,6 @@ import axios from "axios";
 import { serverUri } from "../ipc/main";
 import { BeatmapHashMap } from "../../models/api";
 import { loadBeatmaps } from "../beatmaps";
-import fs from 'fs'
 
 export const addCollection = async (hashes: string[], name: string) => {
   const osuPath = await settings.get("path") as string;
@@ -52,7 +51,7 @@ export const checkCollections = async () => {
     if (serverHashes.has(hash)) {
       const setId = serverHashes.get(hash);
 
-      if (!ownedSetIds.has(setId)) {
+      if (setId && !ownedSetIds.has(setId)) {
         missing.push(setId)
       }
     }

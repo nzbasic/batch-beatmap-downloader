@@ -3,7 +3,8 @@ import { DownloadStatus } from "../models/api";
 import { loadBeatmaps } from "./beatmaps";
 import Download from "nodejs-file-downloader";
 import { window, shouldBeClosed } from "../main";
-import { isPaused, pauseDownload, serverUri } from "./ipc/main";
+import { isPaused, pauseDownload } from "./ipc/downloads";
+import { serverUri } from "./ipc/main";
 import { addCollection } from "./collection/collection";
 import { getSongsFolder } from "./settings";
 import axios from "axios";
@@ -149,8 +150,9 @@ export const download = async (
         status.currentProgress = percentage;
       },
       onResponse: (response) => {
-        currentSize = parseInt(response.headers["content-length"]);
-        status.currentSize = response.headers["content-length"];
+        const size = response.headers["content-length"] ?? "0"
+        currentSize = parseInt(size);
+        status.currentSize = size;
         if (isPaused) download.cancel()
         cancelled = true
       },

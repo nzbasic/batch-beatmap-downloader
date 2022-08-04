@@ -39,7 +39,7 @@ export const readCollections = async (path: string) => {
     }
 
     for (let mapIdx = 0; mapIdx < collection.numberMaps; mapIdx++) {
-      collection.hashes.push(reader.readString());
+      collection.hashes.push(reader.readString() ?? "");
     }
 
     collections.collections.push(collection);
@@ -71,13 +71,12 @@ export const writeCollections = async (osuPath: string, collections: Collections
       });
     });
 
+    const buffer = Buffer.from(writer.buff);
+    const path = osuPath + "/collection.db"
+    await fs.promises.writeFile(path, buffer);
   } catch(err) {
     console.log(err)
   }
-
-  const buffer = Buffer.from(writer.buff);
-  const path = osuPath + "/collection.db"
-  await fs.promises.writeFile(path, buffer);
 };
 
 /**
