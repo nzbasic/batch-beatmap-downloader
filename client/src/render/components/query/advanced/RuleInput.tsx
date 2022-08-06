@@ -9,7 +9,7 @@ import {
   RuleType,
   Rule,
   DropdownOption,
-} from "../../../models/rules";
+} from "../../../../models/rules";
 import React from "react";
 
 interface PropTypes {

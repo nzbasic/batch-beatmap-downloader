@@ -14,7 +14,7 @@ export enum RuleType {
   MODE,
   DATE,
   BOOLEAN,
-  TOURNAMENT
+  TOURNAMENT,
 }
 
 export interface InputOption {
@@ -80,7 +80,7 @@ export const operatorMap: Record<RuleType, Operator[]> = {
     { label: "is greater than or equal to", value: ">=" },
   ],
   2: defaultOperators,
-  3:  defaultOperators,
+  3: defaultOperators,
   4: defaultOperators,
   5: defaultOperators,
   6: [

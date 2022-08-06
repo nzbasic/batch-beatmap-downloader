@@ -1,5 +1,5 @@
 import React from "react"
-import { QueryGroup } from "./QueryGroup"
+import { QueryGroup } from "./advanced/QueryGroup"
 import { Group, Node } from "../../../models/filter";
 import { QueryLimit } from "./QueryLimit";
 import { CircularProgress } from "@mui/material";

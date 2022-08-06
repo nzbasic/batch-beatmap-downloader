@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Select from "react-select";
-import { Rule, RuleType, operatorMap, Operator } from "../../../models/rules";
+import { Rule, RuleType, operatorMap, Operator } from "../../../../models/rules";
 
 interface PropTypes {
   rule: Rule;

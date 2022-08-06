@@ -1,6 +1,6 @@
 import React from "react";
 import Select from "react-select";
-import { inputOptions, Rule, defaultValuesMap, defaultOperatorsMap, RuleType } from "../../../models/rules";
+import { inputOptions, Rule, defaultValuesMap, defaultOperatorsMap, RuleType } from "../../../../models/rules";
 
 interface PropTypes {
   rule: Rule;

@@ -1,4 +1,4 @@
-import { BeatmapDetails } from "../../../models/api";
+import { BeatmapDetails } from "../../../../models/api";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import React, { useState } from "react";

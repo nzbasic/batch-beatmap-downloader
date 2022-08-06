@@ -1,6 +1,6 @@
 import { FilterRule } from "./Rule";
-import { ConnectorDetails, Group, Node } from "../../../models/filter";
-import { RuleType, Rule } from "../../../models/rules";
+import { ConnectorDetails, Group, Node } from "../../../../models/filter";
+import { RuleType, Rule } from "../../../../models/rules";
 import { Connector } from "./Connector";
 import React, { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
