@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import classNames from 'classnames';
+import { Input } from '../components/util/Input';
 
 interface UseTextInputArguments {
   label?: string
@@ -24,12 +24,11 @@ export const useTextInput = (args: UseTextInputArguments = {}): [JSX.Element, st
   const TextInput = (
     <div className="flex items-center w-full gap-2">
       {label && <label className="w-32">{label}</label>}
-      <input
-        type="text"
-        className={classNames('input', className)}
+      <Input
+        className={className}
         placeholder={placeholder}
         value={value}
-        onChange={e => setValue(e.target.value)}
+        onChange={(str) => setValue(str)}
         disabled={disabled}
         required={required}
       />

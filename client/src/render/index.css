@@ -10,6 +10,15 @@
   width: calc(100% - 13rem);
 }
 
+input {
+  @apply p-2 bg-gray-50 rounded-md shadow-sm border-gray-300 border text-gray-600 w-full focus:outline-none focus:border-monokai-light2 transition ease-in-out placeholder-gray-500;
+  @apply dark:bg-monokai-light2 dark:border dark:border-black dark:placeholder-gray-200 dark:text-gray-200;
+}
+
+input:disabled {
+  @apply bg-gray-200 dark:bg-monokai-light2;
+}
+
 .button {
   @apply dark:bg-blue-600 dark:hover:bg-blue-700 hover:bg-blue-400 bg-blue-400 text-white cursor-pointer transition-colors
 }
@@ -50,17 +59,20 @@
   @apply text-gray-500 dark:text-gray-200;
 }
 
-.input {
-  @apply bg-gray-50 rounded-md shadow-sm border-gray-300 border text-gray-600 w-full focus:outline-none focus:border-emerald-600 transition ease-in-out placeholder-gray-500;
-  @apply dark:bg-zinc-700 dark:border-black dark:placeholder-gray-200 dark:text-gray-200;
-}
-
-.input:disabled {
-  @apply bg-gray-200 hover:text-gray-600 dark:bg-zinc-900;
-}
-
 .label {
   @apply block text-sm leading-5 font-medium dark:text-gray-200 text-gray-700;
+}
+
+.rc-slider-rail {
+  @apply dark:bg-monokai-light2
+}
+
+.rc-slider-handle {
+  @apply dark:border-sky-600
+}
+
+.rc-slider-track {
+  @apply dark:bg-sky-600
 }
 
 @layer components {

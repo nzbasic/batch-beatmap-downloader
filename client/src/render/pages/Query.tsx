@@ -86,8 +86,12 @@ export const Query = () => {
           {simpleMode ?
           (
             <SimpleFilter
-
-
+              tree={tree}
+              updateTree={updateTree}
+              limit={limit}
+              setLimit={(limit) => setLimit(limit)}
+              loading={loading}
+              exportData={exportData}
             />
           ) : (
             <AdvancedFilter
