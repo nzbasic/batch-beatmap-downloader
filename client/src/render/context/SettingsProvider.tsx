@@ -21,23 +21,21 @@ const SettingsProvider: React.FC<PropsWithChildren<any>> = ({ children }) => {
   useEffect(() => {
     window.electron.getSettings().then((res) => {
       const mode = res.darkMode as boolean;
-      setDarkMode(mode)
+      toggleDarkMode(mode)
     });
   }, []);
 
-  useEffect(() => {
-    if (darkMode) {
+  const toggleDarkMode = (on?: boolean) => {
+    let newValue = !darkMode
+    if (on !== undefined) newValue = on
+
+    if (newValue) {
       document.documentElement.classList.add("dark");
     } else {
       document.documentElement.classList.remove("dark");
     }
 
-    window.electron.setTheme(darkMode)
-  }, [darkMode])
-
-  const toggleDarkMode = (on?: boolean) => {
-    if (on !== undefined) setDarkMode(on);
-    else setDarkMode(prev => !prev)
+    setDarkMode(newValue)
   }
 
   return (

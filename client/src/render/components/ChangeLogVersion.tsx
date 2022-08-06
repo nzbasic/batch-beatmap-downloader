@@ -1,6 +1,6 @@
 import React from "react"
 import { ChangeLogItem } from "../assets/changelog"
-import { SimpleSummaryAccordion } from "./SimpleSummaryAccordion"
+import { SimpleSummaryAccordion } from "./util/SimpleSummaryAccordion"
 
 interface PropTypes {
   item: ChangeLogItem

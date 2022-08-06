@@ -1,19 +1,18 @@
 import { useState } from "react";
 import { sampleTree } from "../../models/filter";
 import { RuleType } from "../../models/rules";
-import { QueryGroup } from "../components/querybuilder/QueryGroup";
 import { Node, Group } from "../../models/filter";
 import { cloneDeep } from "lodash";
-import { ResultTable } from "../components/querybuilder/ResultTable";
-import { CircularProgress } from "@mui/material";
+import { ResultTable } from "../components/query/ResultTable";
 import { Settings } from "../components/Settings";
 import { FilterResponse } from "../../models/api";
-import { QueryLimit } from "../components/querybuilder/QueryLimit";
-import { useStickyState } from "../hooks/stickystate";
+import { useStickyState } from "../hooks/useStickyState";
 import { DownloadSettings } from "../components/DownloadSettings";
 import { toast } from "react-toastify";
 import { InvalidPath } from "../components/InvalidPath";
 import React from "react";
+import { SimpleFilter } from "../components/query/SimpleFilter";
+import { AdvancedFilter } from "../components/query/AdvancedFilter";
 
 export const Query = () => {
   const [validPath, setValidPath] = useState(false)
@@ -22,6 +21,7 @@ export const Query = () => {
   const [loading, setLoading] = useState(false);
   const [limit, setLimit] = useState<number | null>(null);
   const [existing, setExisting] = useState<number[]>([]);
+  const [simpleMode, setSimpleMode] = useStickyState(true, "simple")
 
   const exportData = async () => {
     setResult(null);
@@ -78,37 +78,35 @@ export const Query = () => {
     <div className="flex flex-col w-full gap-4">
       <Settings onValidPath={valid => setValidPath(valid)} onBeatmapsLoaded={(ids) => setExisting(ids)} />
       {!validPath ? <InvalidPath /> : (
-        <div className="bg-white dark:bg-monokai-dark rounded shadow p-6 mt-0 flex flex-col gap-4">
-          <span className="font-bold text-lg dark:text-white">Query Builder</span>
-          <span>
-            Large queries (queries that will return a lot of results) may take a
-            lot of time (1-2mins) to load. Consider using a limit, or make your
-            query more specific to get it loading faster.
-          </span>
-          <QueryGroup
-            group={tree.group}
-            id={tree.id}
-            updateParent={(child) => updateTree(child)}
-          />
-          <QueryLimit limit={limit} updateLimit={(limit) => setLimit(limit)} />
-          <div className="flex gap-2 items-center">
-            <button
-              disabled={loading}
-              className="bg-blue-600 self-start rounded hover:bg-blue-700 transition duration-150 px-2 py-1 text-white font-medium"
-              onClick={exportData}
-            >
-              Search
-            </button>
-            {loading && <CircularProgress size={25} />}
+        <>
+          <div className="flex items-center gap-4">
+            <button className={`${simpleMode ? 'box-selector-on' : 'box-selector-off'}`} onClick={() => setSimpleMode(true)}>Simple Mode</button>
+            <button className={`${!simpleMode ? 'box-selector-on' : 'box-selector-off'}`} onClick={() => setSimpleMode(false)}>Advanced Mode</button>
           </div>
-        </div>
+          {simpleMode ?
+          (
+            <SimpleFilter
+
+
+            />
+          ) : (
+            <AdvancedFilter
+              tree={tree}
+              updateTree={updateTree}
+              limit={limit}
+              setLimit={(limit) => setLimit(limit)}
+              loading={loading}
+              exportData={exportData}
+            />
+          )}
+        </>
       )}
       {result && (result?.Ids??[]).length ? (
         <div className="flex flex-col gap-4">
-          <div className="bg-white dark:bg-monokai-dark rounded shadow p-6">
+          <div className="container">
             <DownloadSettings result={result} existing={existing} />
           </div>
-          <div className="bg-white dark:bg-monokai-dark rounded shadow p-6 mt-0 flex flex-col gap-4">
+          <div className="container mt-0 flex flex-col gap-4">
             <span className="font-bold text-lg dark:text-white">Results</span>
             <ResultTable result={result} />
           </div>
