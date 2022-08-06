@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import Button from "./Button";
+import classNames from 'classnames'
 
 interface PropTypes {
   min: number;
@@ -18,17 +20,17 @@ export const NumberRangeSelector = ({ min, max, initial, onChange }: PropTypes) 
     const buttons: JSX.Element[] = []
     for (let i = min; i <= max; i++) {
       buttons.push(
-        <button
-          className={
-            `${initial == i ? 'bg-emerald-600 ' : 'button'}
-            w-6 h-6 rounded-sm transition-colors font-semibold text-white`
-          }
-          disabled={initial == i}
+        <Button
+          color="blue"
+          className={classNames(
+            { 'bg-emerald-600 pointer-events-none': initial === i },
+            "px-0 py-0 w-6 h-6"
+          )}
           key={i}
           onClick={() => handleClick(i)}
         >
           {i}
-        </button>
+        </Button>
       )
     }
 

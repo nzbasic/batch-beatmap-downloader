@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { bytesToFileSize } from "../util/fileSize";
 import { toast } from "react-toastify";
+import Button from "./util/Button";
 
 interface PropTypes {
   result: FilterResponse;
@@ -93,13 +94,9 @@ export const DownloadSettings = ({ result, existing }: PropTypes) => {
       </div>
       <div className="flex items-center">
         <Link className={`${downloadDisabled() ? 'pointer-events-none' : ''}`} to="/downloads">
-          <button
-            onClick={download}
-            disabled={downloadDisabled()}
-            className="bg-green-500 hover:bg-green-400 text-white transition duration-150 px-2 py-1 rounded text-lg font-medium self-start"
-          >
+          <Button color="green" onClick={download} disabled={downloadDisabled()}>
             Download
-          </button>
+          </Button>
         </Link>
         {downloadDisabled() && (
           <span className="text-red-500 text-sm ml-4">

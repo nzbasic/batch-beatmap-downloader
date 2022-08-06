@@ -1,12 +1,21 @@
 import { useEffect, useState } from "react";
 import { BeatmapDetails, FilterResponse } from "../../../models/api";
-import { Beatmap } from "./Beatmap";
 import { toast } from "react-toastify";
 import React from "react";
+import { TableHeader } from "../../types/table";
+import Table from "../util/Table";
+import Button from "../util/Button";
 
 interface PropTypes {
   result: FilterResponse;
 }
+
+const headers: TableHeader[] = [
+  { title: "Artist", key: "Artist" },
+  { title: "Title", key: "Title" },
+  { title: "Difficulty", key: "Version" },
+  { title: "Mapper", key: "Creator" },
+];
 
 const pageSize = 25;
 export const ResultTable = ({ result }: PropTypes) => {
@@ -44,27 +53,24 @@ export const ResultTable = ({ result }: PropTypes) => {
   }, [pageNumber]);
 
   return (
-    <div className="w-full">
-      {page.map((map) => (
-        <Beatmap key={map.Id} details={map} />
-      ))}
-
+    <div className="w-full flex flex-col pb-6">
+      <Table headers={headers} data={page} className="border-b dark:border-black" />
       <div className="flex justify-center items-center gap-2 mt-6">
-        <button
-          className="w-24 px-2 py-1 bg-blue-600 hover:bg-blue-700 rounded text-white"
+        <Button
+          color="blue"
           onClick={() => setPageNumber(pageNumber - 1)}
           disabled={pageNumber === 1}
         >
-          Previous
-        </button>
+          Prev
+        </Button>
         {pageNumber}/{Math.ceil(result.Ids.length / pageSize)}
-        <button
-          className="w-24 px-2 py-1 bg-blue-600 hover:bg-blue-700 rounded text-white"
+        <Button
+          color="blue"
           onClick={() => setPageNumber(pageNumber + 1)}
           disabled={pageNumber === Math.ceil(result.Ids.length / pageSize)}
         >
           Next
-        </button>
+        </Button>
       </div>
     </div>
   );

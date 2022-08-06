@@ -3,6 +3,16 @@ import { Metrics } from "../../models/metrics";
 import ColorScales from "color-scales";
 import { bytesToFileSize } from "../util/fileSize";
 import { CircularProgress } from "@mui/material";
+import { TableHeader } from "../types/table";
+import Table from "../components/util/Table";
+import StatusTableRow from "../components/StatusTableRow";
+
+const headers: TableHeader[] = [
+  { title: "Total Size", key: "TotalSize" },
+  { title: "Remaining Size", key: "RemainingSize" },
+  { title: "Download Speed", key: "AverageSpeed" },
+  { title: "Time Left", key: "EstTimeLeft" }
+];
 
 export const Status = () => {
   const [status, setStatus] = useState(false);
@@ -55,7 +65,7 @@ export const Status = () => {
           <div className="flex gap-4">
             <div
               style={{backgroundColor: downloadsScale.getColor(getActiveDownloads().length).toHexString()}}
-              className="bg-green-500 rounded shadow w-full h-24"
+              className="bg-green-500 rounded shadow w-full h-24 border border-gray-500 dark:border-black"
             >
               <div className="text-black flex justify-between items-center w-full h-full px-8">
                 <span className="font-bold text-5xl w-full text-center">{getActiveDownloads().length}</span>
@@ -64,7 +74,7 @@ export const Status = () => {
             </div>
             <div
               style={{backgroundColor: bandwidthScale.getColor(getCurrentBandwidth() / 1e6).toHexString()}}
-              className="bg-red-500 rounded shadow w-full h-24"
+              className="bg-red-500 rounded shadow w-full h-24 border border-gray-500 dark:border-black"
             >
               <div className="text-black flex justify-between items-center w-full h-full px-8">
                 <div className="flex flex-col items-center w-full">
@@ -101,32 +111,17 @@ export const Status = () => {
             </div>
           </div>
 
-          <div className="container flex flex-col dark:text-white w-full">
+          <div className="container no-pad flex flex-col dark:text-white w-full">
             <div className="flex flex-col gap-2">
-              <span className="font-bold text-lg">Current Downloads</span>
+              <span className="font-bold text-lg p-6 pb-2">Current Downloads</span>
               {getActiveDownloads().length ? (
-                <table className="border border-black rounded mt-2">
-                  <thead className="border-b border-black">
-                    <tr className="text-left">
-                      <th className="border-black border pl-1">Total Size</th>
-                      <th className="border-black border pl-1">Remaining Size</th>
-                      <th className="border-black border pl-1">Download Speed</th>
-                      <th className="border-black border pl-1">Time Left</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {getActiveDownloads().map((i) => (
-                      <tr key={i.Id} className="even:bg-gray-200 dark:even:bg-gray-800 text-left">
-                        <td className="border-black border pl-1">{bytesToFileSize(i.TotalSize)}</td>
-                        <td className="border-black border pl-1">{bytesToFileSize(i.RemainingSize)}</td>
-                        <td className="border-black border pl-1">{(i.AverageSpeed / 1e6).toFixed(0)}Mbps</td>
-                        <td className="border-black border pl-1">{i.EstTimeLeft.toFixed(0)}s</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                <Table
+                  data={getActiveDownloads()}
+                  headers={headers}
+                  RenderRow={StatusTableRow}
+                />
               ) : (
-                <span className="font-medium">No active downloads</span>
+                <span className="font-medium p-6">No active downloads</span>
               )}
             </div>
           </div>

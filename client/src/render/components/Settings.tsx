@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Switch from "react-switch";
 import { Browse } from "./Browse";
-import { NumberRangeSelector } from "./NumberRangeSelector";
+import { NumberRangeSelector } from "./util/NumberRangeSelector";
 
 interface PropTypes {
   onValidPath: (valid: boolean) => void

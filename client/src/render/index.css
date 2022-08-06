@@ -38,6 +38,10 @@
   @apply bg-white dark:bg-monokai-dark p-6 shadow-border;
 }
 
+.no-pad {
+  padding: 0 !important;
+}
+
 .title {
   @apply text-gray-900 text-lg font-semibold dark:text-gray-100;
 }

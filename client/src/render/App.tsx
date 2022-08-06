@@ -1,4 +1,4 @@
-import { Menu } from "./components/Menu";
+import { Menu } from "./components/layout/Menu";
 import "./index.css";
 import { Query } from "./pages/Query";
 import { HashRouter, Route, Routes } from "react-router-dom";

@@ -101,17 +101,17 @@ export const Query = () => {
           )}
         </>
       )}
-      {result && (result?.Ids??[]).length ? (
+      {result && (result?.Ids??[]).length && (
         <div className="flex flex-col gap-4">
           <div className="container">
             <DownloadSettings result={result} existing={existing} />
           </div>
-          <div className="container mt-0 flex flex-col gap-4">
-            <span className="font-bold text-lg dark:text-white">Results</span>
+          <div className="container no-pad mt-0 flex flex-col gap-4">
+            <span className="font-bold text-lg dark:text-white p-6 pb-2">Results</span>
             <ResultTable result={result} />
           </div>
         </div>
-      ) : null}
+      )}
     </div>
   );
 };

@@ -3,6 +3,7 @@ import { QueryGroup } from "./QueryGroup"
 import { Group, Node } from "../../../models/filter";
 import { QueryLimit } from "./QueryLimit";
 import { CircularProgress } from "@mui/material";
+import Button from "../util/Button";
 
 interface PropTypes {
   tree: Node
@@ -32,13 +33,9 @@ export const AdvancedFilter: React.FC<PropTypes> = ({ tree, updateTree, limit, s
       )}
       <QueryLimit limit={limit} updateLimit={(limit) => setLimit(limit)} />
       <div className="flex gap-2 items-center">
-        <button
-          disabled={loading}
-          className="bg-blue-600 self-start rounded hover:bg-blue-700 transition duration-150 px-2 py-1 text-white font-medium"
-          onClick={exportData}
-        >
+        <Button color="blue" onClick={exportData} disabled={loading}>
           Search
-        </button>
+        </Button>
         {loading && <CircularProgress size={25} />}
       </div>
     </div>

@@ -46,7 +46,7 @@ export const Connector = ({ id, details, update }: PropTypes) => {
               }
               ${
                 details.type === type
-                  ? "bg-blue-500 dark:bg-blue-500"
+                  ? "bg-blue-500 dark:bg-blue-500 text-white"
                   : "bg-white dark:bg-monokai-light2 dark:hover:bg-blue-500 hover:bg-blue-500"
               }
               px-2 py-1 border-gray-600 dark:border-monokai-border border w-12 transition duration-200`}
@@ -63,7 +63,7 @@ export const Connector = ({ id, details, update }: PropTypes) => {
         className={`
           ${
             isNot()
-              ? "bg-red-500 dark:bg-red-600"
+              ? "bg-red-500 dark:bg-red-600 text-white"
               : "hover:bg-red-500 bg-white dark:bg-monokai-light2 dark:hover:bg-red-600"
           }
           ml-2 border-gray-600 dark:border-monokai-border border px-2 py-1 rounded transition duration-100`}
