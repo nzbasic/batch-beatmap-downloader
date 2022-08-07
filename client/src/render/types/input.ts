@@ -13,7 +13,7 @@ export type TInputItemBase = {
 
 export type TInputItemText = TInputItemBase & {
   type: InputType.TEXT;
-  defaultValue?: string;
+  defaultValue: string;
 };
 
 export type TInputItemDropdown = TInputItemBase & {
@@ -22,7 +22,7 @@ export type TInputItemDropdown = TInputItemBase & {
     label: string;
     value: string;
   }[];
-  defaultValue?: string;
+  defaultValue: string;
 };
 
 export type TInputItemMinMax = TInputItemBase & {
@@ -30,7 +30,7 @@ export type TInputItemMinMax = TInputItemBase & {
   min: number;
   max: number;
   step: number
-  defaultValue?: number[]
+  defaultValue: number[]
 }
 
 export type TInputItem = TInputItemText | TInputItemDropdown | TInputItemMinMax;

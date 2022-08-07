@@ -25,7 +25,7 @@ export const MinMaxInput: React.FC<TInputItemProps<TInputItemMinMax>> = ({ label
 
   return (
     <div className="flex items-center w-full gap-4">
-      <span className="w-36">{label}</span>
+      <span className="w-32">{label}</span>
       <div className="w-16">
         <Input
           className="p-1"
