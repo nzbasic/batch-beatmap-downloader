@@ -1,8 +1,18 @@
 import { cloneDeep } from "lodash"
 import React, { useState } from "react"
 import { Group, Node } from "../../../models/filter"
-import { Rule } from "../../../models/rules"
-import { sections, InputType, TInputItem, Section, keyMap, getValue, convertTreeToSimpleMode, treeIsCompatibleWithSimpleMode, convertTreeToText } from "../../../models/simple"
+import {
+  sections,
+  InputType,
+  TInputItem,
+  Section,
+  keyMap,
+  getValue,
+  convertTreeToSimpleMode,
+  treeIsCompatibleWithSimpleMode,
+  convertTreeToText,
+  getType
+} from "../../../models/simple"
 import InputItem from "./simple/InputItem"
 import { v4 as uuidv4 } from 'uuid'
 import { Input } from "../util/Input"
@@ -31,14 +41,18 @@ export const SimpleFilter: React.FC<PropTypes> = ({ tree, updateTree, limit, set
     switch (item.type) {
       case InputType.MIN_MAX:
         const [newMin, newMax] = value as number[]
-        const [currentMin, currentMax] = currentValue
+        const [currentMin, currentMax] = currentValue as number[]
 
         if (newMin !== currentMin) updateValuePair(item.key, ">=", newMin.toString())
         if (newMax !== currentMax) updateValuePair(item.key, "<=", newMax.toString())
+      case InputType.TEXT:
+        const string = value as string
+        const current = currentValue as string
+        if (string !== current) updateValuePair(item.key, "=", string)
     }
   }
 
-  const updateValuePair = (type: string, symbol: string, number: string, state?: Node) => {
+  const updateValuePair = (type: string, symbol: string, value: string, state?: Node) => {
     const clone = cloneDeep(state ? state : tree)
     if (!clone.group) return
 
@@ -59,24 +73,15 @@ export const SimpleFilter: React.FC<PropTypes> = ({ tree, updateTree, limit, set
       if (!rule) continue
 
       if (rule.field === realKey && rule.operator === symbol) {
-        if (rule.value === number) return clone
-        rule.value = number
+        if (rule.value === value) return clone
+        rule.value = value
         setTextInput(convertTreeToText(clone))
         updateTree(clone.group)
         return clone
       }
     }
 
-    const newRule: Node = {
-      id: uuidv4(),
-      rule: {
-        field: realKey,
-        value: number,
-        operator: symbol,
-        type: 1
-      }
-    }
-
+    const newRule: Node = { id: uuidv4(), rule: { field: realKey, value, operator: symbol, type: getType(realKey) } }
     clone.group.children.push(newRule)
     updateTree(clone.group)
     setTextInput(convertTreeToText(clone))
@@ -85,19 +90,22 @@ export const SimpleFilter: React.FC<PropTypes> = ({ tree, updateTree, limit, set
 
   const handleTextChange = (text: string) => {
     const terms = text.toLowerCase().split(" ")
-    const contents: { type: string, symbol: string, number: string }[] = []
+    const contents: { type: string, symbol: string, value: string }[] = []
     let state: Node | undefined = cloneDeep(tree)
 
     for (const term of terms) {
-      if (term.match(/^\w*(<|<=|>|>=|==|=|!=)\d+\.?\d*$/g)) {
-        let type = (term.match(/^\w+/g) ?? ["stars"])[0] // gets the word before operator
+      if (term.match(/^\w*(<|<=|>|>=|==|=|!=)\d+\.?\d*$/g)) { // numeric
+        const type = (term.match(/^\w+/g) ?? ["stars"])[0] // gets the word before operator
         const symbol = (term.match(/(<=|<|>=|>|==|=|!=)/g) ?? ">=")[0] // gets operator
-        const number = (term.match(/\d+\.?\d*$/g) ?? ["0"])[0] // gets number after operator
-        if (type === "length") { type = "drain" }
-        if (type === "stars") { type = "sr" }
-        if (type === "keys") { type = "cs" }
-        contents.push({ type, symbol, number })
-        state = updateValuePair(type, symbol, number, state)
+        const value = (term.match(/\d+\.?\d*$/g) ?? ["0"])[0] // gets number after operator
+        contents.push({ type, symbol, value })
+        state = updateValuePair(type, symbol, value, state)
+      } else if (term.match(/^\w*(==|=|!=)\w+$/g)) { // text
+        const type = (term.match(/^\w+/g) ?? ["status"])[0] // gets the word before operator
+        const symbol = (term.match(/(==|=|!=)/g) ?? [])[0] // gets operator
+        const value = (term.match(/\w+$/g) ?? [])[0] // gets word after operator
+        contents.push({ type, symbol, value })
+        state = updateValuePair(type, symbol, value, state)
       }
     }
 
@@ -109,7 +117,7 @@ export const SimpleFilter: React.FC<PropTypes> = ({ tree, updateTree, limit, set
         if (
           rule.field.toLowerCase() === content.type &&
           rule.operator === content.symbol &&
-          rule.value === content.number
+          rule.value === content.value
         ) return true
       }
 

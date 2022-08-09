@@ -1,5 +1,5 @@
 import { Group, Node } from './filter'
-import { Rule } from './rules';
+import { inputOptions, Rule, RuleType } from './rules';
 
 export enum InputType {
   TEXT = "text",
@@ -55,9 +55,43 @@ export interface Section {
 }
 
 export const keyMap = new Map<string, string>([
+  ["status", "Approved"],
+  ["archetype", "Archetype"],
+  ["farm", "Farm"],
+  ["stream", "Stream"],
+  ["title", "Title"],
+  ["artist", "Artist"],
+  ["creator", "Creator"],
+  ["version", "Version"],
+  ["bpm", "Bpm"],
+  ["hp", "Hp"],
+  ["od", "Od"],
+  ["ar", "Ar"],
   ["cs", "Cs"],
-  ["ar", "Ar"]
+  ["keys", "Cs"],
+  ["mode", "Mode"],
+  ["stars", "Stars"],
+  ["combo", "MaxCombo"],
+  ["length", "HitLength"],
+  ["source", "Source"],
+  ["tags", "Tags"],
+  ["genre", "Genre"],
+  ["language", "Language"],
+  ["favourites", "FavouriteCount"],
+  ["favorites", "FavouriteCount"],
+  ["passes", "PassCount"],
+  ["plays", "PlayCount"]
 ])
+
+export const getType = (type: string) => {
+  for (const option of inputOptions) {
+    if (option.value === type) {
+      return option.type
+    }
+  }
+
+  return RuleType.TEXT
+}
 
 export const getRules = (tree: Node, key?: string): Rule[] => {
   if (!tree.group) return []
@@ -98,6 +132,9 @@ export const getValue = (tree: Node, item: TInputItem) => {
       if (maxs.length) max = maxs[0]
 
       return [min, max]
+    case InputType.TEXT:
+      if (rules.length) return rules[0].value
+      return ""
   }
 
   return [0, 10]
@@ -114,6 +151,7 @@ export const shouldSkipText = (rule: Rule) => {
     return rule.value === "0" || rule.value === "10"
   }
 
+  if (rule.type === RuleType.TEXT && rule.value === "") return true
   return false
 }
 
