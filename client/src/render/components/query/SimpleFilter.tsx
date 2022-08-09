@@ -2,10 +2,11 @@ import { cloneDeep } from "lodash"
 import React, { useState } from "react"
 import { Group, Node } from "../../../models/filter"
 import { Rule } from "../../../models/rules"
-import { InputType, TInputItem } from "../../types/input"
+import { sections, InputType, TInputItem, Section, keyMap, getValue, convertTreeToSimpleMode, treeIsCompatibleWithSimpleMode, convertTreeToText } from "../../../models/simple"
 import InputItem from "./simple/InputItem"
 import { v4 as uuidv4 } from 'uuid'
 import { Input } from "../util/Input"
+import classNames from "classnames"
 
 interface PropTypes {
   tree: Node
@@ -16,71 +17,16 @@ interface PropTypes {
   exportData: () => void
 }
 
-const config: TInputItem[] = [
-  {
-    type: InputType.MIN_MAX,
-    key: "Cs",
-    label: "CS",
-    min: 0,
-    max: 10,
-    step: 0.1,
-    defaultValue: [0, 10]
-  },
-  {
-    type: InputType.MIN_MAX,
-    key: "Ar",
-    label: "AR",
-    min: 0,
-    max: 10,
-    step: 0.1,
-    defaultValue: [0, 10]
-  },
-]
-
-const keyMap = new Map<string, string>([
-  ["cs", "Cs"],
-  ["ar", "Ar"]
-])
-
-const treeIsCompatibleWithSimpleMode = (group: Group) => {
-  return true
-}
-
-const convertTreeToSimpleMode = (group: Group) => group
-
-const shouldSkipText = (rule: Rule) => {
-  if (rule.operator === ">=" || rule.operator === "<=") {
-    return rule.value === "0" || rule.value === "10"
-  }
-
-  return false
-}
-
-const convertTreeToText = (tree: Node) => {
-  let output = ""
-  if (!tree.group) return output;
-  for (const child of tree.group.children) {
-    if (!child.rule) continue
-    const rule = child.rule
-
-    if (shouldSkipText(rule)) continue
-    output += `${rule.field.toLowerCase()}${rule.operator}${rule.value} `
-  }
-
-  return output.trim()
-}
-
 export const SimpleFilter: React.FC<PropTypes> = ({ tree, updateTree, limit, setLimit, loading, exportData }) => {
   if (tree.group && !treeIsCompatibleWithSimpleMode(tree.group)) {
     updateTree(convertTreeToSimpleMode(tree.group))
   }
 
+  const [section, setSection] = useState<Section>(sections[0])
   const [textInput, setTextInput] = useState(convertTreeToText(tree))
 
-  console.log(tree)
-
-  const handleChange = (value: string | number[], item: TInputItem) => {
-    const currentValue = getValue(item)
+  const handleChange = (value: string | boolean | number[], item: TInputItem) => {
+    const currentValue = getValue(tree, item)
 
     switch (item.type) {
       case InputType.MIN_MAX:
@@ -155,8 +101,7 @@ export const SimpleFilter: React.FC<PropTypes> = ({ tree, updateTree, limit, set
       }
     }
 
-    if (!state || !state.group) return console.log("a")
-
+    if (!state || !state.group) return
     const children = state.group.children.filter(child => {
       for (const content of contents) {
         const rule = child.rule
@@ -171,61 +116,15 @@ export const SimpleFilter: React.FC<PropTypes> = ({ tree, updateTree, limit, set
       return false
     }) ?? []
 
+    setTextInput(text)
     updateTree({
       ...state.group,
       children
     })
-
-    setTextInput(text)
-  }
-
-  const getRules = (key?: string): Rule[] => {
-    if (!tree.group) return []
-
-    const rules: Rule[] = [];
-    for (const child of tree.group.children) {
-      if (child.rule) rules.push(child.rule)
-    }
-    if (!key) return rules
-
-    const realKey = keyMap.get(key.toLowerCase())
-    if (!realKey) return []
-    return rules.filter(rule => rule.field === realKey)
-  }
-
-  const getValue = (item: TInputItem) => {
-    const rules = getRules(item.key)
-
-    switch (item.type) {
-      case InputType.MIN_MAX:
-        const mins: number[] = []
-        const maxs: number[] = []
-        for (const rule of rules) {
-          const op = rule.operator
-          const val = parseFloat(rule.value)
-          if (op === ">") mins.push(val + item.step)
-          if (op === ">=") mins.push(val)
-          if (op === "<") maxs.push(val - item.step)
-          if (op === "<=") maxs.push(val)
-          if (op === "=" || op === "==" || op === "!=") return [val, val]
-        }
-
-        mins.sort()
-        maxs.sort()
-        let [min, max] = item.defaultValue
-
-        if (mins.length) min = mins[mins.length - 1]
-        if (maxs.length) max = maxs[0]
-
-        return [min, max]
-    }
-
-    return [0, 10]
   }
 
   return (
-    <div className="container flex flex-col gap-2">
-
+    <div className="container flex flex-col gap-4">
       <div className="flex items-center">
         <label className="w-32">Text Input</label>
         <Input
@@ -235,8 +134,22 @@ export const SimpleFilter: React.FC<PropTypes> = ({ tree, updateTree, limit, set
         />
       </div>
 
-      {config.map(item => (
-        <InputItem {...item} onChange={(value) => handleChange(value, item)} value={getValue(item)} />
+      <div className="flex items-center gap-2 w-full justify-between">
+        {sections.map(item => (
+          <div
+            key={item.title}
+            className={classNames(
+              { 'bg-emerald-600 pointer-events-none': section.title === item.title },
+              "w-full bg-sky-500 p-1 text-center text-white py-2 rounded font-medium hover:bg-sky-600 cursor-pointer")}
+            onClick={() => setSection(item)}
+          >
+            {item.title}
+          </div>
+        ))}
+      </div>
+
+      {section.items.map(item => (
+        <InputItem {...item} onChange={(value) => handleChange(value, item)} value={getValue(tree, item)} />
       ))}
     </div>
   )

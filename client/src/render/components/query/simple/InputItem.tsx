@@ -1,6 +1,6 @@
 import React, { ComponentProps } from "react";
-import { InputType, TInputItem } from "../../../types/input";
-import { MinMaxInput } from "./MinMaxInput";
+import { InputType, TInputItem } from "../../../../models/simple";
+import { SliderInput } from "./SliderInput";
 
 export type TInputItemProps<ExactFormItem extends TInputItem> = {
   value: NonNullable<ExactFormItem["defaultValue"]>;
@@ -11,8 +11,8 @@ const InputItem: React.FC<TInputItemProps<TInputItem>> = (props) => {
   const type = props.type as InputType;
 
   switch (type) {
-    case InputType.MIN_MAX:
-      return <MinMaxInput {...props as ComponentProps<typeof MinMaxInput>} />
+    case InputType.SLIDER:
+      return <SliderInput {...props as ComponentProps<typeof SliderInput>} />
   }
 
   return <div>Input</div>
