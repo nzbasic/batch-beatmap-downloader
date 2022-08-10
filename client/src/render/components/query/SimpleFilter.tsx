@@ -1,5 +1,5 @@
 import { cloneDeep } from "lodash"
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { Group, Node } from "../../../models/filter"
 import {
   sections,
@@ -39,17 +39,34 @@ export const SimpleFilter: React.FC<PropTypes> = ({ tree, updateTree, limit, set
     const currentValue = getValue(tree, item)
 
     switch (item.type) {
+      case InputType.SLIDER:
       case InputType.MIN_MAX:
         const [newMin, newMax] = value as number[]
         const [currentMin, currentMax] = currentValue as number[]
+        const [defaultMin, defaultMax] = item.defaultValue
 
-        if (newMin !== currentMin) updateValuePair(item.key, ">=", newMin.toString())
-        if (newMax !== currentMax) updateValuePair(item.key, "<=", newMax.toString())
+        if (newMin > 0 && newMin !== currentMin) updateValuePair(item.key, ">=", newMin.toString())
+        if (newMax > 0 && newMax !== currentMax) updateValuePair(item.key, "<=", newMax.toString())
+
+        if (newMin === defaultMin && newMin !== currentMin) removeRule(item, ">")
+        if (newMax === defaultMax && newMax !== currentMax) removeRule(item, "<")
+        break
       case InputType.TEXT:
         const string = value as string
         const current = currentValue as string
         if (string !== current) updateValuePair(item.key, "=", string)
+        break
     }
+  }
+
+  const removeRule = (item: TInputItem, operator: string) => {
+    const clone = cloneDeep(tree)
+    if (!clone.group) return
+    clone.group.children = clone.group.children.filter(child => {
+      return item.key !== child?.rule?.field || !child?.rule?.operator.includes(operator)
+    })
+    updateTree(clone.group)
+    setTextInput(convertTreeToText(clone))
   }
 
   const updateValuePair = (type: string, symbol: string, value: string, state?: Node) => {
@@ -65,9 +82,10 @@ export const SimpleFilter: React.FC<PropTypes> = ({ tree, updateTree, limit, set
       if (symbol === "<=" && child?.rule?.operator === "<") return false
       return true
     })
-    clone.group.children = children
 
+    clone.group.children = children
     updateTree(clone.group)
+
     for (const child of children) {
       const rule = child.rule
       if (!rule) continue
@@ -134,7 +152,7 @@ export const SimpleFilter: React.FC<PropTypes> = ({ tree, updateTree, limit, set
   return (
     <div className="container flex flex-col gap-4">
       <div className="flex items-center">
-        <label className="w-32">Text Input</label>
+        <label className="min-w-[8rem] label">Text Input</label>
         <Input
           placeholder="Use osu! search terms e.g. cs>5 ar=8"
           value={textInput}

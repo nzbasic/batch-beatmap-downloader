@@ -24,28 +24,30 @@ export const SliderInput: React.FC<TInputItemProps<TInputItemSlider>> = ({ label
   }
 
   return (
-    <div className="flex items-center w-full gap-4">
-      <span className="w-32">{label}</span>
-      <div className="w-16">
-        <Input
-          className="p-1"
-          value={value[0].toString()}
-          onChange={(value) => updateValue(value, 0)}
+    <div className="flex items-center w-full">
+      <span className="min-w-[8rem] label">{label}</span>
+      <div className="flex items-center gap-4 w-full">
+        <div className="w-16">
+          <Input
+            className="p-1"
+            value={value[0].toString()}
+            onChange={(value) => updateValue(value, 0)}
+          />
+        </div>
+        <Range
+          value={value}
+          onChange={onChange}
+          min={min}
+          max={max}
+          step={step}
         />
-      </div>
-      <Range
-        value={value}
-        onChange={onChange}
-        min={min}
-        max={max}
-        step={step}
-      />
-      <div className="w-16">
-        <Input
-          className="p-1"
-          value={value[1].toString()}
-          onChange={(value) => updateValue(value, 1)}
-        />
+        <div className="w-16">
+          <Input
+            className="p-1"
+            value={value[1].toString()}
+            onChange={(value) => updateValue(value, 1)}
+          />
+        </div>
       </div>
     </div>
   )

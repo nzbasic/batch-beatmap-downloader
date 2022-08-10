@@ -32,6 +32,7 @@ export type TInputItemDropdown = TInputItemBase & {
 export type TInputItemMinMax = TInputItemBase & {
   type: InputType.MIN_MAX;
   defaultValue: number[];
+  step: number;
 }
 
 export type TInputItemSlider = TInputItemBase & {
@@ -112,6 +113,7 @@ export const getValue = (tree: Node, item: TInputItem) => {
 
   switch (item.type) {
     case InputType.SLIDER:
+    case InputType.MIN_MAX:
       const mins: number[] = []
       const maxs: number[] = []
       for (const rule of rules) {
@@ -175,15 +177,17 @@ export const sections: Section[] = [
     items: [
       {
         type: InputType.MIN_MAX,
-        key: "Sr",
+        key: "Stars",
         label: "Stars",
-        defaultValue: [-1, -1]
+        defaultValue: [-1, -1],
+        step: 0.01
       },
       {
         type: InputType.MIN_MAX,
         key: "Bpm",
         label: "BPM",
-        defaultValue: [-1, -1]
+        defaultValue: [-1, -1],
+        step: 0.01
       },
       {
         type: InputType.SLIDER,
@@ -255,7 +259,15 @@ export const sections: Section[] = [
         type: InputType.MIN_MAX,
         key: "Drain",
         label: "Length",
-        defaultValue: [-1, -1]
+        defaultValue: [-1, -1],
+        step: 1,
+      },
+      {
+        type: InputType.MIN_MAX,
+        key: "MaxCombo",
+        label: "Max Combo",
+        defaultValue: [-1, -1],
+        step: 1
       }
     ],
   },
@@ -266,19 +278,22 @@ export const sections: Section[] = [
         type: InputType.MIN_MAX,
         label: "FavouriteCount",
         key: "Favourites",
-        defaultValue: [-1, -1]
+        defaultValue: [-1, -1],
+        step: 1
       },
       {
         type: InputType.MIN_MAX,
         label: "PlayCount",
         key: "Plays",
-        defaultValue: [-1, -1]
+        defaultValue: [-1, -1],
+        step: 1
       },
       {
         type: InputType.MIN_MAX,
         label: "PassCount",
         key: "Passes",
-        defaultValue: [-1, -1]
+        defaultValue: [-1, -1],
+        step: 1
       },
       {
         type: InputType.TEXT,
@@ -302,7 +317,7 @@ export const sections: Section[] = [
       {
         type: InputType.DROPDOWN,
         label: "Language",
-        key: "Genre",
+        key: "Language",
         options: [],
         defaultValue: ""
       },

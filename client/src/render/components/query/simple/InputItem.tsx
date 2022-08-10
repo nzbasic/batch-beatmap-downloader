@@ -1,5 +1,6 @@
 import React, { ComponentProps } from "react";
 import { InputType, TInputItem } from "../../../../models/simple";
+import { MinMaxInput } from "./MinMaxInput";
 import { SliderInput } from "./SliderInput";
 import { TextInput } from "./TextInput";
 
@@ -16,6 +17,8 @@ const InputItem: React.FC<TInputItemProps<TInputItem>> = (props) => {
       return <SliderInput {...props as ComponentProps<typeof SliderInput>} />
     case InputType.TEXT:
       return <TextInput {...props as ComponentProps<typeof TextInput>} />
+    case InputType.MIN_MAX:
+      return <MinMaxInput {...props as ComponentProps<typeof MinMaxInput>} />
   }
 
   return <div>Input</div>
