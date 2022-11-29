@@ -1,1 +1,4 @@
 .env
+cmd/operation-unranked/main.go
+cmd/test/main.go
+cmd/tournament-maps/main.go

@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"strings"
 
 	"github.com/blockloop/scan"
 	"github.com/cheggaaa/pb/v3"
@@ -15,6 +16,7 @@ import (
 type Updater func(*sql.Tx, osu.BeatmapData)
 
 func BatchUpdate(updater Updater) {
+	OpenFullDb()
 	count := GetBeatmapCount()
 
 	batchSize := 1000
@@ -22,8 +24,8 @@ func BatchUpdate(updater Updater) {
 	bar := pb.StartNew(pages)
 
 	for i := 0; i < pages; i++ {
-		tx, _ := database.Begin()
-		rows, err := tx.Query(fmt.Sprintf("SELECT * FROM beatmaps LIMIT 1000 OFFSET %d", (batchSize * i)))
+		tx, _ := metaDb.Begin()
+		rows, err := fullDb.Query(fmt.Sprintf("SELECT * FROM beatmaps LIMIT 1000 OFFSET %d", (batchSize * i)))
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -77,4 +79,25 @@ func AddFarm(tx *sql.Tx, row osu.BeatmapData) {
 	}
 
 	updateTxRow(tx, "farm", farm, row.Id)
+}
+
+func AddRankedMapper(tx *sql.Tx, row osu.BeatmapData) {
+	mapper := "0"
+	creator := strings.ReplaceAll(row.Creator, "'", "''")
+	rows, err := tx.Query(fmt.Sprintf("SELECT * FROM beatmaps WHERE creator='%s' AND approved='ranked'", creator))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var beatmaps []osu.BeatmapData
+	err = scan.Rows(&beatmaps, rows)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if len(beatmaps) > 0 {
+		mapper = "1"
+	}
+
+	updateTxRow(tx, "rankedMapper", mapper, row.Id)
 }

@@ -1,4 +1,18 @@
 import settings from "electron-settings";
+import fs from 'fs';
+
+export const checkValidPath = async (path: string) => {
+  try {
+    const files = await fs.promises.readdir(path);
+    if (!files.includes("collection.db")) {
+      return false;
+    }
+  } catch(err) {
+    return false;
+  }
+
+  return true
+};
 
 export const getSongsFolder = async () => {
   const altPath = await settings.get("altPath") as string

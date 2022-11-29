@@ -35,7 +35,7 @@ module.exports = {
         setupIcon: path.join(packageAssetsPath, "bbd.ico"),
         icon: path.join(packageAssetsPath, "bbd.ico"),
         iconUrl:
-          "https://cdn.discordapp.com/attachments/882111142355435540/944838015153475594/bbd.ico",
+          "https://raw.githubusercontent.com/nzbasic/batch-beatmap-downloader/0d3d2a2f6754e0ba95f8470e71b82c579e0c5ee2/client/src/bbd.ico",
         authors: "nzbasic",
       },
     },
@@ -72,7 +72,7 @@ module.exports = {
         mainConfig: "./.config/webpack.main.config.js",
         renderer: {
           config: "./.config/webpack.renderer.config.js",
-          devContentSecurityPolicy: `img-src * 'self' data: https:; default-src 'self' 'unsafe-inline' data:; script-src 'self' 'unsafe-eval'`,
+          devContentSecurityPolicy: `img-src * 'self' data: https:; default-src 'self' 'unsafe-inline' data:; script-src 'self' 'unsafe-eval' https://cdnjs.buymeacoffee.com;`,
           entryPoints: [
             {
               html: "./src/render/index.html",

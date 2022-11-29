@@ -9,56 +9,13 @@ import (
 	"github.com/nzbasic/batch-beatmap-downloader/osu"
 )
 
-var database *sql.DB
-
 func init() {
-
 	open()
-	table := "CREATE TABLE IF NOT EXISTS beatmaps (" +
-		"id INTEGER PRIMARY KEY, " +
-		"setId INTEGER, " +
-		"title TEXT, " +
-		"artist TEXT, " +
-		"creator TEXT, " +
-		"version TEXT, " +
-		"hp REAL, " +
-		"cs REAL, " +
-		"od REAL, " +
-		"ar REAL, " +
-		"timingPoints TEXT, " +
-		"hitObjects TEXT, " +
-		"hash TEXT, " +
-		"genre TEXT, " +
-		"approvedDate INTEGER, " +
-		"approved TEXT, " +
-		"bpm INTEGER, " +
-		"stars REAL, " +
-		"favouriteCount INTEGER, " +
-		"hitLength INTEGER, " +
-		"language TEXT, " +
-		"maxCombo INTEGER, " +
-		"mode TEXT, " +
-		"totalLength INTEGER, " +
-		"tags TEXT, " +
-		"source TEXT, " +
-		"lastUpdate INTEGER, " +
-		"passCount INTEGER, " +
-		"playCount INTEGER," +
-		"path TEXT," +
-		"stream INTEGER," +
-		"farm INTEGER" +
-		")"
-
-	_, err := database.Exec(table)
-	if err != nil {
-		panic(err)
-	}
 }
 
 func Exists(setId int) bool {
-
 	cmd := "SELECT id FROM beatmaps WHERE setId = " + fmt.Sprint(setId)
-	row := database.QueryRow(cmd)
+	row := metaDb.QueryRow(cmd)
 	id := 0
 	err := row.Scan(&id)
 
@@ -72,10 +29,9 @@ func Exists(setId int) bool {
 	return true
 }
 
-func AddBeatmap(beatmap osu.BeatmapData) {
-
-	cmd := "INSERT INTO beatmaps VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
-	_, err := database.Exec(cmd,
+func AddBeatmap(beatmap osu.BeatmapData, size int64) {
+	cmd := "INSERT INTO beatmaps VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+	_, err := fullDb.Exec(cmd,
 		beatmap.Id,
 		beatmap.SetId,
 		beatmap.Title,
@@ -106,9 +62,10 @@ func AddBeatmap(beatmap osu.BeatmapData) {
 		beatmap.PassCount,
 		beatmap.PlayCount,
 		beatmap.Path,
+		size,
 		"0",
 		"0",
-		"0",
+		"",
 	)
 
 	if err != nil {

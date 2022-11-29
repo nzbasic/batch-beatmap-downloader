@@ -30,3 +30,27 @@ export interface DatabaseMetrics {
   NumberStoredLoved: number
   LastBeatmapAdded: number
 }
+
+export interface DailyDownloadStatsV2 extends DailyDownloadStats {
+  Completed: number
+}
+
+export interface CurrentDownloadV2 {
+  Size: number;
+  Progress: number;
+  Speed: number;
+  Active: boolean;
+  Finished: boolean;
+}
+
+export interface DownloadMetricsV2 {
+  CurrentDownloads: CurrentDownloadV2[];
+  DailyStats: DailyDownloadStatsV2;
+  CurrentBandwidthUsage: number;
+  AverageSpeedMinute: number;
+}
+
+export interface MetricsV2 {
+  Download: DownloadMetricsV2;
+  Database: DatabaseMetrics;
+}

@@ -21,5 +21,11 @@
       "@components/*": ["./src/render/components/*"]
     }
   },
-  "include": ["*.js", "*.jsx", "*.ts", "*.tsx"]
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+      "node_modules",
+      "**/*.spec.ts"
+  ]
 }

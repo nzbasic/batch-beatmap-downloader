@@ -5,7 +5,7 @@ import { window } from '../../main'
 import axios from "axios";
 import { serverUri } from "../ipc/main";
 import { BeatmapHashMap } from "../../models/api";
-import { loadBeatmaps } from "../beatmaps";
+import { beatmapIds, loadBeatmaps } from "../beatmaps";
 
 export const addCollection = async (hashes: string[], name: string) => {
   const osuPath = await settings.get("path") as string;
@@ -44,8 +44,9 @@ export const checkCollections = async () => {
   const data = (await axios.get<BeatmapHashMap>(`${serverUri}/hashMap`)).data
   const serverHashes = new Map<string, number>(Object.entries(data))
   const missing: number[] = []
+  await loadBeatmaps()
 
-  const ownedSetIds = new Set(await loadBeatmaps())
+  const ownedSetIds = new Set(beatmapIds)
 
   collectionMapHashes.forEach(hash => {
     if (serverHashes.has(hash)) {

@@ -15,6 +15,7 @@ export enum RuleType {
   DATE,
   BOOLEAN,
   TOURNAMENT,
+  SPECIAL
 }
 
 export interface InputOption {
@@ -25,10 +26,9 @@ export interface InputOption {
 
 export const inputOptions: InputOption[] = [
   { value: "Approved", label: "Map Status", type: RuleType.STATUS },
+  { value: "Special", label: "Special Type", type: RuleType.SPECIAL },
   { value: "Archetype", label: "Tournament Archetype", type: RuleType.TOURNAMENT },
   { value: "ApprovedDate", label: "Approved Date", type: RuleType.DATE },
-  { value: "Farm", label: "Farm", type: RuleType.BOOLEAN },
-  { value: "Stream", label: "Stream", type: RuleType.BOOLEAN },
   { value: "Title", label: "Song Title", type: RuleType.TEXT },
   { value: "Artist", label: "Artist", type: RuleType.TEXT },
   { value: "Creator", label: "Mapper", type: RuleType.TEXT },
@@ -89,6 +89,7 @@ export const operatorMap: Record<RuleType, Operator[]> = {
   ],
   7: defaultOperators,
   8: defaultOperators,
+  9: defaultOperators,
 };
 
 export enum InputType {
@@ -108,7 +109,8 @@ export const inputTypeMap: Record<RuleType, InputType> = {
   5: InputType.DROPDOWN,
   6: InputType.DATE,
   7: InputType.DROPDOWN,
-  8: InputType.DROPDOWN
+  8: InputType.DROPDOWN,
+  9: InputType.DROPDOWN,
 };
 
 export interface DropdownOption {
@@ -120,14 +122,21 @@ export const dropdownMap = new Map<RuleType, DropdownOption[]>([
   [
     RuleType.STATUS,
     [
+      { value: "any", label: "Any" },
+      { value: "HasLeaderboard", label: "Has Leaderboard" },
       { value: "ranked", label: "Ranked" },
       { value: "loved", label: "Loved" },
-      { value: "unranked", label: "Unranked" }
+      { value: "approved", label: "Approved" },
+      { value: "Unranked", label: "Any Unranked" },
+      { value: "WIP", label: "WIP" },
+      { value: "pending", label: "Pending" },
+      { value: "graveyard", label: "Graveyard" },
     ],
   ],
   [
     RuleType.GENRE,
     [
+      { value: "any", label: "Any" },
       { value: "unspecified", label: "Unspecified" },
       { value: "video game", label: "Video Game" },
       { value: "anime", label: "Anime" },
@@ -142,6 +151,7 @@ export const dropdownMap = new Map<RuleType, DropdownOption[]>([
   [
     RuleType.MODE,
     [
+      { value: "any", label: "Any" },
       { value: "osu!", label: "osu!" },
       { value: "Taiko", label: "osu!taiko" },
       { value: "Catch the Beat", label: "osu!catch" },
@@ -151,6 +161,7 @@ export const dropdownMap = new Map<RuleType, DropdownOption[]>([
   [
     RuleType.LANGUAGE,
     [
+      { value: "any", label: "Any" },
       { value: "other", label: "Other" },
       { value: "English", label: "English" },
       { value: "Japanese", label: "Japanese" },
@@ -174,6 +185,7 @@ export const dropdownMap = new Map<RuleType, DropdownOption[]>([
   [
     RuleType.TOURNAMENT,
     [
+      { value: "None", label: "None"},
       { value: "Any", label: "Any" },
       { value: "NM1", label: "NM1" },
       { value: "NM2", label: "NM2" },
@@ -199,6 +211,14 @@ export const dropdownMap = new Map<RuleType, DropdownOption[]>([
       { value: "FM4", label: "FM4" },
       { value: "TB", label: "TB" },
     ]
+  ],
+  [
+    RuleType.SPECIAL,
+    [
+      { value: "Farm", label: "Farm" },
+      { value: "Stream", label: "Stream "},
+      { value: "RankedMapper", label: "By Ranked Mapper" }
+    ]
   ]
 ]);
 
@@ -211,7 +231,8 @@ export const defaultValuesMap: Record<RuleType, string> = {
   5: "osu!",
   6: new Date().getTime().toString(),
   7: "1",
-  8: "Any",
+  8: "None",
+  9: "Farm",
 };
 
 export const defaultOperatorsMap: Record<RuleType, string> = {
@@ -224,4 +245,5 @@ export const defaultOperatorsMap: Record<RuleType, string> = {
   6: "<",
   7: "=",
   8: "=",
+  9: "=",
 };

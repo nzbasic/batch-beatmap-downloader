@@ -23,3 +23,4 @@ declare type SettingsObject = {
 };
 
 declare module "*.png";
+declare module "*.svg";

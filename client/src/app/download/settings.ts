@@ -1,6 +1,9 @@
 import { createDownload } from './downloads';
 import settings from "electron-settings";
 import { DownloadStatus } from "../../models/api";
+import { v4 as uuid } from 'uuid';
+
+export let clientId: string
 
 export const setDownloadStatus = async (downloadId: string, status: DownloadStatus) => {
   await settings.set(`downloads.${downloadId}.status`, {
@@ -17,12 +20,12 @@ export const setDownloadStatus = async (downloadId: string, status: DownloadStat
 
 export const getDownloadStatus = async (downloadId: string): Promise<DownloadStatus> => {
   const all = (await settings.get(`downloads.${downloadId}.status.all`)) as number[];
-  const completed = (await settings.get(`downloads.${downloadId}.completed`)) as number[];
-  const skipped = (await settings.get(`downloads.${downloadId}.skipped`)) as number[];
-  const failed = (await settings.get(`downloads.${downloadId}.failed`)) as number[];
-  const totalSize = (await settings.get(`downloads.${downloadId}.totalSize`)) as number;
-  const totalProgress = (await settings.get(`downloads.${downloadId}.totalProgress`)) as number;
-  const force = (await settings.get(`downloads.${downloadId}.force`)) as boolean;
+  const completed = (await settings.get(`downloads.${downloadId}.status.completed`)) as number[];
+  const skipped = (await settings.get(`downloads.${downloadId}.status.skipped`)) as number[];
+  const failed = (await settings.get(`downloads.${downloadId}.status.failed`)) as number[];
+  const totalSize = (await settings.get(`downloads.${downloadId}.status.totalSize`)) as number;
+  const totalProgress = (await settings.get(`downloads.${downloadId}.status.totalProgress`)) as number;
+  const force = (await settings.get(`downloads.${downloadId}.status.force`)) as boolean;
 
   return {
     id: downloadId,
@@ -30,38 +33,57 @@ export const getDownloadStatus = async (downloadId: string): Promise<DownloadSta
     completed,
     failed,
     skipped,
-    currentProgress: "0",
-    currentSize: "0",
     totalSize,
     totalProgress,
     force,
+    speed: 0
   };
 };
 
+export const loadClientId = async () => {
+  clientId = await settings.get("clientId") as string
+  if (!clientId) {
+    const newClientId = uuid()
+    await settings.set("clientId", newClientId)
+    clientId = newClientId
+  }
+}
+
 export const loadDownloads = async () => {
-  const downloads = await settings.get("downloads");
+  const storedDownloads: unknown = await settings.get("downloads");
+  if (typeof storedDownloads !== "object") return;
+  if (storedDownloads === null) return;
+  const downloads = storedDownloads as { [key: string]: { status: DownloadStatus } };
+
   if (downloads) {
     const keys = Object.keys(downloads);
 
     for (const key of keys) {
-      const download: DownloadStatus = downloads[key] as DownloadStatus;
-      if (!download?.all || !download?.completed || !download?.skipped || !download?.failed) continue
-      const remaining = download.all.filter((id) => {
-        return !download.completed.includes(id) ||
-          !download.skipped.includes(id) ||
-          !download.failed.includes(id);
-      });
-
-      if (remaining.length === 0) {
-        await settings.unset(`downloads.${key}`);
+      const download = downloads[key].status;
+      if (download.all === undefined || download.completed === undefined || download.failed === undefined || download.skipped === undefined) {
+        console.log('bad download', download.id)
+        continue;
       }
 
-      const ids = download.all.filter(id => !download.completed.includes(id))
-      const size = download.totalSize - download.totalProgress
+      const remaining = download.all.length - download.completed.length - download.failed.length - download.skipped.length
+      if (remaining === 0) {
+        unsetDownload(key)
+        continue;
+      }
+
+      const ids = download.all;
+      const size = download.totalSize;
       const force = download.force
-      const hashes = []
+      const hashes = [] as string[];
       const collectionName = ""
-      createDownload(ids, size, force, hashes, collectionName)
+      const dl = createDownload(key, ids, size, force, hashes, collectionName)
+      dl.setStatus({
+        ...dl.getStatus(),
+        completed: download.completed,
+        failed: download.failed,
+        skipped: download.skipped,
+        totalProgress: download.totalProgress
+      })
     }
   }
 };

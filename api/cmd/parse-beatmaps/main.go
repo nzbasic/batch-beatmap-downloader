@@ -59,13 +59,12 @@ func main() {
 		beatmapsData := osu.ParseOsz(c, path, setId)
 
 		for _, beatmapData := range beatmapsData {
-
 			if beatmapData.Title == "" {
 				log.Println(path)
 				continue
 			}
 
-			database.AddBeatmap(beatmapData)
+			//database.AddBeatmap(beatmapData)
 		}
 
 		time.Sleep(1*time.Second + 100*time.Millisecond)

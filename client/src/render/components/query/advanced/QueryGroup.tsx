@@ -3,7 +3,7 @@ import { ConnectorDetails, Group, Node } from "../../../../models/filter";
 import { RuleType, Rule } from "../../../../models/rules";
 import { Connector } from "./Connector";
 import React, { useEffect, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
+import { nanoid } from 'nanoid';
 import { cloneDeep } from "lodash";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import { stringToColor } from "@davidcmeier/string-to-color";
@@ -16,7 +16,7 @@ interface PropTypes {
 }
 
 const defaultRule = {
-  id: uuidv4(),
+  id: nanoid(),
   rule: {
     type: RuleType.STATUS,
     value: "ranked",
@@ -26,7 +26,7 @@ const defaultRule = {
 };
 
 const defaultGroup = {
-  id: uuidv4(),
+  id: nanoid(),
   group: {
     connector: {
       type: "AND",
@@ -75,10 +75,10 @@ export const QueryGroup = ({ group, id, updateParent }: PropTypes) => {
   };
 
   const addChild = (child: Node) => {
-    child.id = uuidv4();
+    child.id = nanoid();
     if (child.group) {
       const rule = cloneDeep(defaultRule);
-      rule.id = uuidv4();
+      rule.id = nanoid();
       child.group.children.push(rule);
     }
 

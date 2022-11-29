@@ -4,20 +4,26 @@ import React from "react";
 import { bytesToFileSize } from "../util/fileSize";
 import humanizeDuration from "humanize-duration";
 
-const parseStatusRow = (key: string, entry: TableData) => {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const value = entry[key]
+export interface CurrentDownloadV2 {
+  Size: number;
+  Progress: number;
+  Speed: number;
+  Active: boolean;
+  Finished: boolean;
+}
 
-  if (key === "TotalSize" || key === "RemainingSize") {
-    return <>{bytesToFileSize(value)}</>
+const parseStatusRow = (key: keyof CurrentDownloadV2, entry: CurrentDownloadV2) => {
+  if (key === "Size") {
+    return <>{bytesToFileSize(entry[key])}</>
   }
 
-  if (key === "AverageSpeed") {
-    return <>{(value / 1e6).toFixed(0)}Mbps</>
+  if (key === "Progress") {
+    const remaining = entry.Size - entry.Progress;
+    return <>{bytesToFileSize(remaining)}</>
   }
 
-  if (key === "EstTimeLeft") {
-    return <>{humanizeDuration(value * 1000, { round: true, largest: 2 })}</>
+  if (key === "Speed") {
+    return <>{bytesToFileSize(entry[key])}/s</>
   }
 
   return <>{entry[key]}</>
@@ -33,7 +39,7 @@ const StatusTableRow: React.FC<RowProps> = ({ entry, headers }) => (
           'p-1 px-3 h-12 text-sm whitespace-pre-wrap',
         )}
       >
-        {parseStatusRow(header.key, entry)}
+        {parseStatusRow(header.key as keyof CurrentDownloadV2, entry as CurrentDownloadV2)}
       </td>
     ))}
   </>

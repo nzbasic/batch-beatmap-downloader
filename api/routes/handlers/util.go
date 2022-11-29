@@ -17,7 +17,7 @@ func genericJSONSend[T any](w http.ResponseWriter, req T) {
 	json.NewEncoder(w).Encode(req)
 }
 
-func textErrorReponse(w http.ResponseWriter, text string) {
+func textErrorResponse(w http.ResponseWriter, text string) {
 	w.WriteHeader(http.StatusInternalServerError)
 	w.Header().Set("Content-Type", "application/text")
 	w.Write([]byte(text))

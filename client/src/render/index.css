@@ -24,7 +24,7 @@ input:disabled {
 }
 
 .box-selector {
-  @apply container transition-colors button
+  @apply content-box transition-colors button
 }
 
 .box-selector-off {
@@ -43,8 +43,8 @@ input:disabled {
   @apply shadow-sm rounded-md border dark:border-black dark:bg-zinc-800 border-gray-400 bg-white;
 }
 
-.container {
-  @apply bg-white dark:bg-monokai-dark p-6 shadow-border;
+.content-box {
+  @apply bg-white dark:bg-monokai-dark p-6 shadow-border w-full;
 }
 
 .no-pad {
@@ -78,8 +78,9 @@ input:disabled {
 @layer components {
   /* .my-react-select-container {
   } */
+
   .my-react-select-container .my-react-select__control {
-    @apply bg-white dark:bg-monokai-light2 border border-neutral-300 dark:border-none hover:border-neutral-400;
+    @apply bg-gray-50 dark:bg-monokai-light2 rounded-md shadow-sm border border-neutral-300 dark:border-none hover:border-neutral-400;
   }
 
   .my-react-select-container .my-react-select__control--is-focused {
@@ -105,10 +106,6 @@ input:disabled {
   .my-react-select-container .my-react-select__placeholder,
   .my-react-select-container .my-react-select__single-value {
     @apply text-neutral-600 dark:text-neutral-200;
-  }
-
-  input {
-    @apply bg-white dark:bg-monokai-light2 border border-neutral-300 dark:border-none hover:border-neutral-400 dark:hover:border-neutral-500;
   }
 
   /* width */

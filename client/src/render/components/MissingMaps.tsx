@@ -19,11 +19,11 @@ export const FindMissingMaps = () => {
   }, [])
 
   const download = useCallback(() => {
-    window.electron.download(missing?.ids??[], missing?.totalSize??0, false, [], "")
+    window.electron.createDownload(missing?.ids??[], missing?.totalSize??0, false, [], "")
   }, [missing])
 
   return (
-    <div className="container gap-2 flex flex-col dark:text-white w-full items-start">
+    <div className="content-box gap-2 flex flex-col dark:text-white w-full items-start">
       <span className="font-bold text-lg mb-4">Download missing maps (from collections)</span>
       <div className="flex items-center gap-2 mb-2">
         <Button

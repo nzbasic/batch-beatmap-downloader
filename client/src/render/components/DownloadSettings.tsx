@@ -1,59 +1,32 @@
-import { FilterResponse } from "../../models/api";
 import Switch from "react-switch";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { bytesToFileSize } from "../util/fileSize";
 import { toast } from "react-toastify";
 import Button from "./util/Button";
+import { DownloadDetails } from "../../models/api";
 
 interface PropTypes {
-  result: FilterResponse;
-  existing: number[];
+  result: DownloadDetails;
 }
 
-export const DownloadSettings = ({ result, existing }: PropTypes) => {
+export const DownloadSettings = ({ result }: PropTypes) => {
   const [force, setForce] = useState(false);
   const [collection, setCollection] = useState(false);
   const [collectionName, setCollectionName] = useState("");
 
   const download = () => {
     toast.success(`Download started!`);
-    window.electron.createDownload(result.SetIds, calculateSize(), force, result.Hashes, collectionName)
+    window.electron.startDownload(force, collectionName)
   };
 
-  const matching = (condition: boolean) => {
-    // find number of ids in result.SetIds that are not in existing
-    const newIds = result.SetIds.filter((id) => {
-      if (condition) {
-        return existing.includes(id);
-      } else {
-        return !existing.includes(id);
-      }
-    });
-    return newIds.length;
-  };
-
-  const calculateSize = () => {
-    let totalSize = 0;
-
-    // the response map is actually a raw object, so it needs to be converted to a map object
-    const map = new Map<string, number>(Object.entries(result.SizeMap));
-    if (force) {
-      map.forEach((size) => (totalSize += size));
-    } else {
-      map.forEach((size, setId) => {
-        if (!existing.includes(parseInt(setId))) {
-          totalSize += size;
-        }
-      });
-    }
-
-    return totalSize;
-  };
-
-  const downloadDisabled = () => {
+  const downloadDisabled = useMemo(() => {
     return collection && (collectionName === "")
-  }
+  }, [collection, collectionName])
+
+  const fileSize = useMemo(() => {
+    return bytesToFileSize(force ? result.totalSizeForce : result.totalSize)
+  }, [force, result.totalSizeForce, result.totalSize])
 
   return (
     <div className="flex flex-col gap-4">
@@ -62,13 +35,12 @@ export const DownloadSettings = ({ result, existing }: PropTypes) => {
         <span className="font-medium">Summary</span>
         <div className="flex flex-col gap-0">
           <span>
-            {result.Ids.length} Beatmaps ({result.SetIds.length} Beatmap Sets)
+            {result.beatmaps} Beatmaps ({result.setsForce} Beatmap Sets)
           </span>
-          <span>{matching(true)} Sets already downloaded</span>
           <span>
-            {force ? result.SetIds.length : matching(false)} Sets to download
+            {force ? result.setsForce : result.sets} Sets to download
           </span>
-          <span>Total Size: {bytesToFileSize(calculateSize())}</span>
+          <span>Total Size: {fileSize}</span>
         </div>
       </div>
       <div className="flex flex-col gap-1">
@@ -93,15 +65,15 @@ export const DownloadSettings = ({ result, existing }: PropTypes) => {
         </div>
       </div>
       <div className="flex items-center">
-        <Link className={`${downloadDisabled() ? 'pointer-events-none' : ''}`} to="/downloads">
-          <Button color="green" onClick={download} disabled={downloadDisabled()}>
+        <Link className={`${downloadDisabled ? 'pointer-events-none' : ''}`} to="/downloads">
+          <Button color="green" onClick={download} disabled={downloadDisabled}>
             Download
           </Button>
         </Link>
-        {downloadDisabled() && (
+        {downloadDisabled && (
           <span className="text-red-500 text-sm ml-4">
             Collection name cannot be empty
-            </span>
+          </span>
         )}
       </div>
     </div>

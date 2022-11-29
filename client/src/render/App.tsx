@@ -5,7 +5,6 @@ import { HashRouter, Route, Routes } from "react-router-dom";
 import { Downloads } from "./pages/Downloads";
 import { Home } from "./pages/Home";
 import { useEffect, useState } from "react";
-import { DownloadStatus } from "../models/api";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Status } from "./pages/Status";
@@ -13,7 +12,6 @@ import { Changelog } from "./pages/Changelog";
 import React from "react";
 
 const App = () => {
-  const [downloadStatus, setDownloadStatus] = useState<DownloadStatus | null>(null);
   const [version, setVersion] = useState("1.0.0")
 
   useEffect(() => {
@@ -21,13 +19,13 @@ const App = () => {
       setVersion(version);
     })
 
-    window.electron.listenForDownloads((id, status) => setDownloadStatus(status));
     window.electron.listenForErrors((error) => toast.error(error))
   }, []);
 
   return (
     <HashRouter>
       <div className="flex w-screen">
+        <div id="modal" className="absolute top-0 left-0 w-screen h-screen bg-gray-300/30 z-50 flex items-center justify-center hidden" />
         <Menu version={version} />
         <div className="main p-4 overflow-auto overflow-x-hidden h-screen">
           <Routes>

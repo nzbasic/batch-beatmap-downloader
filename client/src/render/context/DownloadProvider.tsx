@@ -1,10 +1,10 @@
 import React, {
-  useState, createContext, useEffect, PropsWithChildren,
+  useState, createContext, useEffect, PropsWithChildren, useContext,
 } from 'react';
-import { DownloadStatus } from '../../models/api';
+import { DownloadStatus, ReportedDownloadStatus } from '../../models/api';
 
 export interface Downloads {
-  downloads: DownloadStatus[]
+  downloads: ReportedDownloadStatus[]
 }
 
 const defaultContext: Downloads = {
@@ -14,11 +14,11 @@ const defaultContext: Downloads = {
 export const DownloadsContext = createContext<Downloads>(defaultContext);
 
 const DownloadsProvider: React.FC<PropsWithChildren<any>> = ({ children }) => {
-  const [downloads, setDownloads] = useState<DownloadStatus[]>([])
+  const [downloads, setDownloads] = useState<ReportedDownloadStatus[]>([])
 
   useEffect(() => {
     window.electron.getDownloadsStatus().then(res => setDownloads(res))
-    window.electron.listenForDownloads2((status) => setDownloads(status))
+    window.electron.listenForDownloads((status) => setDownloads(status))
   }, [])
 
   return (
@@ -29,5 +29,7 @@ const DownloadsProvider: React.FC<PropsWithChildren<any>> = ({ children }) => {
     </DownloadsContext.Provider>
   );
 };
+
+export const useDownload = () => useContext(DownloadsContext);
 
 export default DownloadsProvider;

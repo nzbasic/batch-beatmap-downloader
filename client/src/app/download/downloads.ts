@@ -1,6 +1,7 @@
 import { DownloadController } from './DownloadController';
 import { unsetDownload } from './settings';
 import { window } from "../../main";
+import { DownloadStatus } from '../../models/api';
 
 export const downloadMap = new Map<string, DownloadController>()
 
@@ -8,19 +9,38 @@ export const getDownload = (downloadId: string) => {
   return downloadMap.get(downloadId)
 };
 
+export const convertStatus = (status: DownloadStatus) => ({
+  id: status.id,
+  paused: status.paused,
+  all: status.all.length,
+  completed: status.completed.length,
+  failed: status.failed.length,
+  skipped: status.skipped.length,
+  totalSize: status.totalSize,
+  totalProgress: status.totalProgress,
+  force: status.force,
+  speed: status.speed
+})
+
 export const emitStatus = () => {
   const statuses = getDownloadsStatus()
-  window?.webContents.send("downloads-status", statuses);
+  const mapped = statuses.map(convertStatus);
+  window?.webContents.send("downloads-status", mapped);
 };
 
-export const createDownload = (ids: number[], size: number, force: boolean, hashes: string[], collectionName: string) => {
-  const download = new DownloadController(ids, size, force, hashes)
+export const createDownload = (id: string, ids: number[], size: number, force: boolean, hashes: string[], collectionName: string) => {
+  const downloadPool = new Set<number>();
+  downloadMap.forEach(download => {
+    download.getIds().forEach(id => downloadPool.add(id))
+  })
+
+  const toDownload = ids.filter(id => !downloadPool.has(id))
+  const download = new DownloadController(id, toDownload, size, force, hashes)
 
   if (collectionName) {
     download.createCollection(collectionName)
   }
 
-  const id = download.getId()
   downloadMap.set(id, download)
   return download
 };
@@ -51,7 +71,11 @@ export const resumeDownloads = () => {
 
 export const deleteDownload = async (downloadId: string) => {
   const download = getDownload(downloadId)
-  if (download) download.pause()
+  if (download) {
+    download.pause()
+    download.updateDownload('delete')
+  }
+
   downloadMap.delete(downloadId)
   await unsetDownload(downloadId)
   emitStatus()

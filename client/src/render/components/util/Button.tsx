@@ -1,6 +1,6 @@
 import React from 'react';
 
-type Colors = 'blue' | 'green' | 'red' | 'transparent';
+type Colors = 'blue' | 'green' | 'red' | 'transparent' | 'none';
 
 interface PropTypes {
   color?: Colors,
@@ -11,28 +11,12 @@ interface PropTypes {
   type?: 'button' | 'submit' | 'reset'
 }
 
-interface ColorData {
-  default: string,
-  hover: string,
-}
-
-const colorMap: Record<Colors, ColorData> = {
-  blue: {
-    default: 'bg-sky-500',
-    hover: 'hover:bg-sky-600',
-  },
-  green: {
-    default: 'bg-emerald-600',
-    hover: 'hover:bg-emerald-700',
-  },
-  red: {
-    default: 'bg-red-500',
-    hover: 'hover:bg-red-600',
-  },
-  transparent: {
-    default: 'bg-transparent',
-    hover: 'hover:bg-transparent',
-  },
+const colorMap: Record<Colors, string> = {
+  blue: 'bg-sky-500 hover:bg-sky-600',
+  green: 'bg-emerald-600 hover:bg-emerald-700',
+  red: 'bg-red-500 hover:bg-red-600',
+  transparent: 'bg-transparent hover:bg-transparent',
+  none: '',
 };
 
 const Button: React.FC<PropTypes> = ({
@@ -47,8 +31,7 @@ const Button: React.FC<PropTypes> = ({
   <button
     type={type}
     className={`
-      ${colorMap[color].default}
-      ${colorMap[color].hover}
+      ${colorMap[color]}
       px-2 py-1 rounded text-white font-semibold transition-colors disabled:opacity-50
       ${className}
     `}

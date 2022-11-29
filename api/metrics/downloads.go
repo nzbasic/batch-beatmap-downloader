@@ -6,25 +6,82 @@ import (
 	"github.com/nzbasic/batch-beatmap-downloader/metrics/store"
 )
 
-type CurrentDownload struct {
-	Id            string
-	TotalSize     int
-	Ended         bool
-	RemainingSize int
-	AverageSpeed  float32
-	EstTimeLeft   float32
-}
+func GetDownloadMetricsV2() DownloadMetricsV2 {
+	db := store.GetDb()
+	timeYesterday := time.Now().Add(-24 * time.Hour)
+	timeMinuteAgo := time.Now().Add(-1 * time.Minute)
 
-type DailyDownloadStats struct {
-	Maps  int
-	Size  int
-	Speed float32
-}
+	var downloads []store.DownloadV2
+	db.All(&downloads)
 
-type DownloadMetrics struct {
-	CurrentDownloads      []CurrentDownload
-	DailyStats            DailyDownloadStats
-	CurrentBandwidthUsage float32
+	var current []CurrentDownloadV2
+	// go through all downloads, trying to find:
+	// currently active downloads (+ associated stats)
+	// total beatmap downloads today
+	// total size of downloads today
+	// total speed of downloads today
+	totalSize := 0
+	totalSpeed := 0
+	totalFinished := 0
+	totalSets := 0
+	totalBandwidth := 0
+	totalMinuteBandwidth := 0
+
+	countMinute := 0
+	countDay := 0
+
+	for _, download := range downloads {
+		if download.LastUpdate.Before(timeYesterday) {
+			continue
+		}
+
+		if download.Started && download.LastUpdate.After(timeMinuteAgo) {
+			current = append(current, CurrentDownloadV2{
+				Size:     download.Size,
+				Progress: download.Progress,
+				Speed:    download.Speed,
+				Active:   download.Active,
+				Finished: download.Finished,
+			})
+
+			countMinute++
+			totalBandwidth += download.Speed
+			totalMinuteBandwidth += download.Speed
+		}
+
+		if download.Finished {
+			totalFinished++
+		}
+
+		countDay++
+		totalSize += download.Progress
+		totalSpeed += download.Speed
+		totalSets += download.SetsDownloaded
+	}
+
+	averageSpeedDay := 0
+	if countDay > 0 {
+		averageSpeedDay = totalSpeed / countDay
+	}
+
+	averageSpeedMinute := 0
+	if countMinute > 0 {
+		averageSpeedMinute = totalMinuteBandwidth / countMinute
+	}
+
+	daily := DailyDownloadStats{
+		Maps:      totalSets,
+		Size:      totalSize,
+		Speed:     averageSpeedDay,
+		Completed: totalFinished,
+	}
+
+	return DownloadMetricsV2{
+		CurrentDownloads:      current,
+		DailyStats:            daily,
+		CurrentBandwidthUsage: totalMinuteBandwidth,
+		AverageSpeedMinute:    averageSpeedMinute,
+	}
 }
 
 func GetDownloadMetrics() DownloadMetrics {
@@ -45,9 +102,13 @@ func GetDownloadMetrics() DownloadMetrics {
 	// total size of downloads today
 	totalSize := 0
 	totalCount := 0
-	totalTime := 0
 	minuteSize := 0
 	minuteTime := 0
+
+	var minuteConcurrentSpeed float64 = 0
+	minuteConcurrentCount := 0
+
+	var totalSpeed float32 = 0
 
 	for _, download := range started {
 		id := download.DownloadId
@@ -59,8 +120,8 @@ func GetDownloadMetrics() DownloadMetrics {
 			}
 		}
 
-		// if download has ended and its older than 24h then not relevant
-		if downloadHasEnded && download.CreatedAt.Before(timeYesterday) {
+		// if download is older than 24h then not relevant
+		if download.CreatedAt.Before(timeYesterday) {
 			for _, detail := range details {
 				if detail.DownloadId == download.DownloadId {
 					db.DeleteStruct(&detail)
@@ -83,6 +144,9 @@ func GetDownloadMetrics() DownloadMetrics {
 		// var allDownloaded []store.BeatmapDownload
 		// db.Find("DownloadId", id, &allDownloaded)
 
+		totalConcurrentDownloadSpeed := 0.0
+		totalConcurrentCount := 0
+
 		downloadedSize := 0
 		downloadedTime := 0
 		lastDownloadTime := timeYesterday
@@ -91,13 +155,23 @@ func GetDownloadMetrics() DownloadMetrics {
 				lastDownloadTime = downloaded.CreatedAt
 			}
 
+			if downloaded.TotalDownloadSpeed != 0 {
+				totalConcurrentDownloadSpeed += downloaded.TotalDownloadSpeed
+				totalConcurrentCount++
+			}
+
 			downloadedSize += downloaded.Size
 			downloadedTime += downloaded.Time
 			totalCount++
 
 			if downloaded.CreatedAt.After(timeMinuteAgo) {
-				minuteSize += downloaded.Size
-				minuteTime += downloaded.Time
+				if downloaded.TotalDownloadSpeed != 0 {
+					minuteConcurrentSpeed += downloaded.TotalDownloadSpeed
+					minuteConcurrentCount++
+				} else {
+					minuteSize += downloaded.Size
+					minuteTime += downloaded.Time
+				}
 			}
 		}
 
@@ -106,9 +180,13 @@ func GetDownloadMetrics() DownloadMetrics {
 		}
 
 		totalSize += downloadedSize
-		totalTime += downloadedTime
-
 		averageSpeed := calculateBandwidth(downloadedSize, downloadedTime)
+		if totalConcurrentCount != 0 {
+			averageSpeed = (float32(totalConcurrentDownloadSpeed) * 1e6) / float32(totalConcurrentCount)
+		}
+
+		totalSpeed += averageSpeed
+
 		remainingSize := download.Size - downloadedSize
 
 		var estTimeLeft float32
@@ -116,7 +194,7 @@ func GetDownloadMetrics() DownloadMetrics {
 			estTimeLeft = -1
 		} else {
 			// remaining size in bytes, average speed in bps, want seconds
-			estTimeLeft = float32(remainingSize) / (float32(averageSpeed) / float32(8))
+			estTimeLeft = (float32(remainingSize) * 8) / float32(averageSpeed)
 		}
 
 		newCurrent := CurrentDownload{
@@ -132,12 +210,17 @@ func GetDownloadMetrics() DownloadMetrics {
 	}
 
 	daily := DailyDownloadStats{
-		Maps:  totalCount,
-		Size:  totalSize,
-		Speed: calculateBandwidth(totalSize, totalTime),
+		Maps: totalCount,
+		Size: totalSize,
 	}
 
-	currentBandwidth := calculateBandwidth(minuteSize, minuteTime)
+	currentOldBandwidth := calculateBandwidth(minuteSize, minuteTime)
+
+	currentBandwidth := currentOldBandwidth
+	if minuteConcurrentCount != 0 {
+		currentBandwidth = (float32(minuteConcurrentSpeed) * 1e6) / float32(minuteConcurrentCount)
+	}
+
 	return DownloadMetrics{
 		CurrentDownloads:      current,
 		CurrentBandwidthUsage: currentBandwidth,

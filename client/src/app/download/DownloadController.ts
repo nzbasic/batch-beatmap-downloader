@@ -1,12 +1,12 @@
+import { BeatmapDownloadV2, DownloadUpdateV2, DownloadStartV2 } from './../../models/api-v2';
 import axios from "axios";
 import { DownloadStatus } from "../../models/api";
 import { serverUri } from "../ipc/main";
 import { shouldBeClosed, window } from "../../main";
 import Download from "nodejs-file-downloader";
 import { getMaxConcurrentDownloads, getSongsFolder } from "../settings";
-import { v4 as uuidv4 } from 'uuid'
-import { loadBeatmaps } from "../beatmaps";
-import { setDownloadStatus } from "./settings";
+import { beatmapIds, loadBeatmaps } from "../beatmaps";
+import { clientId, setDownloadStatus } from "./settings";
 import { addCollection } from "../collection/collection";
 import { emitStatus } from "./downloads";
 
@@ -21,35 +21,42 @@ export class DownloadController {
   private size: number = 0;
   private force: boolean = false;
   private hashes: string[] = [];
-  private status: DownloadStatus
+  private status: DownloadStatus;
+  private startTime: Date;
+  private downloadedSinceResume = 0
 
   private concurrentDownloads: number = 3
-  private id: string = uuidv4()
+  private id: string;
   private toDownload: number[] = []
+  private interval: NodeJS.Timer;
 
-  public constructor(ids: number[], size: number, force: boolean, hashes: string[]) {
+  public constructor(id: string, ids: number[], size: number, force: boolean, hashes: string[]) {
+    this.id = id;
     this.ids = ids
     this.size = size;
     this.force = force;
     this.hashes = hashes;
 
     this.status = {
-      id: this.id,
+      id,
       paused: true,
       all: ids,
       completed: [],
       failed: [],
       skipped: [],
-      currentProgress: "0",
-      currentSize: "0",
       totalSize: size,
       totalProgress: 0,
       force: force,
+      speed: 0,
     };
   }
 
   public getId() {
     return this.id
+  }
+
+  public getIds() {
+    return this.ids
   }
 
   public async createCollection(collectionName: string) {
@@ -69,20 +76,15 @@ export class DownloadController {
   }
 
   public async resume() {
-    this.id = uuidv4()
+    this.startTime = new Date();
+    this.downloadedSinceResume = 0;
     this.status.paused = false
     emitStatus()
 
     this.concurrentDownloads = await getMaxConcurrentDownloads()
+    this.updateDownload("resume")
 
-    await this.postData(`${serverUri}/metrics/downloadStart`, {
-      downloadId: this.id,
-      ids: this.ids,
-      size: this.size,
-      force: this.force
-    })
-
-    const beatmapIds = await loadBeatmaps();
+    await loadBeatmaps();
     const newIds = this.ids.filter((id) => {
       return (
         !this.status.completed.includes(id) &&
@@ -94,7 +96,7 @@ export class DownloadController {
     const skipped: number[] = []
     this.toDownload = newIds.filter(id => {
       if (this.force) return true;
-      const hasMap = beatmapIds.includes(id)
+      const hasMap = beatmapIds.has(id)
       if (hasMap) skipped.push(id)
       return !hasMap
     })
@@ -116,8 +118,8 @@ export class DownloadController {
       }
     }
 
+    if (!this.status.paused) this.updateDownload("delete")
     await setDownloadStatus(this.id, this.status)
-    await this.postData(`${serverUri}/metrics/downloadEnd`, { downloadId: this.id })
   }
 
   private async postData(url: string, body: unknown) {
@@ -130,10 +132,23 @@ export class DownloadController {
     }
   }
 
+  public updateDownload(type: DownloadUpdateV2['Type']) {
+    this.postData(`${serverUri}/v2/metrics/download/update`, {
+      Client: clientId,
+      Id: this.id,
+      Type: type,
+    } as DownloadUpdateV2)
+  }
+
   public pause() {
     this.status.paused = true
     emitStatus()
-    this.postData(`${serverUri}/metrics/downloadEnd`, { id: this.id })
+    this.updateDownload("pause")
+  }
+
+  public getDownloadSpeed() {
+    const elapsed = new Date().getTime() - this.startTime.getTime();
+    return (this.downloadedSinceResume / 1024 / 1024) / (elapsed / 1000);
   }
 
   private handleServerError(err: Error) {
@@ -142,12 +157,12 @@ export class DownloadController {
       window?.webContents.send("error", "Server is down");
       window?.webContents.send("server-down", true)
 
-      const interval = setInterval(() => {
-        axios.get(serverUri).then(res => {
+      this.interval = setInterval(() => {
+        axios.get(`${serverUri}/api`).then(res => {
           if (res.status >= 200 && res.status <= 299) {
             window?.webContents.send("server-down", false)
             this.resume()
-            clearInterval(interval)
+            clearInterval(this.interval)
           }
         })
       }, 1000)
@@ -164,8 +179,6 @@ export class DownloadController {
 
     const setId = this.getNextSetId()
     if (setId === undefined) return Status.FINISHED
-
-    console.log(`${this.id} downloading ${setId}`)
 
     const uri = `${serverUri}/beatmapset/${setId}`;
     let cancelled = false
@@ -191,39 +204,24 @@ export class DownloadController {
       await download.download();
       const after = new Date();
       const difference = after.getTime() - before.getTime();
+      beatmapIds.add(setId);
 
-      const downloadStats: { time: number, size: number }[] = this.status.currentDownloads??[]
-      if (downloadStats.length == this.concurrentDownloads) {
-        downloadStats.shift()
-      }
-
-      downloadStats.push({
-        time: difference,
-        size
-      })
-
-      let totalDownloadSpeed = 0
-      for (const downloadStat of downloadStats) {
-        const size = downloadStat.size * 8 / 1000 / 1000
-        const time = downloadStat.time / 1000
-        totalDownloadSpeed += (size / time)
-      }
-
-      await this.postData(`${serverUri}/metrics/beatmapDownload`, {
-        downloadId: this.id,
-        setId,
-        size,
-        time: difference,
-        totalDownloadSpeed
-      });
-
-      this.status.currentDownloads = downloadStats
-      this.status.lastDownloadTime = difference
-      this.status.lastDownloadSize = size
       this.status.completed.push(setId);
       this.status.totalProgress += size;
+      this.downloadedSinceResume += size
+
+      const speed = this.getDownloadSpeed()
+      this.status.speed = speed
+
+      await this.postData(`${serverUri}/v2/metrics/download/beatmap`, {
+        Client: clientId,
+        Id: this.id,
+        SetId: setId.toString(),
+        Time: difference / Math.max(this.concurrentDownloads, 1)
+      } as BeatmapDownloadV2);
     } catch (err) {
       if (!cancelled) {
+        console.log(setId, 'failed')
         this.status.failed.push(setId);
         this.status.totalProgress += size;
 
@@ -234,8 +232,6 @@ export class DownloadController {
     }
 
     emitStatus()
-    await setDownloadStatus(this.id, this.status)
-
     return this.downloadBeatmapSet()
   }
 }

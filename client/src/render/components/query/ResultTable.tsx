@@ -1,13 +1,14 @@
-import { useEffect, useState } from "react";
-import { BeatmapDetails, FilterResponse } from "../../../models/api";
-import { toast } from "react-toastify";
 import React from "react";
+import { useEffect, useState } from "react";
+import { BeatmapDetails, DownloadDetails } from "../../../models/api";
+import { toast } from "react-toastify";
 import { TableHeader } from "../../types/table";
 import Table from "../util/Table";
 import Button from "../util/Button";
 
 interface PropTypes {
-  result: FilterResponse;
+  result: DownloadDetails;
+  orderBy?: string;
 }
 
 const headers: TableHeader[] = [
@@ -19,42 +20,24 @@ const headers: TableHeader[] = [
 
 const pageSize = 25;
 export const ResultTable = ({ result }: PropTypes) => {
-  const [page, setPage] = useState<BeatmapDetails[]>([]);
+  const [beatmaps, setBeatmaps] = useState<BeatmapDetails[]>([])
   const [pageNumber, setPageNumber] = useState(1);
 
-  const getNewPage = async (): Promise<BeatmapDetails[]> => {
-    const ids = result.Ids.slice(
-      (pageNumber - 1) * pageSize,
-      pageNumber * pageSize
-    );
-    const res = await window.electron.getBeatmapDetails(ids);
-    if (typeof res === "string") {
-      toast.error(res);
-      return [];
-    } else {
-      return res ?? [];
-    }
-  };
-
   useEffect(() => {
-    if (pageNumber != 1) {
-      setPageNumber(1);
-    } else {
-      getNewPage().then((res) => {
-        setPage(res);
-      });
-    }
-  }, [result]);
-
-  useEffect(() => {
-    getNewPage().then((res) => {
-      setPage(res);
-    });
-  }, [pageNumber]);
+    window.electron.getBeatmapDetails(pageNumber, pageSize).then(res => {
+      if (typeof res === "string" || res === undefined) {
+        toast.error(res);
+        setBeatmaps([])
+      } else {
+        setBeatmaps(res)
+      }
+    })
+  }, [result, pageNumber])
 
   return (
     <div className="w-full flex flex-col pb-6">
-      <Table headers={headers} data={page} className="border-b dark:border-black" />
+      <Table headers={headers} data={beatmaps} className="border-b dark:border-black" />
+
       <div className="flex justify-center items-center gap-2 mt-6">
         <Button
           color="blue"
@@ -63,11 +46,11 @@ export const ResultTable = ({ result }: PropTypes) => {
         >
           Prev
         </Button>
-        {pageNumber}/{Math.ceil(result.Ids.length / pageSize)}
+        {pageNumber}/{Math.ceil(result.beatmaps / pageSize)}
         <Button
           color="blue"
           onClick={() => setPageNumber(pageNumber + 1)}
-          disabled={pageNumber === Math.ceil(result.Ids.length / pageSize)}
+          disabled={pageNumber === Math.ceil(result.beatmaps / pageSize)}
         >
           Next
         </Button>

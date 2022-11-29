@@ -1,16 +1,40 @@
 import {
-  ipcRenderer,
   contextBridge,
-  shell,
-  OpenExternalOptions,
 } from "electron";
 import { createStoreBindings } from "electron-persist-secure/lib/bindings";
-import { SettingsObject } from "../global";
-import { BeatmapDetails, DownloadStatus, FilterResponse, MissingMaps } from "../models/api";
-import { Node } from "../models/filter";
-import { Metrics } from "../models/metrics";
+import {
+  handleCheckCollections,
+  handleCreateDownload,
+  handleDeleteDownload,
+  handleGetDownloadsStatus,
+  handleListenForDownloads,
+  handlePauseDownload,
+  handlePauseDownloads,
+  handleResumeDownload,
+  handleResumeDownloads,
+  handleStartDownload
+} from "./downloads";
+import { handleGetBeatmapDetails, handleGetMetrics, handleQuery } from "./query";
+import {
+  handleCheckValidPath,
+  handleGetSettings,
+  handleGetVersion,
+  handleLoadBeatmaps,
+  handleSetAltPath,
+  handleSetMaxConcurrentDownloads,
+  handleSetPath,
+  handleSetSettings,
+  handleSetTheme
+} from "./settings";
+import {
+  handleBrowse,
+  handleListenForErrors,
+  handleListenForServerDown,
+  handleOpenUrl,
+  handleQuit
+} from "./system";
 
-const handleGenericError = (e: unknown) => {
+export const handleGenericError = (e: unknown) => {
   if (typeof e === "string") {
     return e;
   } else if (e instanceof Error) {
@@ -19,163 +43,37 @@ const handleGenericError = (e: unknown) => {
 };
 
 export const electronBridge = {
-  query: async (node: Node, limit: number) => {
-    try {
-      const res = (await ipcRenderer.invoke(
-        "query",
-        node,
-        limit
-      )) as FilterResponse;
-      return res;
-    } catch (e) {
-      return handleGenericError(e);
-    }
-  },
+  query: handleQuery,
+  getMetrics: handleGetMetrics,
+  getBeatmapDetails: handleGetBeatmapDetails,
 
-  getMetrics: async (): Promise<[boolean, Metrics]> => {
-    return (await ipcRenderer.invoke("get-metrics") as [boolean, Metrics])
-  },
+  openUrl: handleOpenUrl,
+  browse: handleBrowse,
+  quit: handleQuit,
 
-  getBeatmapDetails: async (ids: number[]) => {
-    try {
-      const res = (await ipcRenderer.invoke(
-        "get-beatmap-details",
-        ids
-      )) as BeatmapDetails[];
-      return res;
-    } catch (e) {
-      return handleGenericError(e);
-    }
-  },
+  getVersion: handleGetVersion,
+  getSettings: handleGetSettings,
+  setSettings: handleSetSettings,
+  checkValidPath: handleCheckValidPath,
+  loadBeatmaps: handleLoadBeatmaps,
+  setTheme: handleSetTheme,
+  setMaxConcurrentDownloads: handleSetMaxConcurrentDownloads,
+  setPath: handleSetPath,
+  setAltPath: handleSetAltPath,
 
-  openUrl: async (
-    url: string,
-    options?: OpenExternalOptions
-  ): Promise<void> => {
-    return await shell.openExternal(url, options);
-  },
+  startDownload: handleStartDownload,
+  createDownload: handleCreateDownload,
+  pauseDownload: handlePauseDownload,
+  pauseDownloads: handlePauseDownloads,
+  resumeDownload: handleResumeDownload,
+  resumeDownloads: handleResumeDownloads,
+  deleteDownload: handleDeleteDownload,
+  getDownloadsStatus: handleGetDownloadsStatus,
+  checkCollections: handleCheckCollections,
 
-  getVersion: async (): Promise<string> => {
-    return (await ipcRenderer.invoke("get-version")) as string
-  },
-
-  getSettings: async (): Promise<SettingsObject> => {
-    return (await ipcRenderer.invoke("get-settings")) as SettingsObject;
-  },
-
-  setSettings: async (settings: SettingsObject) => {
-    await ipcRenderer.invoke("set-settings", settings)
-  },
-
-  browse: async (): Promise<Electron.OpenDialogReturnValue> => {
-    return (await ipcRenderer.invoke(
-      "browse"
-    )) as Electron.OpenDialogReturnValue;
-  },
-
-  checkValidPath: async () => {
-    await ipcRenderer.invoke("check-valid-path")
-  },
-
-  loadBeatmaps: async (): Promise<number[]> => {
-    return (await ipcRenderer.invoke("load-beatmaps")) as number[];
-  },
-
-  setTheme: async (theme: boolean) => {
-    await ipcRenderer.invoke("set-theme", theme)
-  },
-
-  setMaxConcurrentDownloads: async (number: number): Promise<void> => {
-    await ipcRenderer.invoke("set-max-concurrent-downloads", number)
-  },
-
-  setPath: async (path: string): Promise<boolean> => {
-    return (await ipcRenderer.invoke("set-path", path)) as boolean;
-  },
-
-  setAltPath: async (path: string) => {
-    await ipcRenderer.invoke("set-alt-path", path)
-  },
-
-  quit: (): void => {
-    ipcRenderer.send("quit");
-  },
-
-  download: async (ids: number[], size: number, force: boolean, hashes: string[], collectionName: string) => {
-    await ipcRenderer.invoke("download", ids, size, force, hashes, collectionName)
-  },
-
-  pauseDownload: () => {
-    ipcRenderer.sendSync("pause-download")
-  },
-
-  resumeDownload: async () => {
-    await ipcRenderer.invoke("resume-download")
-  },
-
-  isDownloadPaused: async (): Promise<boolean> => {
-    return await ipcRenderer.invoke("is-download-paused") as boolean;
-  },
-
-  getDownloadStatus: async (): Promise<DownloadStatus> => {
-    return (await ipcRenderer.invoke("downloads-status")) as DownloadStatus;
-  },
-
-  checkCollections: async (): Promise<MissingMaps> => {
-    return (await ipcRenderer.invoke("check-collections") as MissingMaps)
-  },
-
-  createDownload: async (ids: number[], size: number, force: boolean, hashes: string[], collectionName: string): Promise<void> => {
-    return await ipcRenderer.invoke("create-download", ids, size, force, hashes, collectionName) as void
-  },
-
-  getDownloadsStatus: async (): Promise<DownloadStatus[]> => {
-    return (await ipcRenderer.invoke("get-downloads-status")) as DownloadStatus[];
-  },
-
-  resumeDownloads: async (): Promise<void> => {
-    return await ipcRenderer.invoke("resume-downloads") as void
-  },
-
-  resumeDownload2: async (downloadId: string): Promise<void> => {
-    return await ipcRenderer.invoke("resume-download2", downloadId) as void
-  },
-
-  pauseDownload2: async (downloadId: string): Promise<void> => {
-    return await ipcRenderer.invoke("pause-download2", downloadId) as void
-  },
-
-  pauseDownloads: async (): Promise<void> => {
-    return await ipcRenderer.invoke("pause-downloads") as void
-  },
-
-  deleteDownload: async (downloadId: string): Promise<void> => {
-    return await ipcRenderer.invoke("delete-download", downloadId) as void
-  },
-
-  listenForDownloads2: (callback: (downloads: DownloadStatus[]) => void) => {
-    ipcRenderer.on("downloads-status", (event, downloads: DownloadStatus[]) => {
-      callback(downloads)
-    })
-  },
-
-  listenForDownloads: (callback: (downloadId: string, status: DownloadStatus) => void) => {
-    ipcRenderer.on("download-status", (event, downloadId: string, status: DownloadStatus) => {
-      callback(downloadId, status);
-    });
-  },
-
-  listenForErrors: (callback: (error: string) => void) => {
-    ipcRenderer.on("error", (event, error: string) => {
-      callback(error);
-    });
-  },
-
-  listenForServerDown: (callback: (down: boolean) => void) => {
-    ipcRenderer.on("server-down", (event, down: boolean) => {
-      callback(down);
-    });
-  }
+  listenForDownloads: handleListenForDownloads,
+  listenForErrors: handleListenForErrors,
+  listenForServerDown: handleListenForServerDown
 };
 
 contextBridge.exposeInMainWorld("electron", electronBridge);

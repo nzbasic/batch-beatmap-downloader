@@ -1,40 +1,24 @@
+import React from "react";
 import { CircularProgress } from "@mui/material";
-import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Metrics } from "../../models/metrics";
+import { useStatus } from "../context/StatusProvider";
 
 export const BasicStatus = () => {
-  const [status, setStatus] = useState(false);
-  const [metrics, setMetrics] = useState<Metrics | null>(null);
-  const [isLoading, setLoading] = useState(true);
-
-  const collectMetrics = () => {
-    window.electron.getMetrics().then(([online, data]) => {
-      setStatus(online);
-      setMetrics(data);
-      setLoading(false);
-    });
-  };
-
-  useEffect(() => {
-    collectMetrics();
-    const interval = setInterval(() => collectMetrics(), 5000);
-    return () => clearInterval(interval);
-  }, []);
+  const { loading, online, metrics } = useStatus();
 
   return (
-    <div className="container flex flex-col dark:text-white w-full">
+    <div className="content-box flex flex-col dark:text-white w-full">
       <div className="flex flex-col gap-2">
         <span className="font-bold text-lg">Basic Status</span>
         <div className="flex flex-col">
-          {isLoading ? <CircularProgress /> : (
-            <span className={`${status ? "text-green-500" : "text-red-500"}`}>
-              Server connection: {status ? "Online" : "Offline"}
+          {loading ? <CircularProgress /> : (
+            <span className={`${online ? "text-green-500" : "text-red-500"}`}>
+              Server connection: {online ? "Online" : "Offline"}
             </span>
           )}
           {metrics && (
             <div className="flex flex-col">
-              <span>Active downloads: {(metrics.Download?.CurrentDownloads ?? []).filter((i) => !i.Ended).length}</span>
+              <span>Active downloads: {(metrics.Download?.CurrentDownloads ?? []).filter((i) => i.Active).length}</span>
               <span>Ranked beatmaps available: {metrics.Database.NumberStoredRanked}</span>
               <span>Loved beatmaps available: {metrics.Database.NumberStoredLoved}</span>
               <span>Unranked beatmaps available: {metrics.Database.NumberStoredUnranked}</span>

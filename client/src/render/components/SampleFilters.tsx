@@ -24,7 +24,7 @@ const filters: Filter[] = [
   { name: "Ranked 7* Maps", tree: allRanked7Star, colour: "#ff6600" },
   { name: "Stream Maps", tree: allStream, colour: "#b78aff" },
   { name: "Farm Maps", tree: allFarm, colour: "#ff2c96" },
-  { name: "Ranked 2015 Maps", tree: ranked2015, colour: "#2edcff" }
+  // { name: "Ranked 2015 Maps", tree: ranked2015, colour: "#2edcff" }
 ];
 
 export const SampleFilters = () => {
@@ -34,7 +34,7 @@ export const SampleFilters = () => {
   };
 
   return (
-    <div className="container flex flex-col dark:text-white w-full">
+    <div className="content-box flex flex-col dark:text-white w-full">
       <span className="font-bold text-lg mb-4">Load a Preset Filter</span>
       <div className="flex flex-row flex-wrap gap-4">
         {filters.map((filter) => (

@@ -22,20 +22,20 @@ export const MinMaxInput: React.FC<TInputItemProps<TInputItemMinMax>> = ({ label
 
   return (
     <div className="flex items-center w-full">
-      <span className="w-32 label">{label}</span>
+      <span className="min-w-[8rem] label">{label}</span>
       <div className="flex items-center gap-4">
-        <label className="label">Min</label>
         <div className="w-16">
           <Input
-            className="p-1"
+            placeholder="Min"
+            className="p-1 px-2"
             value={(value[0] === -1 ? "" : value[0]).toString()}
             onChange={(value) => updateValue(value, 0)}
           />
         </div>
-        <label className="label">Max</label>
         <div className="w-16">
           <Input
-            className="p-1"
+            placeholder="Max"
+            className="p-1 px-2"
             value={(value[1] === -1 ? "" : value[1]).toString()}
             onChange={(value) => updateValue(value, 1)}
           />

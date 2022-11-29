@@ -1,12 +1,16 @@
+import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import Logo from "../../assets/bbd.svg";
 import HomeIcon from "@mui/icons-material/Home";
 import DownloadIcon from "@mui/icons-material/Download";
 import SearchIcon from "@mui/icons-material/Search";
-import CloseIcon from "@mui/icons-material/Close";
 import StorageIcon from '@mui/icons-material/Storage';
 import HistoryIcon from '@mui/icons-material/History';
-import React from "react";
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import classNames from 'classnames';
+
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import Logo from "../../assets/bbd.svg";
 
 interface PropTypes {
   version: string
@@ -15,17 +19,18 @@ interface PropTypes {
 export const Menu = ({ version }: PropTypes) => {
   const { pathname } = useLocation();
 
-  const closeApp = () => {
-    window.electron.quit();
-  };
-
   const pages = [
     { link: "/", title: "Home", icon: <HomeIcon /> },
     { link: "/query", title: "Map Search", icon: <SearchIcon /> },
     { link: "/downloads", title: "Downloads", icon: <DownloadIcon /> },
     { link: "/status", title: "Server Status", icon: <StorageIcon /> },
-    { link: "/changelog", title: "Change Log", icon: <HistoryIcon /> }
+    { link: "/changelog", title: "Change Log", icon: <HistoryIcon /> },
   ];
+
+  const links = [
+    { link: "https://discord.gg/3nj6cKzynK", title: "Discord" },
+    { link: "https://www.buymeacoffee.com/nzbasic", title: "Donate" },
+  ]
 
   return (
     <div
@@ -44,27 +49,36 @@ export const Menu = ({ version }: PropTypes) => {
             <Link
               key={link}
               to={link}
-              className={`font-medium text-lg py-3 text-center
-                ${pathname === link
-                  ? "bg-monokai-dark dark:bg-monokai-light"
-                  : "dark:hover:bg-monokai-light hover:bg-monokai-dark"
-                }`
-              }
-            >
+              className={classNames("font-medium text-lg py-3 text-center",
+                { "bg-monokai-dark dark:bg-monokai-light": pathname === link },
+                { "dark:hover:bg-monokai-light hover:bg-monokai-dark": pathname !== link },
+            )}>
               <div className="flex items-center justify-between mx-4">
                 {title}
                 {icon}
               </div>
             </Link>
           ))}
+          {links.map(({ link, title }) => (
+            <button
+              key={title}
+              onClick={() => window.electron.openUrl(link)}
+              className="font-medium text-lg py-3 text-center dark:hover:bg-monokai-light hover:bg-monokai-dark"
+            >
+              <div className="flex items-center justify-between mx-4">
+                {title}
+                <OpenInNewIcon />
+              </div>
+            </button>
+          ))}
         </div>
-        <div
+        {/* <div
           onClick={() => closeApp()}
           className="flex items-center justify-between hover:bg-red-500 hover:cursor-pointer font-medium text-lg py-3 px-4"
         >
           <span>Exit</span>
           <CloseIcon />
-        </div>
+        </div> */}
       </div>
     </div>
   );

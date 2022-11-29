@@ -23,7 +23,7 @@ export const NumberRangeSelector = ({ min, max, initial, onChange }: PropTypes) 
         <Button
           color="blue"
           className={classNames(
-            { 'bg-emerald-600 pointer-events-none': initial === i },
+            { '!bg-emerald-600 pointer-events-none': initial === i },
             "px-0 py-0 w-6 h-6"
           )}
           key={i}

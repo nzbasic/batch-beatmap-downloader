@@ -1,18 +1,19 @@
-import React, { useState } from "react";
+import React from "react";
 import { BasicStatus } from "../components/BasicStatus";
 import { InvalidPath } from "../components/InvalidPath";
 import { FindMissingMaps } from "../components/MissingMaps";
 import { SampleFilters } from "../components/SampleFilters";
 import { Settings } from "../components/Settings";
+import { useSettings } from "../context/SettingsProvider";
 
 const videoUrl = "https://www.youtube.com/watch?v=_Nuz0TVF1IY"
 
 export const Home = () => {
-  const [validPath, setValidPath] = useState(false)
+  const { validPath } = useSettings();
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="container">
+      <div className="content-box">
         <span className="font-bold">Video Guide:</span>
         <button
           onClick={() => window.electron.openUrl(videoUrl)}
@@ -21,7 +22,7 @@ export const Home = () => {
           Batch Beatmap Downloader in 60 seconds
         </button>
       </div>
-      <Settings onValidPath={valid => setValidPath(valid)} />
+      <Settings />
       <BasicStatus />
 
       {!validPath ? <InvalidPath /> : (

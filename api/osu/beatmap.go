@@ -185,19 +185,8 @@ func ParseSetId(path string) int {
 	return setId
 }
 
-func ParseOsz(c *osuapi.Client, path string, setId int) []BeatmapData {
-
+func ParseOszWithBeatmap(beatmaps []osuapi.Beatmap, path string, setId int) []BeatmapData {
 	output := []BeatmapData{}
-
-	beatmaps, err := c.GetBeatmaps(osuapi.GetBeatmapsOpts{
-		BeatmapSetID: setId,
-	})
-
-	if err != nil {
-		log.Println(setId)
-		log.Println(err.Error())
-	}
-
 	archive, _ := zip.OpenReader(path)
 
 	defer func() {
@@ -214,6 +203,19 @@ func ParseOsz(c *osuapi.Client, path string, setId int) []BeatmapData {
 
 	archive.Close()
 	return output
+}
+
+func ParseOsz(c *osuapi.Client, path string, setId int) []BeatmapData {
+	beatmaps, err := c.GetBeatmaps(osuapi.GetBeatmapsOpts{
+		BeatmapSetID: setId,
+	})
+
+	if err != nil {
+		log.Println(setId)
+		log.Println(err.Error())
+	}
+
+	return ParseOszWithBeatmap(beatmaps, path, setId)
 }
 
 func parseBeatmap(beatmaps []osuapi.Beatmap, osu io.ReadCloser, setId int, path string) BeatmapData {

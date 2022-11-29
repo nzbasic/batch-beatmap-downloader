@@ -13,23 +13,29 @@ export interface FilterResponse {
 }
 
 export interface DownloadStatus {
-  id: string
-  paused?: boolean
+  id: string;
   all: number[];
   completed: number[];
-  skipped: number[];
   failed: number[];
-  currentProgress: string;
-  currentSize: string;
+  skipped: number[];
+  paused?: boolean;
   totalSize: number;
   totalProgress: number;
+  speed: number;
   force: boolean;
-  lastDownloadTime?: number
-  lastDownloadSize?: number
-  currentDownloads?: {
-    time: number,
-    size: number
-  }[]
+}
+
+export interface ReportedDownloadStatus {
+  id: string;
+  all: number;
+  completed: number;
+  failed: number;
+  skipped: number;
+  paused?: boolean;
+  totalSize: number;
+  totalProgress: number;
+  speed: number;
+  force: boolean;
 }
 
 export interface Speed {
@@ -93,4 +99,17 @@ export interface BeatmapHashMap {
 export interface MissingMaps {
   ids: number[],
   totalSize: number
+}
+
+export interface DownloadDetails {
+  totalSize: number,
+  totalSizeForce: number,
+  sets: number,
+  setsForce: number,
+  beatmaps: number,
+}
+
+export interface QueryOrder {
+  by: string;
+  direction: string;
 }

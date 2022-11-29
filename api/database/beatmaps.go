@@ -15,11 +15,11 @@ import (
 )
 
 func Query(query string) (*sql.Rows, error) {
-	return database.Query(query)
+	return metaDb.Query(query)
 }
 
 func QueryRow(query string) *sql.Row {
-	return database.QueryRow(query)
+	return metaDb.QueryRow(query)
 }
 
 var farmSets []string
@@ -40,21 +40,21 @@ func RefreshFarm() {
 
 func GetBeatmapCount() int {
 	var count int
-	database.QueryRow("SELECT COUNT(*) FROM beatmaps").Scan(&count)
+	metaDb.QueryRow("SELECT COUNT(*) FROM beatmaps").Scan(&count)
 	return count
 }
 
 func GetRowAtOffset(offset int) osu.BeatmapData {
 	var details osu.BeatmapData
 	query := "SELECT * FROM beatmaps LIMIT 1 OFFSET " + strconv.Itoa(offset)
-	row, _ := database.Query(query)
+	row, _ := metaDb.Query(query)
 	scan.Row(&details, row)
 	return details
 }
 
 func UpdateRow(id int, column string, value string) {
 	query := fmt.Sprintf("UPDATE beatmaps SET %s = %s WHERE id=%d", column, value, id)
-	_, err := database.Exec(query)
+	_, err := metaDb.Exec(query)
 	if err != nil {
 		println(err.Error())
 	}
@@ -62,7 +62,7 @@ func UpdateRow(id int, column string, value string) {
 
 func GetBeatmapBySetId(setId string) (osu.BeatmapData, error) {
 	var beatmap osu.BeatmapData
-	row, err := database.Query("SELECT * FROM beatmaps WHERE setId=?", setId)
+	row, err := metaDb.Query("SELECT * FROM beatmaps WHERE setId=?", setId)
 
 	if err != nil {
 		return osu.BeatmapData{}, err
@@ -77,7 +77,7 @@ func GetBeatmapBySetId(setId string) (osu.BeatmapData, error) {
 
 func GetBeatmapById(id int) (osu.BeatmapData, error) {
 	var beatmap osu.BeatmapData
-	row, err := database.Query("SELECT * FROM beatmaps WHERE id=?", id)
+	row, err := metaDb.Query("SELECT * FROM beatmaps WHERE id=?", id)
 
 	if err != nil {
 		return osu.BeatmapData{}, err
@@ -112,7 +112,7 @@ func QueryIds(query string, values []string) ([]int, []int, map[int]int, []strin
 	}
 
 	before := time.Now()
-	rows, err := database.Query(query, iValues...)
+	rows, err := metaDb.Query(query, iValues...)
 	if err != nil {
 		return ids, setIds, sizeMap, hashes, err
 	}
@@ -151,7 +151,7 @@ func QueryIds(query string, values []string) ([]int, []int, map[int]int, []strin
 }
 
 func GetBeatmapHashMap() (map[string]int, error) {
-	rows, err := database.Query("SELECT setId, hash FROM beatmaps")
+	rows, err := metaDb.Query("SELECT setId, hash FROM beatmaps")
 
 	if err != nil {
 		return nil, err

@@ -2,11 +2,9 @@ package handlers
 
 import (
 	"database/sql"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"strconv"
-	"strings"
 
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
@@ -23,7 +21,7 @@ func init() {
 
 func BeatmapDownloadHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	beatmap, err := database.GetBeatmapBySetId(vars["setId"])
+	_, err := database.GetBeatmapBySetId(vars["setId"])
 
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -34,35 +32,9 @@ func BeatmapDownloadHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if cdnUrl != "" {
-		resource := cdnUrl + "/" + vars["setId"] + ".osz"
-		res, err := http.Head(resource)
-		if err == nil {
-			if res.StatusCode == http.StatusOK {
-				http.Redirect(w, r, resource, http.StatusFound)
-				return
-			}
-		}
-	}
-
-	file, err := ioutil.ReadFile(beatmap.Path)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
-	filenames := strings.Split(beatmap.Path, "/")
-	filename := filenames[len(filenames)-1]
-
-	fi, err := os.Stat(beatmap.Path)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Length", strconv.FormatInt(fi.Size(), 10))
-	w.Header().Set("Content-Disposition", "attachment; filename="+filename)
-	w.Write(file)
+	resource := cdnUrl + "/" + vars["setId"] + ".osz"
+	http.Redirect(w, r, resource, http.StatusFound)
+	return
 }
 
 func BeatmapDetailsHandler(w http.ResponseWriter, r *http.Request) {

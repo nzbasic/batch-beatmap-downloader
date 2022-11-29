@@ -38,34 +38,34 @@ type Filter struct {
 	Value    string
 }
 
-var validOperatorsNumeric = []string{"<", ">", "<=", ">=", "=", "!="}
-var validOperatorsText = []string{"like", "="}
-
-func contains(s []string, e string) bool {
-	for _, a := range s {
-		if a == e {
-			return true
-		}
-	}
-	return false
-}
-
-func addValidOperator(operator string, list []string, query string) (string, error) {
-	if contains(list, operator) {
-		query += " " + operator + " "
-		return query, nil
-	} else {
-		return query, errors.New("Bad operator " + operator + ". Expected " + strings.Join(list, ","))
-	}
-}
-
-func QueryNode(node Node, limit *int) ([]int, []int, map[int]int, []string, error) {
+func QueryNode(node Node, limit *int, by *string, direction *string) ([]int, []int, map[int]int, []string, error) {
 	var values = []string{}
-	query := "SELECT id, setId, size, hash FROM beatmaps WHERE"
-	query += RecursiveQueryBuilder(node, &values)
+	query := "SELECT id, setId, size, hash FROM beatmaps"
+	if len(node.Group.Children) > 0 {
+		query += " WHERE "
+		built, err := RecursiveQueryBuilder(node, &values)
+		if err != nil {
+			return nil, nil, nil, nil, err
+		}
+
+		query += built
+	}
+
+	if by != nil && direction != nil {
+		if !contains(validColumnNames, *by) {
+			return nil, nil, nil, nil, errors.New("Bad column name " + *by + ". Expected " + strings.Join(validColumnNames, ","))
+		}
+
+		if !contains(validDirections, *direction) {
+			return nil, nil, nil, nil, errors.New("Bad direction " + *direction + ". Expected " + strings.Join(validDirections, ","))
+		}
+
+		query += fmt.Sprintf(" ORDER BY %s %s", *by, *direction)
+	}
 
 	if limit != nil {
-		query += " LIMIT " + fmt.Sprintf("%d", *limit)
+		query += " LIMIT ? "
+		values = append(values, fmt.Sprintf("%d", *limit))
 	}
 
 	ids, setIds, sizeMap, hashes, err := database.QueryIds(query, values)
@@ -76,13 +76,22 @@ func QueryNode(node Node, limit *int) ([]int, []int, map[int]int, []string, erro
 	return ids, setIds, sizeMap, hashes, nil
 }
 
-func RecursiveQueryBuilder(node Node, values *[]string) string {
+func RecursiveQueryBuilder(node Node, values *[]string) (string, error) {
 	queryAddition := ""
 	if node.Rule.Type == "" { // node is a group
 		queryAddition += " ("
 		for index, child := range node.Group.Children {
-			queryAddition += RecursiveQueryBuilder(child, values)
+			addition, err := RecursiveQueryBuilder(child, values)
+			if err != nil {
+				return "", err
+			}
+
+			queryAddition += addition
 			if index != len(node.Group.Children)-1 {
+				if !contains(validConnectors, node.Group.Connector.Type) {
+					return "", errors.New("Invalid connector type " + node.Group.Connector.Type)
+				}
+
 				queryAddition += " " + node.Group.Connector.Type + " "
 				nextChild := node.Group.Children[index+1]
 				if contains(node.Group.Connector.Not, nextChild.Id) {
@@ -92,8 +101,12 @@ func RecursiveQueryBuilder(node Node, values *[]string) string {
 		}
 		queryAddition += ")"
 	} else { // node is a rule
+		if node.Rule.Field == "Approved" && node.Rule.Value == "HasLeaderboard" {
+			return "approved = 'ranked' or approved = 'loved' or approved = 'approved'", nil
+		}
+
 		if node.Rule.Field == "Approved" && node.Rule.Value == "Unranked" {
-			queryAddition += "approved = \"WIP\" or approved = \"graveyard\" or approved = \"pending\""
+			return "approved = 'WIP' or approved = 'graveyard' or approved = 'pending'", nil
 		}
 
 		if node.Rule.Field == "Archetype" {
@@ -108,9 +121,17 @@ func RecursiveQueryBuilder(node Node, values *[]string) string {
 			node.Rule.Value = "%" + node.Rule.Value + "%"
 		}
 
+		if !contains(validColumnNames, node.Rule.Field) {
+			return "", errors.New("Invalid column name " + node.Rule.Field)
+		}
+
+		if !contains(validOperators, node.Rule.Operator) {
+			return "", errors.New("Invalid operator " + node.Rule.Operator)
+		}
+
 		*values = append(*values, node.Rule.Value)
 		queryAddition += fmt.Sprintf("%s %s %s", node.Rule.Field, node.Rule.Operator, "?")
 	}
 
-	return queryAddition
+	return queryAddition, nil
 }
