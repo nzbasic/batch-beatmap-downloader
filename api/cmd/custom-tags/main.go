@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/nzbasic/batch-beatmap-downloader/database"
+	"github.com/nzbasic/batch-beatmap-downloader/api/database"
 )
 
 func main() {

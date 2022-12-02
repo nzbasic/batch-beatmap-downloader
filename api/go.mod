@@ -1,4 +1,4 @@
-module github.com/nzbasic/batch-beatmap-downloader
+module github.com/nzbasic/batch-beatmap-downloader/api
 
 go 1.18
 

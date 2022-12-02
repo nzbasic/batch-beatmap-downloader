@@ -6,7 +6,7 @@ import (
 	"log"
 
 	_ "github.com/mattn/go-sqlite3"
-	"github.com/nzbasic/batch-beatmap-downloader/osu"
+	"github.com/nzbasic/batch-beatmap-downloader/api/osu"
 )
 
 func init() {

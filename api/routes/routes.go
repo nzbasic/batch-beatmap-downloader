@@ -2,7 +2,7 @@ package routes
 
 import (
 	"github.com/gorilla/mux"
-	"github.com/nzbasic/batch-beatmap-downloader/routes/handlers"
+	"github.com/nzbasic/batch-beatmap-downloader/api/routes/handlers"
 )
 
 var Router *mux.Router

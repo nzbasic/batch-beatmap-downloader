@@ -8,8 +8,8 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
-	"github.com/nzbasic/batch-beatmap-downloader/database"
-	"github.com/nzbasic/batch-beatmap-downloader/osu"
+	"github.com/nzbasic/batch-beatmap-downloader/api/database"
+	"github.com/nzbasic/batch-beatmap-downloader/api/osu"
 )
 
 var cdnUrl string

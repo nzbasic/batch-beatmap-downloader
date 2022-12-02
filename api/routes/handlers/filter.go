@@ -3,8 +3,8 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/nzbasic/batch-beatmap-downloader/filter"
-	"github.com/nzbasic/batch-beatmap-downloader/metrics"
+	"github.com/nzbasic/batch-beatmap-downloader/api/filter"
+	"github.com/nzbasic/batch-beatmap-downloader/api/metrics"
 )
 
 type FilterResponse struct {

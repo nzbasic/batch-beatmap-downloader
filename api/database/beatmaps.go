@@ -10,8 +10,8 @@ import (
 	"time"
 
 	"github.com/blockloop/scan"
-	"github.com/nzbasic/batch-beatmap-downloader/logs"
-	"github.com/nzbasic/batch-beatmap-downloader/osu"
+	"github.com/nzbasic/batch-beatmap-downloader/api/logs"
+	"github.com/nzbasic/batch-beatmap-downloader/api/osu"
 )
 
 func Query(query string) (*sql.Rows, error) {

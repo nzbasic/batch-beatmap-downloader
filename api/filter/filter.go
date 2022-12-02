@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/nzbasic/batch-beatmap-downloader/database"
+	"github.com/nzbasic/batch-beatmap-downloader/api/database"
 )
 
 type ConnectorDetails struct {
@@ -105,7 +105,7 @@ func RecursiveQueryBuilder(node Node, values *[]string) (string, error) {
 			return "approved = 'ranked' or approved = 'loved' or approved = 'approved'", nil
 		}
 
-		if node.Rule.Field == "Approved" && node.Rule.Value == "Unranked" {
+		if node.Rule.Field == "Approved" && strings.ToLower(node.Rule.Value) == "unranked" {
 			return "approved = 'WIP' or approved = 'graveyard' or approved = 'pending'", nil
 		}
 

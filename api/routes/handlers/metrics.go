@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/nzbasic/batch-beatmap-downloader/metrics"
-	metricsstore "github.com/nzbasic/batch-beatmap-downloader/metrics/store"
+	"github.com/nzbasic/batch-beatmap-downloader/api/metrics"
+	metricsstore "github.com/nzbasic/batch-beatmap-downloader/api/metrics/store"
 )
 
 type DownloadStartV2 struct {

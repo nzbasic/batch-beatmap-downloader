@@ -10,7 +10,7 @@ import (
 
 	"github.com/blockloop/scan"
 	"github.com/cheggaaa/pb/v3"
-	"github.com/nzbasic/batch-beatmap-downloader/osu"
+	"github.com/nzbasic/batch-beatmap-downloader/api/osu"
 )
 
 type Updater func(*sql.Tx, osu.BeatmapData)
