@@ -1,3 +1,4 @@
+import { debounce } from 'lodash';
 import React, {
   useState, createContext, useEffect, PropsWithChildren, useContext,
 } from 'react';
@@ -71,9 +72,11 @@ const SettingsProvider: React.FC<PropsWithChildren<any>> = ({ children }) => {
     setBeatmapSetCount(count)
   }
 
+  const debouncedSetMaxConcurrentDownloads = debounce(window.electron.setMaxConcurrentDownloads, 500)
+
   const handleSetMaxConcurrentDownloads = (number: number) => {
     setMaxConcurrentDownloads(number)
-    window.electron.setMaxConcurrentDownloads(number)
+    debouncedSetMaxConcurrentDownloads(number)
   }
 
   return (
