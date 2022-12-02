@@ -1,6 +1,6 @@
 package metrics
 
-import "github.com/nzbasic/batch-beatmap-downloader/database"
+import "github.com/nzbasic/batch-beatmap-downloader/api/database"
 
 type DatabaseMetrics struct {
 	NumberStoredRanked   int

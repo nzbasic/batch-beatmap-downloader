@@ -3,7 +3,7 @@ package metrics
 import (
 	"time"
 
-	"github.com/nzbasic/batch-beatmap-downloader/metrics/store"
+	"github.com/nzbasic/batch-beatmap-downloader/api/metrics/store"
 )
 
 func GetDownloadMetricsV2() DownloadMetricsV2 {

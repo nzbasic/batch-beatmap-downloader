@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/nzbasic/batch-beatmap-downloader/database"
-	"github.com/nzbasic/batch-beatmap-downloader/metrics/store"
+	"github.com/nzbasic/batch-beatmap-downloader/api/database"
+	"github.com/nzbasic/batch-beatmap-downloader/api/metrics/store"
 )
 
 func getDownload(id string, clientId string) (store.DownloadV2, error) {
