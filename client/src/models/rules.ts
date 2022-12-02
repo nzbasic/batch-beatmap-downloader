@@ -15,7 +15,8 @@ export enum RuleType {
   DATE,
   BOOLEAN,
   TOURNAMENT,
-  SPECIAL
+  SPECIAL,
+  SLIDER,
 }
 
 export interface InputOption {
@@ -34,10 +35,10 @@ export const inputOptions: InputOption[] = [
   { value: "Creator", label: "Mapper", type: RuleType.TEXT },
   { value: "Version", label: "Difficulty", type: RuleType.TEXT },
   { value: "Bpm", label: "BPM", type: RuleType.NUMBER },
-  { value: "Hp", label: "HP (Health Drain)", type: RuleType.NUMBER },
-  { value: "Od", label: "OD (Overall Difficulty)", type: RuleType.NUMBER },
-  { value: "Ar", label: "AR (Approach Rate)", type: RuleType.NUMBER },
-  { value: "Cs", label: "CS (Circle Size)", type: RuleType.NUMBER },
+  { value: "Hp", label: "HP (Health Drain)", type: RuleType.SLIDER },
+  { value: "Od", label: "OD (Overall Difficulty)", type: RuleType.SLIDER },
+  { value: "Ar", label: "AR (Approach Rate)", type: RuleType.SLIDER },
+  { value: "Cs", label: "CS (Circle Size)", type: RuleType.SLIDER },
   { value: "Mode", label: "Game Mode", type: RuleType.MODE },
   { value: "Stars", label: "Star Rating", type: RuleType.NUMBER },
   { value: "MaxCombo", label: "Max Combo", type: RuleType.NUMBER },
@@ -90,6 +91,14 @@ export const operatorMap: Record<RuleType, Operator[]> = {
   7: defaultOperators,
   8: defaultOperators,
   9: defaultOperators,
+  10: [
+    { label: "is equal to", value: "=" },
+    { label: "is not equal to", value: "!=" },
+    { label: "is less than", value: "<" },
+    { label: "is greater than", value: ">" },
+    { label: "is less than or equal to", value: "<=" },
+    { label: "is greater than or equal to", value: ">=" },
+  ],
 };
 
 export enum InputType {
@@ -111,6 +120,7 @@ export const inputTypeMap: Record<RuleType, InputType> = {
   7: InputType.DROPDOWN,
   8: InputType.DROPDOWN,
   9: InputType.DROPDOWN,
+  10: InputType.NUMBER,
 };
 
 export interface DropdownOption {
@@ -233,6 +243,7 @@ export const defaultValuesMap: Record<RuleType, string> = {
   7: "1",
   8: "None",
   9: "Farm",
+  10: "1",
 };
 
 export const defaultOperatorsMap: Record<RuleType, string> = {
@@ -246,4 +257,5 @@ export const defaultOperatorsMap: Record<RuleType, string> = {
   7: "=",
   8: "=",
   9: "=",
+  10: "=",
 };

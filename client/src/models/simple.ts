@@ -83,10 +83,13 @@ export const keyMap = new Map<string, string>([
   ["tags", "Tags"],
   ["genre", "Genre"],
   ["language", "Language"],
+  ["favouritecount", "FavouriteCount"],
   ["favourites", "FavouriteCount"],
   ["favorites", "FavouriteCount"],
   ["passes", "PassCount"],
+  ["passcount", "PassCount"],
   ["plays", "PlayCount"],
+  ["playcount", "PlayCount"],
   ["special", "Special"],
   ["farm", "Special"],
   ["stream", "Special"],
@@ -279,7 +282,7 @@ export const convertTreeToSimpleMode = (group: Group) => {
 }
 
 export const shouldSkipText = (rule: Rule) => {
-  if (rule.operator === ">=" || rule.operator === "<=") {
+  if (rule.type === RuleType.SLIDER && (rule.operator === ">=" || rule.operator === "<=")) {
     return rule.value === "0" || rule.value === "10"
   }
 
