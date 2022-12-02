@@ -1,14 +1,14 @@
-import { BeatmapDownloadV2, DownloadUpdateV2, DownloadStartV2 } from './../../models/api-v2';
+import { BeatmapDownloadV2, DownloadUpdateV2 } from './../../models/api-v2';
 import axios from "axios";
 import { DownloadStatus } from "../../models/api";
 import { serverUri } from "../ipc/main";
 import { shouldBeClosed, window } from "../../main";
-import Download from "nodejs-file-downloader";
 import { getMaxConcurrentDownloads, getSongsFolder } from "../settings";
 import { beatmapIds, loadBeatmaps } from "../beatmaps";
 import { clientId, setDownloadStatus } from "./settings";
 import { addCollection } from "../collection/collection";
 import { emitStatus } from "./downloads";
+import { DownloadIPC } from './ipc';
 
 enum Status {
   FINISHED,
@@ -18,7 +18,6 @@ enum Status {
 
 export class DownloadController {
   private ids: number[] = [];
-  private size: number = 0;
   private force: boolean = false;
   private hashes: string[] = [];
   private status: DownloadStatus;
@@ -29,11 +28,11 @@ export class DownloadController {
   private id: string;
   private toDownload: number[] = []
   private interval: NodeJS.Timer;
+  private ipc: DownloadIPC = new DownloadIPC()
 
   public constructor(id: string, ids: number[], size: number, force: boolean, hashes: string[]) {
     this.id = id;
     this.ids = ids
-    this.size = size;
     this.force = force;
     this.hashes = hashes;
 
@@ -105,7 +104,7 @@ export class DownloadController {
 
     const downloads: Promise<Status | (() => Promise<void>)>[] = []
     for (let i = 0; i < this.concurrentDownloads; i++) {
-      downloads.push(this.downloadBeatmapSet())
+      downloads.push(this.downloadBeatmapSet(i))
     }
 
     const results = await Promise.all(downloads)
@@ -173,65 +172,44 @@ export class DownloadController {
     return this.toDownload.shift()
   }
 
-  private async downloadBeatmapSet(): Promise<Status | (() => Promise<void>)> {
+  private async downloadBeatmapSet(index: number): Promise<Status | (() => Promise<void>)> {
     if (shouldBeClosed) return Status.PAUSED
     if (this.status.paused) return Status.PAUSED
 
     const setId = this.getNextSetId()
     if (setId === undefined) return Status.FINISHED
-
-    const uri = `${serverUri}/beatmapset/${setId}`;
-    let cancelled = false
-    let size = 0
-
-    const path = await getSongsFolder();
-    const download = new Download({
-      url: uri,
-      directory: path,
-      maxAttempts: 3,
-      onResponse: (r) => {
-        const rSize = r.headers["content-length"] ?? "0"
-        size = parseInt(rSize);
-        if (this.status.paused) {
-          download.cancel()
-          cancelled = true
-        }
-      },
-    })
+    const path = await getSongsFolder()
 
     try {
       const before = new Date();
-      await download.download();
+      const res = await this.ipc.download(setId.toString(), path, index)
       const after = new Date();
       const difference = after.getTime() - before.getTime();
-      beatmapIds.add(setId);
 
+      beatmapIds.add(setId);
       this.status.completed.push(setId);
-      this.status.totalProgress += size;
-      this.downloadedSinceResume += size
+      this.status.totalProgress += res.Size;
+      this.downloadedSinceResume += res.Size
 
       const speed = this.getDownloadSpeed()
       this.status.speed = speed
 
-      await this.postData(`${serverUri}/v2/metrics/download/beatmap`, {
+      this.postData(`${serverUri}/v2/metrics/download/beatmap`, {
         Client: clientId,
         Id: this.id,
         SetId: setId.toString(),
         Time: difference / Math.max(this.concurrentDownloads, 1)
       } as BeatmapDownloadV2);
     } catch (err) {
-      if (!cancelled) {
-        console.log(setId, 'failed')
-        this.status.failed.push(setId);
-        this.status.totalProgress += size;
+      console.log(setId, 'failed')
+      this.status.failed.push(setId);
 
-        if (err instanceof Error) {
-          this.handleServerError(err)
-        }
+      if (err instanceof Error) {
+        this.handleServerError(err)
       }
     }
 
     emitStatus()
-    return this.downloadBeatmapSet()
+    return this.downloadBeatmapSet(index)
   }
 }

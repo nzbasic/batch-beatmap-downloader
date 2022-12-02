@@ -2,7 +2,7 @@ import axios from "axios";
 import { Node } from "../../models/filter";
 import { BeatmapDetails, DownloadDetails, QueryOrder } from "../../models/api";
 import { E, serverUri } from "./main";
-import { Metrics, MetricsV2 } from "../../models/metrics";
+import { MetricsV2 } from "../../models/metrics";
 import { beatmapIds, loadBeatmaps } from "../beatmaps";
 import { clientId } from "../download/settings";
 import { FilterResponseV2 } from "../../models/api-v2";
