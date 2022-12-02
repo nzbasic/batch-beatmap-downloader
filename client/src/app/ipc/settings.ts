@@ -31,7 +31,11 @@ export const handleSetPath = async (event: E, path: string): Promise<[boolean, n
     return [false, 0];
   }
 
-  await fs.promises.copyFile(path + '/collection.db', `${path}/collection-${new Date().toISOString()}.db`)
+  const backupName = `${path}/collection-bbd-backup.db`
+  const f = await fs.promises.open(backupName, 'w', 0o666);
+  await fs.promises.copyFile(path + '/collection.db', backupName)
+  f.close();
+
   await settings.set("path", path);
   await loadBeatmaps();
 
