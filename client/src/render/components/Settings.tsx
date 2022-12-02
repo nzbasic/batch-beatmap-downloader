@@ -2,7 +2,15 @@ import React, { useState } from "react";
 import Switch from "react-switch";
 import { useSettings } from "../context/SettingsProvider";
 import { Browse } from "./Browse";
-import { NumberRangeSelector } from "./util/NumberRangeSelector";
+import QuestionMark from "@mui/icons-material/QuestionMark";
+import { Tooltip } from "@mui/material";
+import { NumericInput } from "./util/NumericInput";
+
+const parallelTooltip = `Advanced: The number of parallel requests made per download.
+Increasing this may increase your total download speed.
+Increasing is too high can saturate your network or lag your computer.
+You must restart (pause and resume) your downloads for this to take effect.
+`
 
 export const Settings = () => {
   const {
@@ -43,12 +51,16 @@ export const Settings = () => {
           <Switch onChange={(mode) => toggleDarkMode(mode)} checked={darkMode} />
         </div>
         <div className="flex items-center gap-2">
-          <span className="w-52">Max Concurrent Downloads</span>
-          <NumberRangeSelector
-            min={1}
-            max={5}
-            initial={maxConcurrentDownloads}
-            onChange={i => setMaxConcurrentDownloads(i)}
+          <span className="w-52 shrink-0">
+            Parallel Downloads
+            <Tooltip title={parallelTooltip}>
+              <QuestionMark className="bg-sky-500 rounded-full p-1 ml-2" />
+            </Tooltip>
+          </span>
+          <NumericInput
+            className="w-20"
+            value={maxConcurrentDownloads ?? 3}
+            onChange={setMaxConcurrentDownloads}
           />
         </div>
       </div>

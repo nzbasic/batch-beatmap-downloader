@@ -3,6 +3,7 @@ import React from "react";
 import Switch from "react-switch";
 import Select from "react-select";
 import { QueryOrder } from "../../../models/api";
+import { NumericInput } from "../util/NumericInput";
 
 interface PropTypes {
   limit: number | undefined;
@@ -75,11 +76,11 @@ export const QuerySettings = ({ limit, updateLimit, order, updateOrder }: PropTy
         <div className="flex flex-col gap-4">
           <div className="flex items-center">
             <label className="w-32">Limit</label>
-            <input
+            <NumericInput
               className="input-height p-2 w-40 border-gray-300 border rounded focus:outline-blue-500"
-              type="number"
               value={limit}
-              onChange={(e) => onChange(e)}
+              onChange={(n) => updateLimit(Math.max(1, n || 1))}
+              step={1}
             />
           </div>
 
