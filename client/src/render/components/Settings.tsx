@@ -10,6 +10,7 @@ const parallelTooltip = `Advanced: The number of parallel requests made per down
 Increasing this may increase your total download speed.
 Increasing is too high can saturate your network or lag your computer.
 You must restart (pause and resume) your downloads for this to take effect.
+Maximum: 25
 `
 
 export const Settings = () => {
@@ -59,8 +60,10 @@ export const Settings = () => {
           </span>
           <NumericInput
             className="w-20"
-            value={maxConcurrentDownloads ?? 3}
-            onChange={setMaxConcurrentDownloads}
+            max={25}
+            min={1}
+            value={maxConcurrentDownloads ?? 5}
+            onChange={(value) => setMaxConcurrentDownloads(Math.max(1, Math.min(25, value)))}
           />
         </div>
       </div>

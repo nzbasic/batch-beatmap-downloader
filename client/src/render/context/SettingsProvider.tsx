@@ -25,7 +25,7 @@ const defaultContext: Settings = {
   setPath: () => null,
   altPath: "",
   setAltPath: () => null,
-  maxConcurrentDownloads: 3,
+  maxConcurrentDownloads: 5,
   setMaxConcurrentDownloads: () => null,
   validPath: false,
   beatmapSetCount: 0,
@@ -38,7 +38,7 @@ const SettingsProvider: React.FC<PropsWithChildren<any>> = ({ children }) => {
   const [path, setPath] = useState("");
   const [altPath, setAltPath] = useState("")
   const [beatmapSetCount, setBeatmapSetCount] = useState(0);
-  const [maxConcurrentDownloads, setMaxConcurrentDownloads] = useState(3)
+  const [maxConcurrentDownloads, setMaxConcurrentDownloads] = useState(5)
   const [validPath, setValidPath] = useState(false)
 
   useEffect(() => {

@@ -19,11 +19,11 @@ export const Status = () => {
   const downloadsScale = new ColorScales(0, 50, ["#00ff00", "#ff0000"]);
   const bandwidthScale = new ColorScales(0, 5000, ["#00ff00", "#ff0000"]);
 
-  const [currentDownloads, activeDownloads, currentBandwidth] = useMemo(() => {
+  const [activeDownloads, currentBandwidth] = useMemo(() => {
     const currentDownloads = metrics?.Download?.CurrentDownloads ?? []
     const activeDownloads = currentDownloads.filter((i) => i.Active)
     const currentBandwidth = metrics?.Download?.CurrentBandwidthUsage ?? 0
-    return [currentDownloads, activeDownloads, currentBandwidth]
+    return [activeDownloads, currentBandwidth]
   }, [metrics]);
 
   return (
@@ -56,8 +56,8 @@ export const Status = () => {
             >
               <div className="text-black flex justify-between items-center w-full h-full px-8">
                 <div className="flex flex-col items-center w-full">
-                  <span className="font-bold text-3xl">{(currentBandwidth / 1e6).toFixed(0)}Mbps</span>
-                  <span>{(metrics.Download.CurrentBandwidthUsage / 1e6).toFixed(0)}Mbps Avg 1min</span>
+                  <span className="font-bold text-3xl">{(currentBandwidth / 1e6).toFixed(0)}MB/s</span>
+                  <span>{(metrics.Download.CurrentBandwidthUsage / 1e6).toFixed(0)}MB/s Avg 1min</span>
                 </div>
                 <span className="text-xl w-full font-medium text-center">Bandwidth Use</span>
               </div>
