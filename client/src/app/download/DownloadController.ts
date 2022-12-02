@@ -22,13 +22,13 @@ export class DownloadController {
   private hashes: string[] = [];
   private status: DownloadStatus;
   private startTime: Date;
-  private downloadedSinceResume = 0
+  private downloadedSinceResume = 0;
 
-  private concurrentDownloads: number = 3
+  private concurrentDownloads: number = 3;
   private id: string;
-  private toDownload: number[] = []
+  private toDownload: number[] = [];
   private interval: NodeJS.Timer;
-  private ipc: DownloadIPC = new DownloadIPC()
+  private ipc: DownloadIPC;
 
   public constructor(id: string, ids: number[], size: number, force: boolean, hashes: string[]) {
     this.id = id;
@@ -75,6 +75,7 @@ export class DownloadController {
   }
 
   public async resume() {
+    this.ipc = new DownloadIPC();
     this.startTime = new Date();
     this.downloadedSinceResume = 0;
     this.status.paused = false
@@ -119,6 +120,7 @@ export class DownloadController {
 
     if (!this.status.paused) this.updateDownload("delete")
     await setDownloadStatus(this.id, this.status)
+    this.ipc.close();
   }
 
   private async postData(url: string, body: unknown) {
@@ -143,6 +145,7 @@ export class DownloadController {
     this.status.paused = true
     emitStatus()
     this.updateDownload("pause")
+    this.ipc.close();
   }
 
   public getDownloadSpeed() {

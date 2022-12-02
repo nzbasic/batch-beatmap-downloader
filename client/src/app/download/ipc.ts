@@ -58,4 +58,8 @@ export class DownloadIPC {
       })
     })
   }
+
+  public close() {
+    this.ipc.kill();
+  }
 }
