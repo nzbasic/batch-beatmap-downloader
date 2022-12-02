@@ -43,7 +43,8 @@ export const Query = () => {
       6: "Numeric",
       7: "Numeric",
       8: "Text",
-      9: "Numeric"
+      9: "Numeric",
+      10: "Numeric",
     };
 
     // replace all rule types with the correct string from the Map

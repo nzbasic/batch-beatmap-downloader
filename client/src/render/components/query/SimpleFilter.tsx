@@ -50,8 +50,8 @@ export const SimpleFilter: React.FC<PropTypes> = ({ tree, updateTree }) => {
         const [currentMin, currentMax] = currentValue as number[]
         const [defaultMin, defaultMax] = item.defaultValue
 
-        if (newMin > 0 && newMin !== currentMin) updateValuePair(item.key, ">=", newMin.toString())
-        if (newMax > 0 && newMax !== currentMax) updateValuePair(item.key, "<=", newMax.toString())
+        if (newMin >= 0 && newMin !== currentMin) updateValuePair(item.key, ">=", newMin.toString())
+        if (newMax >= 0 && newMax !== currentMax) updateValuePair(item.key, "<=", newMax.toString())
 
         if (newMin === defaultMin && newMin !== currentMin) removeRule(item, ">")
         if (newMax === defaultMax && newMax !== currentMax) removeRule(item, "<")
@@ -83,6 +83,7 @@ export const SimpleFilter: React.FC<PropTypes> = ({ tree, updateTree }) => {
   }
 
   const updateValuePair = (type: string, symbol: string, value: string, state?: Node) => {
+    console.log(type, symbol, value)
     const clone = cloneDeep(state ? state : tree)
     if (!clone.group) return
 

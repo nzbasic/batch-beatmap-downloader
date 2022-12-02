@@ -1,45 +1,39 @@
 import React from "react"
-import 'rc-slider/assets/index.css';
-import { Input } from "../../util/Input";
 import { TInputItemProps } from "./InputItem";
 import { TInputItemMinMax } from "../../../../models/simple";
-import is_number from "is-number";
+import { NumericInput } from "../../util/NumericInput";
 
-export const MinMaxInput: React.FC<TInputItemProps<TInputItemMinMax>> = ({ label, value, onChange }) => {
-  const updateValue = (newValue: string, index: number) => {
-    // todo handle x.
-    if (is_number(newValue)) {
-      const number = parseFloat(newValue)
-      const newValues = [number, value[1-index]]
-      if (index === 1) newValues.reverse()
-      onChange(newValues)
-    } else if (newValue === "") {
-      const newValues = [...value]
-      newValues[index] = -1
-      onChange(newValues)
-    }
-  };
+export const MinMaxInput: React.FC<TInputItemProps<TInputItemMinMax>> = ({ label, value, onChange, step }) => {
+  const updateValue = (number: number, index: number) => {
+    const newValues = [...value]
+    newValues[index] = Number.isNaN(number) ? -1 : number
+    onChange(newValues)
+  }
+
+  const convertValue = (number: number) => {
+    if (number === -1) return NaN
+    return number
+  }
 
   return (
     <div className="flex items-center w-full">
       <span className="min-w-[8rem] label">{label}</span>
-      <div className="flex items-center gap-4">
-        <div className="w-16">
-          <Input
-            placeholder="Min"
-            className="p-1 px-2"
-            value={(value[0] === -1 ? "" : value[0]).toString()}
-            onChange={(value) => updateValue(value, 0)}
-          />
-        </div>
-        <div className="w-16">
-          <Input
-            placeholder="Max"
-            className="p-1 px-2"
-            value={(value[1] === -1 ? "" : value[1]).toString()}
-            onChange={(value) => updateValue(value, 1)}
-          />
-        </div>
+      <div className="flex items-center gap-2">
+        <NumericInput
+          placeholder="Min"
+          step={step}
+          className="p-1 px-2 w-16"
+          value={convertValue(value[0])}
+          onChange={(value) => updateValue(value, 0)}
+        />
+
+        <NumericInput
+          placeholder="Min"
+          step={step}
+          className="p-1 px-2 w-16"
+          value={convertValue(value[1])}
+          onChange={(value) => updateValue(value, 1)}
+        />
       </div>
     </div>
   )
