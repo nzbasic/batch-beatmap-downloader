@@ -44,14 +44,6 @@ const defaultOrder = {
 }
 
 export const QuerySettings = ({ limit, updateLimit, order, updateOrder }: PropTypes) => {
-  const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value;
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-    if (isNumber(value)) {
-      updateLimit(parseInt(value));
-    }
-  };
-
   const enable = (enabled: boolean) => {
     if (enabled) {
       updateLimit(defaultLimit);
