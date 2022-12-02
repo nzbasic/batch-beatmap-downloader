@@ -37,7 +37,7 @@ export const Menu = ({ version }: PropTypes) => {
       id="menu"
       className="w-52 flex flex-col h-screen bg-monokai-light text-white dark:bg-monokai-dark shadow"
     >
-      <img className="m-4" src={Logo} />
+      <img className="m-4" src={Logo as string} />
       <div className="text-sm self-center items-center flex flex-col">
         <span className="">Batch Beatmap Downloader</span>
         <span>by nzbasic</span>
