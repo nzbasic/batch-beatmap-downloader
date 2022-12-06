@@ -28,7 +28,7 @@ export const MinMaxInput: React.FC<TInputItemProps<TInputItemMinMax>> = ({ label
         />
 
         <NumericInput
-          placeholder="Min"
+          placeholder="Max"
           step={step}
           className="p-1 px-2 w-16"
           value={convertValue(value[1])}
