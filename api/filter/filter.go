@@ -102,11 +102,11 @@ func RecursiveQueryBuilder(node Node, values *[]string) (string, error) {
 		queryAddition += ")"
 	} else { // node is a rule
 		if node.Rule.Field == "Approved" && node.Rule.Value == "HasLeaderboard" {
-			return "approved = 'ranked' or approved = 'loved' or approved = 'approved'", nil
+			return "(approved = 'ranked' or approved = 'loved' or approved = 'approved')", nil
 		}
 
 		if node.Rule.Field == "Approved" && strings.ToLower(node.Rule.Value) == "unranked" {
-			return "approved = 'WIP' or approved = 'graveyard' or approved = 'pending'", nil
+			return "(approved = 'WIP' or approved = 'graveyard' or approved = 'pending')", nil
 		}
 
 		if node.Rule.Field == "Archetype" {
