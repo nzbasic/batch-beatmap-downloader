@@ -37,16 +37,10 @@ const defaultGroup = {
 };
 
 export const QueryGroup = ({ group, id, updateParent }: PropTypes) => {
-  const [state, setState] = useState<Group>(group);
-
-  useEffect(() => {
-    updateParent(state, id);
-  }, [state]);
-
   const updateGroup = (child: Group | Rule, id: string) => {
-    setState({
-      ...state,
-      children: state.children.map((node) => {
+    updateParent({
+      ...group,
+      children: group.children.map((node) => {
         if (node.id === id) {
           if ("children" in child) {
             return { ...node, group: child };
@@ -56,18 +50,18 @@ export const QueryGroup = ({ group, id, updateParent }: PropTypes) => {
         }
         return node;
       }),
-    });
+    }, id);
   };
 
   const updateConnector = (connector: ConnectorDetails) => {
-    setState({
-      ...state,
+    updateParent({
+      ...group,
       connector,
-    });
+    }, id);
   };
 
   const getLastRule = () => {
-    const lastRule = state.children.filter((node) => "rule" in node).pop();
+    const lastRule = group.children.filter((node) => "rule" in node).pop();
     if (lastRule) {
       return lastRule;
     }
@@ -82,17 +76,17 @@ export const QueryGroup = ({ group, id, updateParent }: PropTypes) => {
       child.group.children.push(rule);
     }
 
-    setState({
-      ...state,
-      children: [...state.children, child],
-    });
+    updateParent({
+      ...group,
+      children: [...group.children, child],
+    }, id);
   };
 
   const removeChild = (id: string) => {
-    setState({
-      ...state,
-      children: state.children.filter((node) => node.id !== id),
-    });
+    updateParent({
+      ...group,
+      children: group.children.filter((node) => node.id !== id),
+    }, id);
   };
 
   return (
@@ -100,10 +94,10 @@ export const QueryGroup = ({ group, id, updateParent }: PropTypes) => {
       <div style={{ backgroundColor: stringToColor(id) }} className="w-2" />
       <div className="p-4 rounded-l-none border-gray-300 dark:border-monokai-border dark:border-2 dark:border-l-0 border-l-0 border rounded flex items-stretch w-full">
         <div className="flex flex-col">
-          {state.children.map((child, index) => (
+          {group.children.map((child, index) => (
             <div key={child.id}>
               {index == 0 ? null : (
-                <Connector id={child.id} details={state.connector} update={updateConnector} />
+                <Connector id={child.id} details={group.connector} update={updateConnector} />
               )}
               {child.group ? (
                 <div className="flex">

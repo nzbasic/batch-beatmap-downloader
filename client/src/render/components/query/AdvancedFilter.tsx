@@ -12,9 +12,7 @@ export const AdvancedFilter: React.FC<PropTypes> = ({ tree, updateTree }) => {
   return (
     <div className="content-box mt-0 flex flex-col gap-4">
       <span className="font-bold text-lg dark:text-white">Query Builder</span>
-
       <ShareFilter tree={tree} updateTree={updateTree} />
-
       {tree.group && (
         <QueryGroup
           group={tree.group}
