@@ -145,7 +145,7 @@ export class DownloadController {
     this.status.paused = true
     emitStatus()
     this.updateDownload("pause")
-    this.ipc.close();
+    if (this.ipc) this.ipc.close();
   }
 
   public getDownloadSpeed() {
