@@ -11,6 +11,7 @@ var validColumnNames = []string{
 	"bpm", "favouriteCount", "hitLength", "language", "maxCombo",
 	"mode", "totalLength", "tags", "source", "lastUpdate", "stars",
 	"passCount", "playCount", "size", "stream", "farm", "rankedMapper",
+	"archetype",
 }
 var validOperators = []string{"<", ">", "=", "<=", ">=", "!=", "like"}
 var validConnectors = []string{"and", "or"}
