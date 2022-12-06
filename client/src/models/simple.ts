@@ -300,7 +300,13 @@ export const convertTreeToText = (tree: Node) => {
 
     const field = textAliasMap.get(rule.field) ?? rule.field
     const value = textAliasMap.get(rule.value) ?? rule.value
-    const operator = rule.operator === "like" ? "=" : rule.operator;
+    let operator = rule.operator
+    if (rule.operator === "not like") {
+      operator = "!="
+    } else if (rule.operator === "like") {
+      operator = "="
+    }
+
     output += `${field}${operator}${value} `.toLowerCase()
   }
 
