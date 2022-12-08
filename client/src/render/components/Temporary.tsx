@@ -84,7 +84,7 @@ export const Temporary = () => {
         )}
       </div>
 
-      <Button disabled={tempCount === 0} onClick={handleMoveDownloads}>Move Contents</Button>
+      <Button disabled={tempCount === 0 || moving} onClick={handleMoveDownloads}>Move Contents</Button>
     </div>
   );
 };
