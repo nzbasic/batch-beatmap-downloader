@@ -3,12 +3,15 @@ import axios from "axios";
 import { DownloadStatus } from "../../models/api";
 import { serverUri } from "../ipc/main";
 import { shouldBeClosed, window } from "../../main";
-import { getDownloadPath, getMaxConcurrentDownloads, getSongsFolder } from "../settings";
+import { getDownloadPath, getMaxConcurrentDownloads, getSongsFolder, getTempPath } from "../settings";
 import { beatmapIds, loadBeatmaps } from "../beatmaps";
 import { clientId, setDownloadStatus } from "./settings";
 import { addCollection } from "../collection/collection";
 import { emitStatus } from "./downloads";
 import { DownloadIPC } from './ipc';
+import settings from 'electron-settings';
+import fs from 'fs';
+import path from 'path';
 
 enum Status {
   FINISHED,
@@ -120,7 +123,37 @@ export class DownloadController {
 
     if (!this.status.paused) this.updateDownload("delete")
     await setDownloadStatus(this.id, this.status)
-    this.ipc.close();
+    if (this.ipc) this.ipc.close();
+
+    const enabled = await settings.get("temp") as boolean
+    if (enabled) await this.moveTempFiles();
+  }
+
+  private async moveTempFiles() {
+    const tempPath = await getTempPath();
+    const songsPath = await getSongsFolder();
+
+    // move all files in temp path to songs path
+    const files = await fs.promises.readdir(tempPath);
+
+    for (const set of this.status.all) {
+      const oldPath = path.join(tempPath, `${set}.osz`);
+      const newPath = path.join(songsPath, `${set}.osz`);
+      await fs.promises.rename(oldPath, newPath)
+    }
+
+    await Promise.all(files.map(file => {
+      if (!file.endsWith(".osz")) return
+
+      const setId = parseInt(file.split(".osz")[0])
+      if (!this.status.all.includes(setId)) return
+
+      const oldPath = path.join(tempPath, file);
+      const newPath = path.join(songsPath, file);
+      return fs.promises.rename(oldPath, newPath);
+    })).catch(err => {
+      window?.webContents.send("error", err);
+    })
   }
 
   private async postData(url: string, body: unknown) {
