@@ -117,10 +117,10 @@ export const allFarm: Node = {
       {
         id: "2",
         rule: {
-          type: RuleType.BOOLEAN,
-          value: "1",
+          type: RuleType.SPECIAL,
+          value: "Farm",
           operator: "=",
-          field: "Farm",
+          field: "Special",
         },
       }
     ],
@@ -147,10 +147,10 @@ export const allStream: Node = {
       {
         id: "2",
         rule: {
-          type: RuleType.BOOLEAN,
-          value: "1",
+          type: RuleType.SPECIAL,
+          value: "Stream",
           operator: "=",
-          field: "Stream",
+          field: "Special",
         },
       }
     ],
