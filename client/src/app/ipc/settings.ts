@@ -5,8 +5,9 @@ import { dialog } from "electron";
 import { beatmapIds, loadBeatmaps } from "../beatmaps";
 import { checkCollections } from "../collection/collection";
 import { E } from "./main";
-import { checkValidPath } from "../settings";
+import { checkValidPath, checkValidTempPath, getTempPath } from "../settings";
 import fs from 'fs';
+import os from 'os';
 
 export const handleGetSettings = async () => {
   await loadBeatmaps();
@@ -48,9 +49,34 @@ export const handleSetAltPath = async (event: E, path: string): Promise<number> 
   return beatmapIds.size
 }
 
+export const handleSetAltPathEnabled = async (event: E, enabled: boolean) => {
+  await settings.set("altPathEnabled", enabled);
+  await loadBeatmaps();
+  return beatmapIds.size;
+}
+
 export const handleBrowse = async () => {
   const dialogResult = await dialog.showOpenDialog({
     properties: ["openDirectory"],
   });
   return dialogResult;
 }
+
+export const handleSetTempEnabled = (event: E, enabled: boolean) => settings.set("temp", enabled);
+export const handleSetTempPath = (event: E, path: string) => settings.set("tempPath", path);
+export const handleResetTempPath = () => settings.unset("tempPath");
+export const handleGetTempData = async () => {
+  const tempEnabled = await settings.get("temp") as boolean;
+  const tempPath = await getTempPath();
+  const files = tempPath ? await fs.promises.readdir(tempPath) : []
+  const valid = await checkValidTempPath(tempPath);
+
+  return {
+    valid,
+    enabled: tempEnabled,
+    path: tempPath,
+    count: files.filter(file => file.endsWith(".osz")).length,
+  };
+};
+
+export const handleGetPlatform = () => os.platform();

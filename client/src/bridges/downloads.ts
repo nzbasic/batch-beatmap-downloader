@@ -44,3 +44,7 @@ export const handleListenForDownloads = (callback: (downloads: ReportedDownloadS
     callback(downloads)
   })
 };
+
+export const handleMoveAllDownloads = () => {
+  return ipcRenderer.invoke("move-all-downloads") as Promise<void>
+};

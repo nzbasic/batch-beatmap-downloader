@@ -18,3 +18,5 @@ export const handleListenForServerDown = (callback: (down: boolean) => void) => 
     callback(down);
   });
 };
+
+export const handleGetPlatform = () => ipcRenderer.invoke("get-platform") as Promise<NodeJS.Platform>;

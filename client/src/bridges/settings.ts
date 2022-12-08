@@ -1,3 +1,4 @@
+import { TempData } from "../models/ipc";
 import {
   ipcRenderer,
 } from "electron";
@@ -12,3 +13,8 @@ export const handleSetTheme = (theme: boolean) => ipcRenderer.invoke("set-theme"
 export const handleSetMaxConcurrentDownloads = (number: number) => ipcRenderer.invoke("set-max-concurrent-downloads", number);
 export const handleSetPath = (path: string) => ipcRenderer.invoke("set-path", path) as Promise<[boolean, number]>;
 export const handleSetAltPath = (path: string) => ipcRenderer.invoke("set-alt-path", path) as Promise<number>;
+export const handleSetTempEnabled = (enabled: boolean) => ipcRenderer.invoke("set-temp-enabled", enabled) as Promise<void>;
+export const handleGetTempData = () => ipcRenderer.invoke("get-temp-data") as Promise<TempData>;
+export const handleSetTempPath = (path: string) => ipcRenderer.invoke("set-temp-path", path) as Promise<void>;
+export const handleResetTempPath = () => ipcRenderer.invoke("reset-temp-path") as Promise<void>;
+export const handleSetAltPathEnabled = (enabled: boolean) => ipcRenderer.invoke("set-alt-path-enabled", enabled) as Promise<number>;

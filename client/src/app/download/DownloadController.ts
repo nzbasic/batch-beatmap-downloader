@@ -3,7 +3,7 @@ import axios from "axios";
 import { DownloadStatus } from "../../models/api";
 import { serverUri } from "../ipc/main";
 import { shouldBeClosed, window } from "../../main";
-import { getMaxConcurrentDownloads, getSongsFolder } from "../settings";
+import { getDownloadPath, getMaxConcurrentDownloads, getSongsFolder } from "../settings";
 import { beatmapIds, loadBeatmaps } from "../beatmaps";
 import { clientId, setDownloadStatus } from "./settings";
 import { addCollection } from "../collection/collection";
@@ -181,7 +181,7 @@ export class DownloadController {
 
     const setId = this.getNextSetId()
     if (setId === undefined) return Status.FINISHED
-    const path = await getSongsFolder()
+    const path = await getDownloadPath()
 
     try {
       const before = new Date();

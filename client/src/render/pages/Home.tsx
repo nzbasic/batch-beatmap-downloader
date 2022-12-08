@@ -4,6 +4,7 @@ import { InvalidPath } from "../components/InvalidPath";
 import { FindMissingMaps } from "../components/MissingMaps";
 import { SampleFilters } from "../components/SampleFilters";
 import { Settings } from "../components/Settings";
+import { Temporary } from "../components/Temporary";
 import { useSettings } from "../context/SettingsProvider";
 
 const videoUrl = "https://www.youtube.com/watch?v=_Nuz0TVF1IY"
@@ -23,6 +24,7 @@ export const Home = () => {
         </button>
       </div>
       <Settings />
+      <Temporary />
       <BasicStatus />
 
       {!validPath ? <InvalidPath /> : (

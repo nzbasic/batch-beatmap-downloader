@@ -8,6 +8,7 @@ import {
   handleDeleteDownload,
   handleGetDownloadsStatus,
   handleListenForDownloads,
+  handleMoveAllDownloads,
   handlePauseDownload,
   handlePauseDownloads,
   handleResumeDownload,
@@ -18,16 +19,22 @@ import { handleGetBeatmapDetails, handleGetMetrics, handleQuery } from "./query"
 import {
   handleCheckValidPath,
   handleGetSettings,
+  handleGetTempData,
   handleGetVersion,
   handleLoadBeatmaps,
+  handleResetTempPath,
   handleSetAltPath,
+  handleSetAltPathEnabled,
   handleSetMaxConcurrentDownloads,
   handleSetPath,
   handleSetSettings,
+  handleSetTempEnabled,
+  handleSetTempPath,
   handleSetTheme
 } from "./settings";
 import {
   handleBrowse,
+  handleGetPlatform,
   handleListenForErrors,
   handleListenForServerDown,
   handleOpenUrl,
@@ -50,6 +57,7 @@ export const electronBridge = {
   openUrl: handleOpenUrl,
   browse: handleBrowse,
   quit: handleQuit,
+  getPlatform: handleGetPlatform,
 
   getVersion: handleGetVersion,
   getSettings: handleGetSettings,
@@ -60,6 +68,7 @@ export const electronBridge = {
   setMaxConcurrentDownloads: handleSetMaxConcurrentDownloads,
   setPath: handleSetPath,
   setAltPath: handleSetAltPath,
+  setAltPathEnabled: handleSetAltPathEnabled,
 
   startDownload: handleStartDownload,
   createDownload: handleCreateDownload,
@@ -70,6 +79,11 @@ export const electronBridge = {
   deleteDownload: handleDeleteDownload,
   getDownloadsStatus: handleGetDownloadsStatus,
   checkCollections: handleCheckCollections,
+  getTempData: handleGetTempData,
+  setTempEnabled: handleSetTempEnabled,
+  setTempPath: handleSetTempPath,
+  resetTempPath: handleResetTempPath,
+  moveTempDownloads: handleMoveAllDownloads,
 
   listenForDownloads: handleListenForDownloads,
   listenForErrors: handleListenForErrors,

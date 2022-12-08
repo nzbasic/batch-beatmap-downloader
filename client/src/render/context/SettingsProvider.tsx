@@ -9,6 +9,8 @@ export interface Settings {
 
   path: string;
   setPath: (path: string) => void;
+  altPathEnabled: boolean;
+  setAltPathEnabled: (enabled: boolean) => void;
   altPath: string;
   setAltPath: (path: string) => void;
   maxConcurrentDownloads: number;
@@ -23,6 +25,8 @@ const defaultContext: Settings = {
   toggleDarkMode: () => null,
   path: "",
   setPath: () => null,
+  altPathEnabled: false,
+  setAltPathEnabled: () => null,
   altPath: "",
   setAltPath: () => null,
   maxConcurrentDownloads: 5,
@@ -37,18 +41,20 @@ const SettingsProvider: React.FC<PropsWithChildren<any>> = ({ children }) => {
   const [darkMode, setDarkMode] = useState(false);
   const [path, setPath] = useState("");
   const [altPath, setAltPath] = useState("")
+  const [altPathEnabled, setAltPathEnabled] = useState(false)
   const [beatmapSetCount, setBeatmapSetCount] = useState(0);
   const [maxConcurrentDownloads, setMaxConcurrentDownloads] = useState(5)
   const [validPath, setValidPath] = useState(false)
 
   useEffect(() => {
     window.electron.getSettings().then((res) => {
-      setValidPath(res.validPath as boolean)
-      toggleDarkMode(res.darkMode as boolean)
-      setPath(res.path as string);
-      setAltPath(res.altPath as string)
-      setMaxConcurrentDownloads(res.maxConcurrentDownloads as number)
-      setBeatmapSetCount(res.sets as number)
+      setValidPath(res.validPath as boolean ?? false)
+      toggleDarkMode(res.darkMode as boolean ?? false)
+      setPath(res.path as string ?? "");
+      setAltPath(res.altPath as string ?? "")
+      setMaxConcurrentDownloads(res.maxConcurrentDownloads as number ?? 5)
+      setBeatmapSetCount(res.sets as number ?? 0)
+      setAltPathEnabled(res.altPathEnabled as boolean ?? false)
     });
   }, []);
 
@@ -72,6 +78,12 @@ const SettingsProvider: React.FC<PropsWithChildren<any>> = ({ children }) => {
     setBeatmapSetCount(count)
   }
 
+  const handleSetAltPathEnabled = async (enabled: boolean) => {
+    setAltPathEnabled(enabled)
+    const count = await window.electron.setAltPathEnabled(enabled)
+    setBeatmapSetCount(count)
+  }
+
   const debouncedSetMaxConcurrentDownloads = debounce(window.electron.setMaxConcurrentDownloads, 500)
 
   const handleSetMaxConcurrentDownloads = (number: number) => {
@@ -86,6 +98,8 @@ const SettingsProvider: React.FC<PropsWithChildren<any>> = ({ children }) => {
         toggleDarkMode,
         path,
         setPath: handleSetPath,
+        altPathEnabled,
+        setAltPathEnabled: handleSetAltPathEnabled,
         altPath,
         setAltPath: handleSetAltPath,
         beatmapSetCount,

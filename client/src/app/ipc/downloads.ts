@@ -6,6 +6,9 @@ import { v4 as uuid } from 'uuid'
 import axios from 'axios';
 import { DownloadStartV2 } from '../../models/api-v2';
 import { clientId } from '../download/settings';
+import { getSongsFolder, getTempPath } from '../settings';
+import fs from 'fs';
+import path from 'path';
 
 export const handleStartDownload = async (event: E, force: boolean, collectionName: string) => {
   const { totalSize, totalSizeForce } = currentDownloadDetails;
@@ -42,3 +45,14 @@ export const handleResumeDownloads = resumeDownloads;
 export const handlePauseDownload = (event: E, downloadId: string) => pause(downloadId);
 export const handlePauseDownloads = pauseDownloads;
 export const handleDeleteDownload = (event: E, downloadId: string) => deleteDownload(downloadId);
+
+export const handleMoveAllDownloads = async () => {
+  const tempPath = await getTempPath();
+  const songsPath = await getSongsFolder();
+
+
+
+  // move all files in temp path to songs path
+  const files = await fs.promises.readdir(tempPath);
+  await Promise.all(files.map(file => fs.promises.rename(path.join(tempPath, file), path.join(songsPath, file))))
+};
