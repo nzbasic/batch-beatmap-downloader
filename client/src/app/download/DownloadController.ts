@@ -61,6 +61,13 @@ export class DownloadController {
     return this.ids
   }
 
+  public removeIds(ids: number[]) {
+    this.ids = this.ids.filter(id => !ids.includes(id))
+    this.status.all = this.ids;
+    setDownloadStatus(this)
+    emitStatus();
+  }
+
   public async createCollection(collectionName: string) {
     await addCollection(this.hashes, collectionName);
   }
@@ -122,7 +129,7 @@ export class DownloadController {
     }
 
     if (!this.status.paused) this.updateDownload("delete")
-    await setDownloadStatus(this.id, this.status)
+    await setDownloadStatus(this)
     if (this.ipc) this.ipc.close();
 
     const enabled = await settings.get("temp") as boolean

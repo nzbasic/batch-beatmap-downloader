@@ -1,13 +1,17 @@
-import { createDownload } from './downloads';
+import { createDownload, downloadMap } from './downloads';
 import settings from "electron-settings";
 import { DownloadStatus } from "../../models/api";
 import { v4 as uuid } from 'uuid';
+import { DownloadController } from './DownloadController';
 
 export let clientId: string
 
-export const setDownloadStatus = async (downloadId: string, status: DownloadStatus) => {
-  await settings.set(`downloads.${downloadId}.status`, {
-    id: downloadId,
+const downloadToStatus = (download: DownloadController) => {
+  const status = download.getStatus()
+  const id = download.getId()
+
+  return {
+    id,
     all: status.all,
     completed: status.completed,
     skipped: status.skipped,
@@ -15,8 +19,20 @@ export const setDownloadStatus = async (downloadId: string, status: DownloadStat
     totalSize: status.totalSize,
     totalProgress: status.totalProgress,
     force: status.force,
-  });
+  }
+}
+
+export const setDownloadStatus = async (download: DownloadController) => {
+  const status = downloadToStatus(download)
+  await settings.set(`downloads.${status.id}.status`, status);
 };
+
+export const setAllDownloadStatus = async () => {
+  const downloads = Array.from(downloadMap.values());
+  for (const download of downloads) {
+    await setDownloadStatus(download)
+  }
+}
 
 export const getDownloadStatus = async (downloadId: string): Promise<DownloadStatus> => {
   const all = (await settings.get(`downloads.${downloadId}.status.all`)) as number[];
