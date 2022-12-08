@@ -64,7 +64,7 @@ export const DownloadSummary: React.FC<PropTypes> = ({ status }) => {
     const remaining = all - completed - skipped - failed;
     const finished = remaining === 0
     return [remaining, finished]
-  }, [])
+  }, [status])
 
   return (
     <div className="content-box hover:border-blue-400 flex flex-col" >
