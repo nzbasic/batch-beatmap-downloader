@@ -50,9 +50,12 @@ export const handleMoveAllDownloads = async () => {
   const tempPath = await getTempPath();
   const songsPath = await getSongsFolder();
 
-
-
   // move all files in temp path to songs path
   const files = await fs.promises.readdir(tempPath);
-  await Promise.all(files.map(file => fs.promises.rename(path.join(tempPath, file), path.join(songsPath, file))))
+  await Promise.all(files.map(file => {
+    if (!file.endsWith(".osz")) return
+    const oldPath = path.join(tempPath, file);
+    const newPath = path.join(songsPath, file);
+    return fs.promises.rename(oldPath, newPath);
+  }))
 };
