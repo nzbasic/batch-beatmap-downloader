@@ -1,5 +1,5 @@
 import { DownloadController } from './DownloadController';
-import { unsetDownload } from './settings';
+import { setDownloadStatus, unsetDownload } from './settings';
 import { window } from "../../main";
 import { DownloadStatus } from '../../models/api';
 
@@ -29,19 +29,19 @@ export const emitStatus = () => {
 };
 
 export const createDownload = (id: string, ids: number[], size: number, force: boolean, hashes: string[], collectionName: string) => {
-  const downloadPool = new Set<number>();
   downloadMap.forEach(download => {
-    download.getIds().forEach(id => downloadPool.add(id))
+    download.removeIds(ids)
   })
 
-  const toDownload = ids.filter(id => !downloadPool.has(id))
-  const download = new DownloadController(id, toDownload, size, force, hashes)
+  // const toDownload = ids.filter(id => !downloadPool.has(id))
+  const download = new DownloadController(id, ids, size, force, hashes)
 
   if (collectionName) {
     download.createCollection(collectionName)
   }
 
   downloadMap.set(id, download)
+  setDownloadStatus(download)
   return download
 };
 
