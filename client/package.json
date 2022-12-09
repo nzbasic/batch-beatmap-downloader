@@ -11,8 +11,6 @@
   "scripts": {
     "start": "electron-forge start",
     "lint": "cross-env NODE_ENV=development eslint . --cache --ext .js,.jsx,.ts,.tsx",
-    "prepare": "husky install .config/husky",
-    "commit": "cz",
     "create-icons": "electron-icon-builder --input=./assets/package/source.png --output=./assets/package",
     "package:mac": "electron-forge package --platform darwin",
     "package:linux": "electron-forge package --platform linux",
