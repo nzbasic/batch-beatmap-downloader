@@ -37,11 +37,11 @@ const defaultGroup = {
 };
 
 export const QueryGroup = ({ group, id, updateParent }: PropTypes) => {
-  const updateGroup = (child: Group | Rule, id: string) => {
+  const updateGroup = (child: Group | Rule, childId: string) => {
     updateParent({
       ...group,
       children: group.children.map((node) => {
-        if (node.id === id) {
+        if (node.id === childId) {
           if ("children" in child) {
             return { ...node, group: child };
           } else {
@@ -82,10 +82,10 @@ export const QueryGroup = ({ group, id, updateParent }: PropTypes) => {
     }, id);
   };
 
-  const removeChild = (id: string) => {
+  const removeChild = (childId: string) => {
     updateParent({
       ...group,
-      children: group.children.filter((node) => node.id !== id),
+      children: group.children.filter((node) => node.id !== childId),
     }, id);
   };
 
