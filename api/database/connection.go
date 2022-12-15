@@ -30,7 +30,10 @@ func open() {
 
 func Close() {
 	metaDb.Close()
-	fullDb.Close()
+
+	if fullDb != nil {
+		fullDb.Close()
+	}
 }
 
 func Begin() (*sql.Tx, error) {
