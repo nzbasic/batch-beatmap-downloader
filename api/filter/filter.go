@@ -117,7 +117,14 @@ func RecursiveQueryBuilder(node Node, values *[]string) (string, error) {
 			}
 		}
 
-		if strings.Contains(node.Rule.Operator, "like") {
+		if node.Rule.Field == "Archetype" && node.Rule.Value == "Any" {
+			node.Rule.Value = ""
+			if node.Rule.Operator == "like" {
+				node.Rule.Operator = "not like"
+			} else {
+				node.Rule.Operator = "like"
+			}
+		} else if strings.Contains(node.Rule.Operator, "like") {
 			node.Rule.Value = "%" + node.Rule.Value + "%"
 		}
 
