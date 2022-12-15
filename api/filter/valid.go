@@ -13,7 +13,7 @@ var validColumnNames = []string{
 	"passCount", "playCount", "size", "stream", "farm", "rankedMapper",
 	"archetype",
 }
-var validOperators = []string{"<", ">", "=", "<=", ">=", "!=", "like"}
+var validOperators = []string{"<", ">", "=", "<=", ">=", "!=", "like", "not like"}
 var validConnectors = []string{"and", "or"}
 var validDirections = []string{"asc", "desc"}
 
