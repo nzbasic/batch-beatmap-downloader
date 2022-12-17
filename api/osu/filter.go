@@ -6,8 +6,8 @@ import (
 	"strings"
 )
 
-func IsStream(row BeatmapData) int {
-	if row.Mode != "osu!" {
+func IsStream(mode string, bpm float64, hits string, timings string) int {
+	if mode != "osu!" {
 		return 0
 	}
 
@@ -16,7 +16,7 @@ func IsStream(row BeatmapData) int {
 	var minimumBpm float64 = 140
 	maximumTimeDifference := math.Ceil((1 / (minimumBpm * 4 / 60)) * 1000)
 
-	if row.Bpm <= minimumBpm {
+	if bpm <= minimumBpm {
 		return 0
 	}
 
@@ -32,8 +32,8 @@ func IsStream(row BeatmapData) int {
 		Time int
 	}
 
-	hitObjectsRaw := strings.Split(row.HitObjects, ">")
-	timingPointsRaw := strings.Split(row.TimingPoints, ">")
+	hitObjectsRaw := strings.Split(hits, ">")
+	timingPointsRaw := strings.Split(timings, ">")
 	hitObjects := []HitObject{}
 	timingPoints := []TimingPoint{}
 

@@ -22,12 +22,10 @@ func init() {
 }
 
 func parseJson[T ProxyRequest](body T, reader io.Reader) (T, error) {
-
 	decoder := json.NewDecoder(reader)
 	err := decoder.Decode(&body)
-
 	if err != nil {
-		panic(err)
+		return T{}, err
 	}
 
 	return body, err

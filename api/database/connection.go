@@ -13,6 +13,7 @@ var fullDb *sql.DB
 func open() {
 	godotenv.Load()
 	metaDb, _ = sql.Open("sqlite3", os.Getenv("META_DB_LOCATION"))
+	fullDb, _ = sql.Open("sqlite3", os.Getenv("FULL_DB_LOCATION"))
 
 	println("Total Maps:", GetBeatmapCount())
 	// RefreshFarm()

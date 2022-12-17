@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
-	"os"
 	"strconv"
 	"strings"
 
@@ -55,17 +54,17 @@ func updateTxRow(tx *sql.Tx, column string, value string, id int) {
 }
 
 // methods below were ran once to generate data and are stored here for future reference
-func AddFileSize(tx *sql.Tx, row osu.BeatmapData) {
-	fi, err := os.Stat(row.Path)
-	if err != nil {
-		log.Fatal(err)
-	}
+// func AddFileSize(tx *sql.Tx, row osu.BeatmapData) {
+// 	fi, err := os.Stat(row.Path)
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
 
-	updateTxRow(tx, "size", strconv.FormatInt(fi.Size(), 10), row.Id)
-}
+// 	updateTxRow(tx, "size", strconv.FormatInt(fi.Size(), 10), row.Id)
+// }
 
 func AddStream(tx *sql.Tx, row osu.BeatmapData) {
-	stream := osu.IsStream(row)
+	stream := osu.IsStream(row.Mode, row.Bpm, row.HitObjects, row.TimingPoints)
 	updateTxRow(tx, "stream", strconv.Itoa(stream), row.Id)
 }
 
@@ -81,10 +80,10 @@ func AddFarm(tx *sql.Tx, row osu.BeatmapData) {
 	updateTxRow(tx, "farm", farm, row.Id)
 }
 
-func AddRankedMapper(tx *sql.Tx, row osu.BeatmapData) {
-	mapper := "0"
-	creator := strings.ReplaceAll(row.Creator, "'", "''")
-	rows, err := tx.Query(fmt.Sprintf("SELECT * FROM beatmaps WHERE creator='%s' AND approved='ranked'", creator))
+func isRankedMapper(mapper string) string {
+	output := "0"
+	creator := strings.ReplaceAll(mapper, "'", "''")
+	rows, err := metaDb.Query(fmt.Sprintf("SELECT * FROM beatmaps WHERE creator='%s' AND approved='ranked'", creator))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -96,8 +95,13 @@ func AddRankedMapper(tx *sql.Tx, row osu.BeatmapData) {
 	}
 
 	if len(beatmaps) > 0 {
-		mapper = "1"
+		output = "1"
 	}
 
+	return output
+}
+
+func AddRankedMapper(tx *sql.Tx, row osu.BeatmapData) {
+	mapper := isRankedMapper(row.Creator)
 	updateTxRow(tx, "rankedMapper", mapper, row.Id)
 }

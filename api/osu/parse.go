@@ -45,14 +45,16 @@ type BeatmapData struct {
 	LastUpdate     int64   `filterType:"Numeric"`
 	PassCount      int     `filterType:"Numeric"`
 	PlayCount      int     `filterType:"Numeric"`
-	Path           string  `filterType:"None"`
 	Size           int
 }
 
 type OszBeatmapData struct {
+	BeatmapId    int
+	SetId        int
 	Version      string
 	TimingPoints string
 	HitObjects   string
+	Size         int
 }
 
 var r *regexp.Regexp
@@ -77,14 +79,29 @@ func ParseOszInMemory(data []byte) []OszBeatmapData {
 	for _, f := range archive.File {
 		if strings.HasSuffix(f.Name, ".osu") {
 			file, _ := f.Open()
-			output = append(output, parseBeatmap(file))
+			output = append(output, parseOszBeatmap(file))
 		}
 	}
 
 	return output
 }
 
-func ParseOszWithBeatmap(beatmaps []osuapi.Beatmap, path string, setId int) []BeatmapData {
+func ParseOszInMemoryWithApiData(apiData []osuapi.Beatmap, data []byte) []BeatmapData {
+	oszData := ParseOszInMemory(data)
+	output := []BeatmapData{}
+
+	for _, apiBeatmap := range apiData {
+		for _, oszBeatmap := range oszData {
+			if apiBeatmap.DiffName == oszBeatmap.Version {
+				output = append(output, convertToBeatmapData(apiBeatmap, oszBeatmap))
+			}
+		}
+	}
+
+	return output
+}
+
+func ParseOszFromFileWithApiData(apiData []osuapi.Beatmap, path string, setId int) []BeatmapData {
 	output := []BeatmapData{}
 	archive, _ := zip.OpenReader(path)
 
@@ -96,44 +113,11 @@ func ParseOszWithBeatmap(beatmaps []osuapi.Beatmap, path string, setId int) []Be
 	for _, f := range archive.File {
 		if strings.HasSuffix(f.Name, ".osu") {
 			file, _ := f.Open()
-			oszData := parseBeatmap(file)
+			oszData := parseOszBeatmap(file)
 
-			for _, apiBeatmap := range beatmaps {
+			for _, apiBeatmap := range apiData {
 				if apiBeatmap.DiffName == oszData.Version {
-					data := BeatmapData{
-						Title:          apiBeatmap.Title,
-						Artist:         apiBeatmap.Artist,
-						Creator:        apiBeatmap.Creator,
-						Version:        oszData.Version,
-						Hp:             apiBeatmap.HPDrain,
-						Cs:             apiBeatmap.CircleSize,
-						Od:             apiBeatmap.OverallDifficulty,
-						TimingPoints:   oszData.TimingPoints,
-						HitObjects:     oszData.HitObjects,
-						Hash:           apiBeatmap.FileMD5,
-						Genre:          apiBeatmap.Genre.String(),
-						ApprovedDate:   apiBeatmap.ApprovedDate.GetTime().UnixMilli(),
-						Approved:       apiBeatmap.Approved.String(),
-						Ar:             apiBeatmap.ApproachRate,
-						Bpm:            apiBeatmap.BPM,
-						Id:             apiBeatmap.BeatmapID,
-						SetId:          apiBeatmap.BeatmapSetID,
-						Stars:          apiBeatmap.DifficultyRating,
-						FavouriteCount: apiBeatmap.FavouriteCount,
-						HitLength:      apiBeatmap.HitLength,
-						Language:       apiBeatmap.Language.String(),
-						MaxCombo:       apiBeatmap.MaxCombo,
-						Mode:           apiBeatmap.Mode.String(),
-						TotalLength:    apiBeatmap.TotalLength,
-						Tags:           apiBeatmap.Tags,
-						Source:         apiBeatmap.Source,
-						LastUpdate:     apiBeatmap.LastUpdate.GetTime().Unix(),
-						PassCount:      apiBeatmap.Passcount,
-						PlayCount:      apiBeatmap.Playcount,
-						Path:           path,
-					}
-
-					output = append(output, data)
+					output = append(output, convertToBeatmapData(apiBeatmap, oszData))
 				}
 			}
 		}
@@ -153,20 +137,23 @@ func ParseOsz(c *osuapi.Client, path string, setId int) []BeatmapData {
 		log.Println(err.Error())
 	}
 
-	return ParseOszWithBeatmap(beatmaps, path, setId)
+	return ParseOszFromFileWithApiData(beatmaps, path, setId)
 }
 
-func parseBeatmap(osu io.ReadCloser) OszBeatmapData {
+func parseOszBeatmap(osu io.ReadCloser) OszBeatmapData {
 	// We need the version name, timing points and hit objects from the file, everything else
 	// from the api.
 
 	buf := new(bytes.Buffer)
 	buf.ReadFrom(osu)
+	size := buf.Len()
 	content := buf.String()
 
 	lines := strings.Split(content, "\n")
 
 	version := ""
+	beatmapId := 0
+	setId := 0
 	timingPoints := []string{}
 	hitObjects := []string{}
 	timingFlag := false
@@ -182,6 +169,16 @@ func parseBeatmap(osu io.ReadCloser) OszBeatmapData {
 			if len(version) == 0 {
 				version = "Normal"
 			}
+		}
+
+		if strings.HasPrefix(line, "BeatmapID:") {
+			beatmapIdDetails := strings.Split(line, "BeatmapID:")
+			beatmapId, _ = strconv.Atoi(strings.TrimSpace(beatmapIdDetails[1]))
+		}
+
+		if strings.HasPrefix(line, "BeatmapSetID:") {
+			setIdDetails := strings.Split(line, "BeatmapSetID:")
+			setId, _ = strconv.Atoi(strings.TrimSpace(setIdDetails[1]))
 		}
 
 		if timingFlag {
@@ -211,8 +208,46 @@ func parseBeatmap(osu io.ReadCloser) OszBeatmapData {
 	}
 
 	return OszBeatmapData{
+		BeatmapId:    beatmapId,
+		SetId:        setId,
 		Version:      version,
 		TimingPoints: strings.Join(timingPoints, CustomDelimiter),
 		HitObjects:   strings.Join(hitObjects, CustomDelimiter),
+		Size:         size,
+	}
+}
+
+func convertToBeatmapData(api osuapi.Beatmap, osz OszBeatmapData) BeatmapData {
+	return BeatmapData{
+		Title:          api.Title,
+		Artist:         api.Artist,
+		Creator:        api.Creator,
+		Version:        osz.Version,
+		Hp:             api.HPDrain,
+		Cs:             api.CircleSize,
+		Od:             api.OverallDifficulty,
+		TimingPoints:   osz.TimingPoints,
+		HitObjects:     osz.HitObjects,
+		Hash:           api.FileMD5,
+		Genre:          api.Genre.String(),
+		ApprovedDate:   api.ApprovedDate.GetTime().UnixMilli(),
+		Approved:       api.Approved.String(),
+		Ar:             api.ApproachRate,
+		Bpm:            api.BPM,
+		Id:             api.BeatmapID,
+		SetId:          api.BeatmapSetID,
+		Stars:          api.DifficultyRating,
+		FavouriteCount: api.FavouriteCount,
+		HitLength:      api.HitLength,
+		Language:       api.Language.String(),
+		MaxCombo:       api.MaxCombo,
+		Mode:           api.Mode.String(),
+		TotalLength:    api.TotalLength,
+		Tags:           api.Tags,
+		Source:         api.Source,
+		LastUpdate:     api.LastUpdate.GetTime().Unix(),
+		PassCount:      api.Passcount,
+		PlayCount:      api.Playcount,
+		Size:           osz.Size,
 	}
 }

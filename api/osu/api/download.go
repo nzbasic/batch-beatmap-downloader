@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"time"
@@ -14,7 +13,7 @@ import (
 func DownloadBeatmap(setId string) (bytes.Buffer, error) {
 	base := os.Getenv("DOWNLOAD_BASE_URL")
 
-	// uploadClient := &http.Client{}
+	uploadClient := &http.Client{}
 	downloadClient := &http.Client{
 		Transport: &http.Transport{
 			ResponseHeaderTimeout: 5 * time.Second,
@@ -22,7 +21,7 @@ func DownloadBeatmap(setId string) (bytes.Buffer, error) {
 	}
 
 	setIdString := fmt.Sprint(setId)
-	// uploadFilename := setIdString + ".osz"
+	uploadFilename := setIdString + ".osz"
 
 	res, err := downloadClient.Get(base + setIdString)
 	if err != nil {
@@ -44,20 +43,19 @@ func DownloadBeatmap(setId string) (bytes.Buffer, error) {
 	var buf bytes.Buffer
 	tee := io.TeeReader(res.Body, &buf)
 
-	ioutil.ReadAll(tee)
-	// a, err := http.NewRequest(http.MethodPut, fmt.Sprintf("https://bbd-api.nzbasic.workers.dev/%s", uploadFilename), tee)
-	// if err != nil {
-	// 	res.Body.Close()
-	// 	return bytes.Buffer{}, err
-	// }
+	a, err := http.NewRequest(http.MethodPut, fmt.Sprintf("https://bbd-api.nzbasic.workers.dev/%s", uploadFilename), tee)
+	if err != nil {
+		res.Body.Close()
+		return bytes.Buffer{}, err
+	}
 
-	// a.Header.Set("Content-Type", "application/octet-stream")
-	// a.Header.Set("X-Custom-Auth-Key", os.Getenv("CDN_KEY"))
+	a.Header.Set("Content-Type", "application/octet-stream")
+	a.Header.Set("X-Custom-Auth-Key", os.Getenv("CDN_KEY"))
 
-	// res, err = uploadClient.Do(a)
-	// if err != nil {
-	// 	return bytes.Buffer{}, err
-	// }
+	res, err = uploadClient.Do(a)
+	if err != nil {
+		return bytes.Buffer{}, err
+	}
 
 	return buf, nil
 }

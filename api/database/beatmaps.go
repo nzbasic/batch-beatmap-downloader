@@ -14,8 +14,12 @@ import (
 	"github.com/nzbasic/batch-beatmap-downloader/api/osu"
 )
 
-func Query(query string) (*sql.Rows, error) {
-	return metaDb.Query(query)
+func Query(query string, args ...any) (*sql.Rows, error) {
+	return metaDb.Query(query, args...)
+}
+
+func Exec(query string, args ...any) (sql.Result, error) {
+	return metaDb.Exec(query, args...)
 }
 
 func QueryRow(query string) *sql.Row {
@@ -90,7 +94,6 @@ func GetBeatmapById(id int) (osu.BeatmapData, error) {
 
 	beatmap.HitObjects = ""
 	beatmap.TimingPoints = ""
-	beatmap.Path = ""
 	return beatmap, nil
 }
 

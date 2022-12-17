@@ -29,9 +29,21 @@ func Exists(setId int) bool {
 	return true
 }
 
-func AddBeatmap(beatmap osu.BeatmapData, size int64) {
-	cmd := "INSERT INTO beatmaps VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
-	_, err := fullDb.Exec(cmd,
+func AddBeatmap(beatmap osu.BeatmapData) {
+	_, err := fullDb.Exec("INSERT INTO beatmaps VALUES(?,?,?,?)",
+		beatmap.Id,
+		beatmap.SetId,
+		beatmap.TimingPoints,
+		beatmap.HitObjects,
+	)
+
+	isStream := osu.IsStream(beatmap.Mode, beatmap.Bpm, beatmap.HitObjects, beatmap.TimingPoints)
+	isRankedMapper := isRankedMapper(beatmap.Creator)
+	isFarm := "0"
+	archetype := "0"
+
+	cmd := "INSERT INTO beatmaps VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+	_, err = metaDb.Exec(cmd,
 		beatmap.Id,
 		beatmap.SetId,
 		beatmap.Title,
@@ -42,8 +54,6 @@ func AddBeatmap(beatmap osu.BeatmapData, size int64) {
 		beatmap.Cs,
 		beatmap.Od,
 		beatmap.Ar,
-		beatmap.TimingPoints,
-		beatmap.HitObjects,
 		beatmap.Hash,
 		beatmap.Genre,
 		beatmap.ApprovedDate,
@@ -61,11 +71,11 @@ func AddBeatmap(beatmap osu.BeatmapData, size int64) {
 		beatmap.LastUpdate,
 		beatmap.PassCount,
 		beatmap.PlayCount,
-		beatmap.Path,
-		size,
-		"0",
-		"0",
-		"",
+		beatmap.Size,
+		isStream,
+		isFarm,
+		archetype,
+		isRankedMapper,
 	)
 
 	if err != nil {
