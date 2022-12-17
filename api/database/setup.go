@@ -40,7 +40,7 @@ func AddBeatmap(beatmap osu.BeatmapData) {
 	isStream := osu.IsStream(beatmap.Mode, beatmap.Bpm, beatmap.HitObjects, beatmap.TimingPoints)
 	isRankedMapper := isRankedMapper(beatmap.Creator)
 	isFarm := "0"
-	archetype := "0"
+	archetype := ""
 
 	cmd := "INSERT INTO beatmaps VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
 	_, err = metaDb.Exec(cmd,
