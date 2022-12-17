@@ -7,12 +7,14 @@ export interface Status {
   online: boolean
   metrics: MetricsV2 | null
   loading: boolean
+  collectMetrics: () => void
 }
 
 const defaultContext: Status = {
   online: false,
   metrics: null,
-  loading: true
+  loading: true,
+  collectMetrics: () => null,
 };
 
 export const StatusContext = createContext<Status>(defaultContext);
@@ -32,13 +34,13 @@ const StatusProvider: React.FC<PropsWithChildren<any>> = ({ children }) => {
 
   useEffect(() => {
     collectMetrics();
-    const interval = setInterval(() => collectMetrics(), 5000);
-    return () => clearInterval(interval);
+    // const interval = setInterval(() => collectMetrics(), 5000);
+    // return () => clearInterval(interval);
   }, []);
 
   return (
     <StatusContext.Provider
-      value={{ online, metrics, loading }}
+      value={{ online, metrics, loading, collectMetrics }}
     >
       {children}
     </StatusContext.Provider>

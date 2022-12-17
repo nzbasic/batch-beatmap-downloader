@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import ColorScales from "color-scales";
 import { bytesToFileSize } from "../util/fileSize";
 import { CircularProgress } from "@mui/material";
@@ -14,7 +14,13 @@ const headers: TableHeader[] = [
 ];
 
 export const Status = () => {
-  const { online, metrics, loading } = useStatus();
+  const { online, metrics, loading, collectMetrics } = useStatus();
+
+  useEffect(() => {
+    collectMetrics();
+    const interval = setInterval(() => collectMetrics(), 5000);
+    return () => clearInterval(interval);
+  }, [collectMetrics])
 
   const downloadsScale = new ColorScales(0, 50, ["#00ff00", "#ff0000"]);
   const bandwidthScale = new ColorScales(0, 5000, ["#00ff00", "#ff0000"]);
