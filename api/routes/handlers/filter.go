@@ -56,11 +56,13 @@ func FilterHandler(w http.ResponseWriter, r *http.Request) {
 	request, err = genericJSONDecode(request, r.Body)
 	if err != nil {
 		textErrorResponse(w, "Invalid filter request, please make sure client is up to date")
+		return
 	}
 
 	ids, setIds, size, hashes, err := filter.QueryNode(request.Node, request.Limit, request.By, request.Direction)
 	if err != nil {
 		textErrorResponse(w, err.Error())
+		return
 	}
 
 	response := FilterResponse{
@@ -79,11 +81,13 @@ func FilterHandlerV2(w http.ResponseWriter, r *http.Request) {
 	request, err = genericJSONDecode(request, r.Body)
 	if err != nil {
 		textErrorResponse(w, "Invalid filter request, please make sure client is up to date")
+		return
 	}
 
 	ids, setIds, size, hashes, err := filter.QueryNode(request.Node, request.Limit, request.By, request.Direction)
 	if err != nil {
 		textErrorResponse(w, err.Error())
+		return
 	}
 
 	response := FilterResponseV2{
