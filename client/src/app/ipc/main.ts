@@ -30,7 +30,7 @@ import {
 } from "./settings";
 import { handleGetBeatmapDetails, handleGetMetrics, handleQuery } from "./query";
 
-export const serverUri = "https://v2.nzbasic.com/";
+export const serverUri = "https://v2.nzbasic.com";
 export type E = Electron.IpcMainInvokeEvent
 
 loadDownloads()
