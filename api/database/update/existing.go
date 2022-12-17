@@ -113,8 +113,17 @@ func updateOszData(oszData osu.OszBeatmapData) {
 }
 
 func updateApiData(apiData api.GetBeatmapResponse) {
+	// convert time string from
+	parsedTime, err := time.Parse(time.RFC3339, apiData.Beatmapset.LastUpdated)
+	if err != nil {
+		log.Println(err)
+	}
+
+	// convert time to unix timestamp
+	unixTime := parsedTime.UnixMilli() / 1000
+
 	query := "UPDATE beatmaps SET hp = ?, cs = ?, od = ?, ar = ?, hash = ?, approved = ?, bpm = ?, stars = ?, favouriteCount = ?, hitLength = ?, maxCombo = ?, mode = ?, totalLength = ?, lastUpdate = ?, passCount = ?, playCount = ? WHERE id = ?"
-	_, err := database.Exec(query,
+	_, err = database.Exec(query,
 		apiData.Drain,
 		apiData.CS,
 		apiData.Accuracy,
@@ -128,7 +137,7 @@ func updateApiData(apiData api.GetBeatmapResponse) {
 		apiData.MaxCombo,
 		apiData.Mode,
 		apiData.TotalLength,
-		apiData.Beatmapset.LastUpdated,
+		unixTime,
 		apiData.Passcount,
 		apiData.Playcount,
 		apiData.ID,
