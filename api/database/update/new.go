@@ -47,11 +47,9 @@ func getBeatmap(setId int) {
 	}
 
 	if len(beatmaps) == 0 {
-		fmt.Printf("%d no beatmaps\n", setId)
 		return
 	}
 
-	fmt.Println("Downloading new map", setId)
 	buffer, err := api.DownloadBeatmap(fmt.Sprintf("%d", setId))
 	if err != nil {
 		log.Println(err)
@@ -65,7 +63,6 @@ func getBeatmap(setId int) {
 	}
 
 	beatmapsData := osu.ParseOszInMemoryWithApiData(beatmaps, body)
-	fmt.Printf("%v\n", beatmapsData)
 	for _, beatmapData := range beatmapsData {
 		if beatmapData.Title == "" {
 			log.Println(setId, "no title")
