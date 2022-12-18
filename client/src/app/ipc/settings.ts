@@ -35,6 +35,8 @@ export const handleSetSetting = async <T extends keyof SettingType>(event: E, ke
       return settings.set("temp", value);
     case "tempPath":
       return settings.set("tempPath", value);
+    case "autoTemp":
+      return settings.set("autoTemp", value);
   }
 }
 
@@ -83,15 +85,17 @@ export const handleBrowse = async () => {
 export const handleResetTempPath = () => settings.unset("tempPath");
 export const handleGetTempData = async () => {
   const tempEnabled = await settings.get("temp") as boolean;
+  const tempAuto = await settings.get("autoTemp") as boolean
   const tempPath = await getTempPath();
   const files = tempPath ? await fs.promises.readdir(tempPath) : []
   const valid = await checkValidTempPath(tempPath);
 
   return {
     valid,
-    enabled: tempEnabled,
+    enabled: tempEnabled ?? false,
     path: tempPath,
     count: files.filter(file => file.endsWith(".osz")).length,
+    auto: tempAuto ?? false
   };
 };
 

@@ -3,4 +3,5 @@ export interface TempData {
   path: string;
   count: number;
   enabled: boolean;
+  auto: boolean;
 }

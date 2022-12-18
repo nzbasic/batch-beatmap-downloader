@@ -6,4 +6,5 @@ export type SettingType = {
   path: (value: string) => Promise<[boolean, number]>
   temp: (value: boolean) => Promise<void>
   tempPath: (value: string) => Promise<void>
+  autoTemp: (value: boolean) => Promise<void>
 }

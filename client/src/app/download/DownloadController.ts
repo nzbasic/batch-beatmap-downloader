@@ -133,7 +133,8 @@ export class DownloadController {
     if (this.ipc) this.ipc.close();
 
     const enabled = await settings.get("temp") as boolean
-    if (enabled) await this.moveTempFiles();
+    const autoTemp = await settings.get("autoTemp") as boolean
+    if (enabled && autoTemp) await this.moveTempFiles();
   }
 
   private async moveTempFiles() {
