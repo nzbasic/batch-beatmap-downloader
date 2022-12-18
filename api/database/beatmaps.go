@@ -170,3 +170,21 @@ func GetBeatmapHashMap() (map[string]int, error) {
 
 	return hashMap, nil
 }
+
+func GetBeatmapHashMapV2() (map[string][]int, error) {
+	rows, err := metaDb.Query("SELECT setId, hash, size FROM beatmaps")
+
+	if err != nil {
+		return nil, err
+	}
+
+	hashMap := make(map[string][]int)
+	for rows.Next() {
+		var setId, size int
+		var hash string
+		rows.Scan(&setId, &hash, &size)
+		hashMap[hash] = []int{setId, size}
+	}
+
+	return hashMap, nil
+}

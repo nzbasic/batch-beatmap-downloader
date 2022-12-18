@@ -41,23 +41,26 @@ export const checkCollections = async () => {
     }
   }
 
-  const data = (await axios.get<BeatmapHashMap>(`${serverUri}/hashMap`)).data
-  const serverHashes = new Map<string, number>(Object.entries(data))
+  const data = (await axios.get<BeatmapHashMap>(`${serverUri}/v2/hashMap`)).data
+  const serverHashes = new Map<string, [number, number]>(Object.entries(data))
   const missing: number[] = []
+  let totalSize = 0;
   await loadBeatmaps()
 
   const ownedSetIds = new Set(beatmapIds)
 
   collectionMapHashes.forEach(hash => {
     if (serverHashes.has(hash)) {
-      const setId = serverHashes.get(hash);
+      const [setId, size] = serverHashes.get(hash) ?? [0, 0];
 
       if (setId && !ownedSetIds.has(setId)) {
+        ownedSetIds.add(setId)
         missing.push(setId)
+        totalSize += size
       }
     }
   })
 
-  const totalSize = (await axios.post<number>(`${serverUri}/totalSize`, missing)).data
+  // const totalSize = (await axios.post<number>(`${serverUri}/totalSize`, missing)).data
   return { ids: missing, totalSize }
 }
