@@ -3,110 +3,123 @@ import React, {
   useState, createContext, useEffect, PropsWithChildren, useContext,
 } from 'react';
 
-export interface Settings {
-  darkMode: boolean
-  toggleDarkMode: (on?: boolean) => void
-
+interface SettingsObject {
+  darkMode: boolean;
   path: string;
-  setPath: (path: string) => void;
-  altPathEnabled: boolean;
-  setAltPathEnabled: (enabled: boolean) => void;
   altPath: string;
-  setAltPath: (path: string) => void;
-  maxConcurrentDownloads: number;
-  setMaxConcurrentDownloads: (number: number) => void;
-
-  validPath: boolean;
+  altPathEnabled: boolean;
   beatmapSetCount: number;
+  maxConcurrentDownloads: number;
+  validPath: boolean;
+  autoTransfer: boolean;
+}
+
+export interface Settings {
+  settings: SettingsObject
+
+  toggleDarkMode: (on?: boolean) => void
+  setPath: (path: string) => void;
+  setAltPathEnabled: (enabled: boolean) => void;
+  setAltPath: (path: string) => void;
+  setMaxConcurrentDownloads: (number: number) => void;
 }
 
 const defaultContext: Settings = {
-  darkMode: false,
+  settings: {
+    darkMode: true,
+    path: "",
+    altPath: "",
+    altPathEnabled: false,
+    beatmapSetCount: 0,
+    maxConcurrentDownloads: 5,
+    validPath: false,
+    autoTransfer: false,
+  },
+
   toggleDarkMode: () => null,
-  path: "",
   setPath: () => null,
-  altPathEnabled: false,
   setAltPathEnabled: () => null,
-  altPath: "",
   setAltPath: () => null,
-  maxConcurrentDownloads: 5,
   setMaxConcurrentDownloads: () => null,
-  validPath: false,
-  beatmapSetCount: 0,
 };
 
 export const SettingsContext = createContext<Settings>(defaultContext);
 
 const SettingsProvider: React.FC<PropsWithChildren<any>> = ({ children }) => {
-  const [darkMode, setDarkMode] = useState(false);
-  const [path, setPath] = useState("");
-  const [altPath, setAltPath] = useState("")
-  const [altPathEnabled, setAltPathEnabled] = useState(false)
-  const [beatmapSetCount, setBeatmapSetCount] = useState(0);
-  const [maxConcurrentDownloads, setMaxConcurrentDownloads] = useState(5)
-  const [validPath, setValidPath] = useState(false)
+  const [settings, setSettings] = useState(defaultContext.settings)
 
   useEffect(() => {
     window.electron.getSettings().then((res) => {
-      setValidPath(res.validPath as boolean ?? false)
-      toggleDarkMode(res.darkMode as boolean ?? false)
-      setPath(res.path as string ?? "");
-      setAltPath(res.altPath as string ?? "")
-      setMaxConcurrentDownloads(res.maxConcurrentDownloads as number ?? 5)
-      setBeatmapSetCount(res.sets as number ?? 0)
-      setAltPathEnabled(res.altPathEnabled as boolean ?? false)
-    });
+      setSettings({
+        darkMode: res.darkMode as boolean ?? true,
+        path: res.path as string ?? "",
+        altPath: res.altPath as string ?? "",
+        altPathEnabled: res.altPathEnabled as boolean ?? false,
+        beatmapSetCount: res.sets as number ?? 0,
+        maxConcurrentDownloads: res.maxConcurrentDownloads as number ?? 5,
+        validPath: res.validPath as boolean ?? false,
+        autoTransfer: res.autoTransfer as boolean ?? false,
+      })
+
+      document.documentElement.classList.toggle('dark', res.darkMode as boolean ?? true);
+    })
   }, []);
 
   const toggleDarkMode = (on?: boolean) => {
-    let newValue = !darkMode
+    let newValue = !settings.darkMode
     if (on !== undefined) newValue = on
     document.documentElement.classList.toggle('dark', newValue)
     window.electron.setSetting("darkMode", newValue)
-    setDarkMode(newValue)
+    setSettings(prev => ({ ...prev, darkMode: newValue }))
   };
 
   const handleSetPath = async (path: string) => {
-    setPath(path)
-    const [valid, count] = await window.electron.setSetting("path", path)
-    setValidPath(valid)
-    setBeatmapSetCount(count)
+    const [validPath, beatmapSetCount] = await window.electron.setSetting("path", path)
+    setSettings(prev => ({
+      ...prev,
+      path,
+      validPath,
+      beatmapSetCount
+    }))
   }
 
   const handleSetAltPath = async (path: string) => {
-    setAltPath(path)
-    const count = await window.electron.setSetting("altPath", path)
-    setBeatmapSetCount(count)
+    const beatmapSetCount = await window.electron.setSetting("altPath", path)
+    setSettings(prev => ({
+      ...prev,
+      altPath: path,
+      beatmapSetCount
+    }))
   }
 
   const handleSetAltPathEnabled = async (enabled: boolean) => {
-    setAltPathEnabled(enabled)
-    const count = await window.electron.setSetting("altPathEnabled", enabled)
-    setBeatmapSetCount(count)
+    const beatmapSetCount = await window.electron.setSetting("altPathEnabled", enabled)
+    setSettings(prev => ({
+      ...prev,
+      altPathEnabled: enabled,
+      beatmapSetCount
+    }))
   }
 
   const debouncedSetMaxConcurrentDownloads = debounce((value: number) => window.electron.setSetting("maxConcurrentDownloads", value), 500)
 
   const handleSetMaxConcurrentDownloads = (number: number) => {
-    setMaxConcurrentDownloads(number)
     debouncedSetMaxConcurrentDownloads(number)
+    setSettings(prev => ({
+      ...prev,
+      maxConcurrentDownloads: number
+    }))
   }
 
   return (
     <SettingsContext.Provider
       value={{
-        darkMode,
+        settings,
         toggleDarkMode,
-        path,
         setPath: handleSetPath,
-        altPathEnabled,
         setAltPathEnabled: handleSetAltPathEnabled,
-        altPath,
         setAltPath: handleSetAltPath,
-        beatmapSetCount,
-        maxConcurrentDownloads,
         setMaxConcurrentDownloads: handleSetMaxConcurrentDownloads,
-        validPath
       }}
     >
       {children}

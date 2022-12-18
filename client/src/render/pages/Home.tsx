@@ -10,7 +10,8 @@ import { useSettings } from "../context/SettingsProvider";
 const videoUrl = "https://www.youtube.com/watch?v=_Nuz0TVF1IY"
 
 export const Home = () => {
-  const { validPath } = useSettings();
+  const { settings } = useSettings();
+  const { validPath } = settings
 
   return (
     <div className="flex flex-col gap-4">

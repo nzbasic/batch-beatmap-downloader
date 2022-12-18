@@ -14,18 +14,22 @@ Maximum: 25
 
 export const Settings = () => {
   const {
-    path,
+    settings,
     setPath,
-    altPathEnabled,
     setAltPathEnabled,
-    altPath,
     setAltPath,
-    beatmapSetCount,
-    darkMode,
     toggleDarkMode,
-    maxConcurrentDownloads,
     setMaxConcurrentDownloads
   } = useSettings()
+
+  const {
+    path,
+    altPathEnabled,
+    altPath,
+    darkMode,
+    beatmapSetCount,
+    maxConcurrentDownloads
+  } = settings
 
   return (
     <div className="content-box flex flex-col dark:text-white w-full">

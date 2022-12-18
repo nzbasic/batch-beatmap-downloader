@@ -21,7 +21,8 @@ import { useSettings } from "../context/SettingsProvider";
 import { ResultTable } from "../components/query/ResultTable";
 
 export const Query = () => {
-  const { validPath } = useSettings()
+  const { settings } = useSettings()
+  const { validPath } = settings;
   const [tree, setTree] = useStickyState<Node>(sampleTree, "tree");
   const [result, setResult] = useState<DownloadDetails | null>(null);
   const [loading, setLoading] = useState(false);
