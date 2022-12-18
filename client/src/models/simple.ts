@@ -94,6 +94,9 @@ export const keyMap = new Map<string, string>([
   ["farm", "Special"],
   ["stream", "Special"],
   ["rankedmapper", "Special"],
+  ["hitlength", "HitLength"],
+  ["drain", "HitLength"],
+  ["length", "HitLength"],
 ])
 
 export const valueMap = new Map<string, string>([
@@ -414,7 +417,7 @@ export const sections: Section[] = [
       },
       {
         type: InputType.MIN_MAX,
-        key: "Drain",
+        key: "HitLength",
         label: "Length",
         defaultValue: [-1, -1],
         step: 1,
