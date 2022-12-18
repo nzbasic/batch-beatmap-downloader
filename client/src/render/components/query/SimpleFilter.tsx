@@ -58,6 +58,11 @@ export const SimpleFilter: React.FC<PropTypes> = ({ tree, updateTree }) => {
         break
       case InputType.TEXT:
         const string = value as string
+        if (!string) {
+          removeRule(item, "like")
+          break
+        }
+
         if (string !== (currentValue as string)) updateValuePair(item.key, "like", string)
         break
       case InputType.DROPDOWN:
@@ -83,7 +88,6 @@ export const SimpleFilter: React.FC<PropTypes> = ({ tree, updateTree }) => {
   }
 
   const updateValuePair = (type: string, symbol: string, value: string, state?: Node) => {
-    console.log(type, symbol, value)
     const clone = cloneDeep(state ? state : tree)
     if (!clone.group) return
 
@@ -132,6 +136,7 @@ export const SimpleFilter: React.FC<PropTypes> = ({ tree, updateTree }) => {
   }
 
   const removeRule = (item: TInputItem, operator: string) => {
+    console.log(item, operator)
     const clone = cloneDeep(tree)
     if (!clone.group) return
     clone.group.children = clone.group.children.filter(child => {
@@ -156,8 +161,8 @@ export const SimpleFilter: React.FC<PropTypes> = ({ tree, updateTree }) => {
         state = updateValuePair(type, symbol, value, state)
       } else if (term.match(/^\w*(==|=|!=)\w+$/g)) { // text
         const type = (term.match(/^\w+/g) ?? ["status"])[0] // gets the word before operator
-        const symbol = (term.match(/(==|=|!=)/g) ?? [])[0] // gets operator
-        const value = (term.match(/\w+$/g) ?? [])[0] // gets word after operator
+        const symbol = (term.match(/(==|=|!=)/g) ?? ["="])[0] // gets operator
+        const value = (term.match(/\w+$/g) ?? ["r"])[0] // gets word after operator
         const aliasedType = textAliasMap.get(type) ?? type
         const aliasedValue = textAliasMap.get(value) ?? value
         contents.push({ type: aliasedType, symbol, value: aliasedValue })
