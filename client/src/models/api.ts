@@ -93,7 +93,7 @@ export interface BeatmapDetails {
 }
 
 export interface BeatmapHashMap {
-  [hash: string]: number;
+  [hash: string]: [number, number];
 }
 
 export interface MissingMaps {

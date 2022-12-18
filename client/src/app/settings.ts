@@ -1,6 +1,7 @@
 import settings from "electron-settings";
 import fs from 'fs';
 import os from 'os';
+import path from "path";
 
 export const checkValidPath = async (path: string) => {
   try {
@@ -36,16 +37,16 @@ export const getSongsFolder = async () => {
     return altPath;
   }
 
-  const path = await settings.get("path") as string;
-  return path + "/Songs"
+  const osuPath = await settings.get("path") as string;
+  return path.join(osuPath, "Songs")
 }
 
 export const getDefaultTempPath = async () => {
   const altPathEnabled = await settings.get("altPathEnabled") as boolean
   if (altPathEnabled) return "";
 
-  const path = await settings.get("path") as string;
-  const tempPath = path + "/bbd-temp"
+  const osuPath = await settings.get("path") as string;
+  const tempPath = path.join(osuPath, "bbd-temp")
 
   if (!fs.existsSync(tempPath)) {
     fs.mkdirSync(tempPath);

@@ -19,14 +19,8 @@ import {
   handleGetTempData,
   handleLoadBeatmaps,
   handleResetTempPath,
-  handleSetAltPath,
-  handleSetAltPathEnabled,
-  handleSetMaxConcurrentDownloads,
-  handleSetPath,
+  handleSetSetting,
   handleSetSettings,
-  handleSetTempEnabled,
-  handleSetTempPath,
-  handleSetTheme
 } from "./settings";
 import { handleGetBeatmapDetails, handleGetMetrics, handleQuery } from "./query";
 
@@ -49,21 +43,15 @@ ipcMain.handle("pause-downloads", handlePauseDownloads)
 ipcMain.handle("delete-download", handleDeleteDownload);
 ipcMain.handle("move-all-downloads", handleMoveAllDownloads);
 
+ipcMain.handle("set-setting", handleSetSetting);
 ipcMain.handle("get-settings", handleGetSettings);
 ipcMain.handle("set-settings", handleSetSettings);
-ipcMain.handle("set-theme", handleSetTheme);
-ipcMain.handle("set-max-concurrent-downloads", handleSetMaxConcurrentDownloads)
-ipcMain.handle("set-alt-path", handleSetAltPath);
-ipcMain.handle("set-path", handleSetPath);
 ipcMain.handle("browse", handleBrowse);
 ipcMain.handle("load-beatmaps", handleLoadBeatmaps);
 ipcMain.handle("check-collections", handleCheckCollections)
-ipcMain.handle("set-temp-enabled", handleSetTempEnabled);
-ipcMain.handle("set-temp-path", handleSetTempPath);
 ipcMain.handle("reset-temp-path", handleResetTempPath);
 ipcMain.handle("get-temp-data", handleGetTempData);
 ipcMain.handle("get-platform", handleGetPlatform);
-ipcMain.handle("set-alt-path-enabled", handleSetAltPathEnabled);
 
 ipcMain.handle("query", handleQuery);
 ipcMain.handle("get-metrics", handleGetMetrics)

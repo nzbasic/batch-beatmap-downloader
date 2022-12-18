@@ -62,29 +62,30 @@ const SettingsProvider: React.FC<PropsWithChildren<any>> = ({ children }) => {
     let newValue = !darkMode
     if (on !== undefined) newValue = on
     document.documentElement.classList.toggle('dark', newValue)
+    window.electron.setSetting("darkMode", newValue)
     setDarkMode(newValue)
   };
 
   const handleSetPath = async (path: string) => {
     setPath(path)
-    const [valid, count] = await window.electron.setPath(path)
+    const [valid, count] = await window.electron.setSetting("path", path)
     setValidPath(valid)
     setBeatmapSetCount(count)
   }
 
   const handleSetAltPath = async (path: string) => {
     setAltPath(path)
-    const count = await window.electron.setAltPath(path)
+    const count = await window.electron.setSetting("altPath", path)
     setBeatmapSetCount(count)
   }
 
   const handleSetAltPathEnabled = async (enabled: boolean) => {
     setAltPathEnabled(enabled)
-    const count = await window.electron.setAltPathEnabled(enabled)
+    const count = await window.electron.setSetting("altPathEnabled", enabled)
     setBeatmapSetCount(count)
   }
 
-  const debouncedSetMaxConcurrentDownloads = debounce(window.electron.setMaxConcurrentDownloads, 500)
+  const debouncedSetMaxConcurrentDownloads = debounce((value: number) => window.electron.setSetting("maxConcurrentDownloads", value), 500)
 
   const handleSetMaxConcurrentDownloads = (number: number) => {
     setMaxConcurrentDownloads(number)

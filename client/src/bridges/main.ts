@@ -23,14 +23,8 @@ import {
   handleGetVersion,
   handleLoadBeatmaps,
   handleResetTempPath,
-  handleSetAltPath,
-  handleSetAltPathEnabled,
-  handleSetMaxConcurrentDownloads,
-  handleSetPath,
+  handleSetSetting,
   handleSetSettings,
-  handleSetTempEnabled,
-  handleSetTempPath,
-  handleSetTheme
 } from "./settings";
 import {
   handleBrowse,
@@ -64,11 +58,7 @@ export const electronBridge = {
   setSettings: handleSetSettings,
   checkValidPath: handleCheckValidPath,
   loadBeatmaps: handleLoadBeatmaps,
-  setTheme: handleSetTheme,
-  setMaxConcurrentDownloads: handleSetMaxConcurrentDownloads,
-  setPath: handleSetPath,
-  setAltPath: handleSetAltPath,
-  setAltPathEnabled: handleSetAltPathEnabled,
+  setSetting: handleSetSetting,
 
   startDownload: handleStartDownload,
   createDownload: handleCreateDownload,
@@ -80,8 +70,6 @@ export const electronBridge = {
   getDownloadsStatus: handleGetDownloadsStatus,
   checkCollections: handleCheckCollections,
   getTempData: handleGetTempData,
-  setTempEnabled: handleSetTempEnabled,
-  setTempPath: handleSetTempPath,
   resetTempPath: handleResetTempPath,
   moveTempDownloads: handleMoveAllDownloads,
 

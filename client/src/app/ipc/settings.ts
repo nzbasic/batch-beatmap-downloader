@@ -1,3 +1,4 @@
+import { SettingType } from './../../models/settings';
 import settings from "electron-settings";
 import { SettingsObject } from "../../global";
 import { window } from '../../main'
@@ -18,13 +19,29 @@ export const handleGetSettings = async () => {
 }
 
 export const handleSetSettings = (event: E, s: SettingsObject) => settings.set(s);
-export const handleSetTheme = (event: E, theme: boolean) => settings.set("darkMode", theme);
-export const handleSetMaxConcurrentDownloads = (event: E, number: number) => settings.set("maxConcurrentDownloads", number);
+export const handleSetSetting = async <T extends keyof SettingType>(event: E, key: T, value: Parameters<SettingType[T]>[0]) => {
+  switch(key) {
+    case "darkMode":
+      return settings.set("darkMode", value);
+    case "maxConcurrentDownloads":
+      return settings.set("maxConcurrentDownloads", value);
+    case "path":
+      return await handleSetPath(value as string);
+    case "altPath":
+      return await handleSetAltPath(value as string);
+    case "altPathEnabled":
+      return await handleSetAltPathEnabled(value as boolean);
+    case "temp":
+      return settings.set("temp", value);
+    case "tempPath":
+      return settings.set("tempPath", value);
+  }
+}
 
 export const handleLoadBeatmaps = loadBeatmaps;
 export const handleCheckCollections = checkCollections
 
-export const handleSetPath = async (event: E, path: string): Promise<[boolean, number]> => {
+export const handleSetPath = async (path: string) => {
   const validPath = await checkValidPath(path);
 
   if (!validPath) {
@@ -43,13 +60,13 @@ export const handleSetPath = async (event: E, path: string): Promise<[boolean, n
   return [true, beatmapIds.size]
 }
 
-export const handleSetAltPath = async (event: E, path: string): Promise<number> => {
+export const handleSetAltPath = async (path: string): Promise<number> => {
   await settings.set("altPath", path);
   await loadBeatmaps();
   return beatmapIds.size
 }
 
-export const handleSetAltPathEnabled = async (event: E, enabled: boolean) => {
+export const handleSetAltPathEnabled = async (enabled: boolean) => {
   await settings.set("altPathEnabled", enabled);
   await loadBeatmaps();
   return beatmapIds.size;
@@ -62,8 +79,7 @@ export const handleBrowse = async () => {
   return dialogResult;
 }
 
-export const handleSetTempEnabled = (event: E, enabled: boolean) => settings.set("temp", enabled);
-export const handleSetTempPath = (event: E, path: string) => settings.set("tempPath", path);
+
 export const handleResetTempPath = () => settings.unset("tempPath");
 export const handleGetTempData = async () => {
   const tempEnabled = await settings.get("temp") as boolean;

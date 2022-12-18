@@ -30,11 +30,11 @@ export const Temporary = () => {
   }, []);
 
   const handleToggle = () => {
-    window.electron.setTempEnabled(!temp).then(() => updateData());
+    window.electron.setSetting("temp", !temp).then(() => updateData());
   };
 
   const handleSetTempPath = (path: string) => {
-    window.electron.setTempPath(path).then(() => updateData());
+    window.electron.setSetting("tempPath", path).then(() => updateData());
   };
 
   const handleResetPath = () => {
