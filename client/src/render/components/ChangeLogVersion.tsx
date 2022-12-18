@@ -9,13 +9,18 @@ interface PropTypes {
 export const ChangeLogVersion = ({ item }: PropTypes) => {
   return (
     <SimpleSummaryAccordion expanded title={item.version}>
-      <ul>
+      <div className="flex flex-col gap-4">
         {item.changes.map((change, index) => (
-          <li key={index}>
-            {change}
-          </li>
+          <div key={index}>
+            <span className="font-semibold">{change.title}</span>
+            <ul className="list-disc list-inside">
+              {change.changes.map((text, index) => (
+                <li key={index}>{text}</li>
+              ))}
+            </ul>
+          </div>
         ))}
-      </ul>
+      </div>
     </SimpleSummaryAccordion>
   )
 }
