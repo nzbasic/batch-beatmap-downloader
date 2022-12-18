@@ -42,7 +42,7 @@ func getBeatmap(setId int) {
 	})
 
 	if err != nil {
-		log.Println(err)
+		log.Println("osu! API error", err)
 		return
 	}
 
@@ -52,13 +52,13 @@ func getBeatmap(setId int) {
 
 	buffer, err := api.DownloadBeatmap(fmt.Sprintf("%d", setId))
 	if err != nil {
-		log.Println(err)
+		log.Println("Error downloading beatmap", err)
 		return
 	}
 
 	body, err := ioutil.ReadAll(&buffer)
 	if err != nil {
-		log.Println(err)
+		log.Println("Error reading buffer", err)
 		return
 	}
 

@@ -54,7 +54,6 @@ type OszBeatmapData struct {
 	Version      string
 	TimingPoints string
 	HitObjects   string
-	Size         int
 }
 
 var r *regexp.Regexp
@@ -87,13 +86,14 @@ func ParseOszInMemory(data []byte) []OszBeatmapData {
 }
 
 func ParseOszInMemoryWithApiData(apiData []osuapi.Beatmap, data []byte) []BeatmapData {
+	size := len(data)
 	oszData := ParseOszInMemory(data)
 	output := []BeatmapData{}
 
 	for _, apiBeatmap := range apiData {
 		for _, oszBeatmap := range oszData {
 			if apiBeatmap.DiffName == oszBeatmap.Version {
-				output = append(output, convertToBeatmapData(apiBeatmap, oszBeatmap))
+				output = append(output, convertToBeatmapData(apiBeatmap, oszBeatmap, size))
 			}
 		}
 	}
@@ -104,6 +104,11 @@ func ParseOszInMemoryWithApiData(apiData []osuapi.Beatmap, data []byte) []Beatma
 func ParseOszFromFileWithApiData(apiData []osuapi.Beatmap, path string, setId int) []BeatmapData {
 	output := []BeatmapData{}
 	archive, _ := zip.OpenReader(path)
+
+	size := 0
+	for _, f := range archive.File {
+		size += int(f.UncompressedSize64)
+	}
 
 	defer func() {
 		if r := recover(); r != nil {
@@ -117,7 +122,7 @@ func ParseOszFromFileWithApiData(apiData []osuapi.Beatmap, path string, setId in
 
 			for _, apiBeatmap := range apiData {
 				if apiBeatmap.DiffName == oszData.Version {
-					output = append(output, convertToBeatmapData(apiBeatmap, oszData))
+					output = append(output, convertToBeatmapData(apiBeatmap, oszData, size))
 				}
 			}
 		}
@@ -146,7 +151,6 @@ func parseOszBeatmap(osu io.ReadCloser) OszBeatmapData {
 
 	buf := new(bytes.Buffer)
 	buf.ReadFrom(osu)
-	size := buf.Len()
 	content := buf.String()
 
 	lines := strings.Split(content, "\n")
@@ -213,11 +217,10 @@ func parseOszBeatmap(osu io.ReadCloser) OszBeatmapData {
 		Version:      version,
 		TimingPoints: strings.Join(timingPoints, CustomDelimiter),
 		HitObjects:   strings.Join(hitObjects, CustomDelimiter),
-		Size:         size,
 	}
 }
 
-func convertToBeatmapData(api osuapi.Beatmap, osz OszBeatmapData) BeatmapData {
+func convertToBeatmapData(api osuapi.Beatmap, osz OszBeatmapData, size int) BeatmapData {
 	return BeatmapData{
 		Title:          api.Title,
 		Artist:         api.Artist,
@@ -248,6 +251,6 @@ func convertToBeatmapData(api osuapi.Beatmap, osz OszBeatmapData) BeatmapData {
 		LastUpdate:     api.LastUpdate.GetTime().Unix(),
 		PassCount:      api.Passcount,
 		PlayCount:      api.Playcount,
-		Size:           osz.Size,
+		Size:           size,
 	}
 }

@@ -72,8 +72,9 @@ func checkUpdate(id int, hash string) {
 			return
 		}
 
+		size := len(body)
 		oszData := osu.ParseOszInMemory(body)
-		updateFullSet(oszData)
+		updateFullSet(oszData, size)
 	} else {
 		updateApiData(beatmap)
 	}
@@ -88,7 +89,7 @@ func readZipFile(zf *zip.File) ([]byte, error) {
 	return ioutil.ReadAll(f)
 }
 
-func updateFullSet(oszData []osu.OszBeatmapData) {
+func updateFullSet(oszData []osu.OszBeatmapData, size int) {
 	for _, osz := range oszData {
 		apiData, err := api.GetBeatmap(osz.BeatmapId)
 		if err != nil {
@@ -97,15 +98,15 @@ func updateFullSet(oszData []osu.OszBeatmapData) {
 		}
 
 		toSkip[apiData.ID] = true
-		updateOszData(osz)
+		updateOszData(osz, size)
 		updateApiData(apiData)
 		updateMiscData(osz, apiData)
 	}
 }
 
-func updateOszData(oszData osu.OszBeatmapData) {
+func updateOszData(oszData osu.OszBeatmapData, size int) {
 	database.Exec(`UPDATE beatmaps SET size = ?, timingPoints = ?, hitObjects = ? WHERE id = ?`,
-		oszData.Size,
+		size,
 		oszData.TimingPoints,
 		oszData.HitObjects,
 		oszData.BeatmapId,
