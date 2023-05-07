@@ -94,7 +94,7 @@ You must have run your osu! client at least once.
 
 ### Usage
 
-<a href="https://github.com/nzbasic/Collection-Helper/releases/latest">Download the latest release here</a>
+<a href="https://github.com/nzbasic/batch-beatmap-downloader/releases/latest">Download the latest release here</a>
 
 #### Building yourself (for devs)
 
